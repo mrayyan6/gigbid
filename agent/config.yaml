@@ -1,0 +1,12 @@
+profile: open
+profiles:
+  open:
+    cheap: ollama/qwen3:8b
+    strong: ollama/gpt-oss:20b
+    embedding: nomic-embed-text
+    reranker: bge-reranker-v2-m3
+  paid: {}
+budgets:
+  max_steps_per_thread: 40
+  max_tokens_per_thread: 60000
+  critic_max_revisions: 2
