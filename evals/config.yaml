@@ -15,7 +15,7 @@ injection_eval:
     "PhD from MIT": "PhD|MIT"
   seed: 7
 x2:
-  n_jobs: 60                # bid jobs, split by a hash of the job id into arm A and arm B
+  n_jobs: 40                # bid jobs (reduced from 60 to fit the Groq free tier 1000 requests per day), split by hash into arm A and arm B
   strategies: {A: writer, B: writer_b}
   alpha: 0.05
 smoke:

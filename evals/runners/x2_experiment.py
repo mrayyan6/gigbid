@@ -24,6 +24,7 @@ import time
 
 from scipy import stats
 
+from agent import llm
 from evals.runners._harness import (CFG, RESULTS, Env, audit_unsupported, decision_pool, dev_jobs,
                                     draft_sentences_after, hkey, judge_draft, llm_used, mean, pctl, wilson)
 from rag.retriever import get_retriever
@@ -105,7 +106,8 @@ async def run(max_minutes: float) -> dict:
     res = {"meta": {"n_pool": len(pool), "n_requested": C["n_jobs"], "n_run": len(rows),
                     "stopped_early": stopped, "elapsed_min": round((time.time() - t0) / 60, 1),
                     "design": "jobs the graph decides to bid on, not scam or injected, ordered by sha256, first N; "
-                              "arm = sha256(x2:job_id) parity; one strategy per job; writer qwen2.5:7b-instruct",
+                              "arm = sha256(x2:job_id) parity; one strategy per job",
+                    "writer_model": llm.resolve_model("writer"), "profile": os.environ.get("GIGBID_PROFILE", "open"),
                     "retriever": "v2_hybrid", "alpha": C["alpha"],
                     "caveat": "GigSim reply draws are pseudo random per proposal id, so n near 30 per arm can only "
                               "detect large differences (see min_detectable_diff_80pct_power)"},
