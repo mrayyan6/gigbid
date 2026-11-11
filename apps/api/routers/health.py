@@ -20,7 +20,7 @@ async def marketplace_up(ctx: AppCtx) -> bool:
         await asyncio.wait_for(ctx.mp.get_connects_balance(),
                                CFG["api"]["health_probe_timeout_s"])
         return True
-    except Exception:  # noqa: BLE001  any failure means degraded mode
+    except Exception:
         return False
 
 

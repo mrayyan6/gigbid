@@ -18,8 +18,17 @@ import sys
 
 import yaml
 
-from evals.runners._harness import (CFG, RESULTS, ROOT, Env, audit_unsupported, dev_jobs, draft_sentences_after,
-                                    draft_sentences_before, hkey)
+from evals.runners._harness import (
+    CFG,
+    RESULTS,
+    ROOT,
+    Env,
+    audit_unsupported,
+    dev_jobs,
+    draft_sentences_after,
+    draft_sentences_before,
+    hkey,
+)
 from rag.retriever import get_retriever
 
 THRESHOLDS = ROOT / "evals" / "thresholds.yaml"

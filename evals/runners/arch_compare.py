@@ -77,7 +77,7 @@ def _native_call(model: str, system: str, user: str, json_mode: bool, max_tokens
         r.raise_for_status()
         d = r.json()
         text = (d["message"]["content"] or "").strip()
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:
         STATS.append({"model": name, "error": f"{type(e).__name__}: {e}"})
         return llm.LLMResult(None, model, latency_ms=int((time.perf_counter() - t0) * 1000),
                              error=f"{type(e).__name__}: {e}")
@@ -128,7 +128,7 @@ class Sim:
 # ---------------------------------------------------------------- shared checks
 def unsupported_count(letter: str, valid_ids: set[str]) -> int:
     """Claims about past work with no [ev:id] tag, or a tag that is not a real portfolio item."""
-    past = re.compile(CFG["verifier"]["past_claim_regex"], re.I)
+    past = re.compile(CFG["verifier"]["past_claim_regex"], re.IGNORECASE)
     n = 0
     for s in core._sentences(letter):
         tags = re.findall(r"\[ev:([^\]]+)\]", s)
@@ -145,7 +145,7 @@ class TokenCounter(BaseCallbackHandler):
     def __init__(self):
         self.tin = self.tout = self.calls = 0
 
-    def on_llm_end(self, response, **kw):  # noqa: ANN001
+    def on_llm_end(self, response, **kw):
         self.calls += 1
         for gens in response.generations:
             for g in gens:
@@ -176,7 +176,7 @@ async def build_tools(sim: Sim, retr, counters: dict) -> dict[str, StructuredToo
             count(name)
             try:
                 return await fn(**kw)
-            except Exception as e:  # noqa: BLE001 - a tool error is an observation, not a crash
+            except Exception as e:
                 return f"tool error: {type(e).__name__}: {e}"
         return StructuredTool(name=name, description=t.description or name, args_schema=t.inputSchema,
                               coroutine=run)
@@ -354,7 +354,7 @@ async def evaluate_job(arch, runner, sim: Sim, job: dict, retr, valid_ids: set[s
             tools = await build_tools(sim, retr, counters)
             agent = runner(tools)
             r = await asyncio.wait_for(run_agent(arch, agent, sim, job, retr, counters), JOB_TIMEOUT_S[arch])
-    except Exception as e:  # noqa: BLE001 - a failed job is a result, not a crash
+    except Exception as e:
         r = {"parse_ok": False, "tokens": 0}
         row["error"] = f"{type(e).__name__}: {str(e)[:160]}"
     row["latency_s"] = round(time.perf_counter() - t0, 1)
@@ -389,7 +389,7 @@ async def evaluate_job(arch, runner, sim: Sim, job: dict, retr, valid_ids: set[s
                                                     "bid_amount": amt}, f"{tag}-{job['job_id']}")
                 row["submitted"], row["replied"] = True, rec["status"] == "replied"
                 row["expected_reply_prob"] = sim.expected_prob(job["job_id"], letter, amt)
-            except Exception as e:  # noqa: BLE001 - e.g. platform policy rejection
+            except Exception as e:
                 row["submit_error"] = f"{type(e).__name__}: {str(e)[:120]}"
     return row
 

@@ -78,7 +78,7 @@ async def open_ctx(with_arq: bool = True):
             try:
                 from agent.memory.store import GigBidMemory
                 ctx.memory = GigBidMemory(persist=not test_mode())
-            except Exception:  # noqa: BLE001  memory lane may be mid edit, API must still boot
+            except Exception:
                 ctx.memory = None
             redis_url = os.environ.get("REDIS_URL")
             if with_arq and redis_url:

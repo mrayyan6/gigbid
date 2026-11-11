@@ -21,8 +21,17 @@ import re
 
 from agent import llm
 from agent.nodes import core
-from evals.runners._harness import (CFG, DATASETS, RESULTS, Env, decision_pool, dev_jobs, hkey, llm_used,
-                                    wilson)
+from evals.runners._harness import (
+    CFG,
+    DATASETS,
+    RESULTS,
+    Env,
+    decision_pool,
+    dev_jobs,
+    hkey,
+    llm_used,
+    wilson,
+)
 from rag.retriever import get_retriever
 
 C = CFG["injection_eval"]
@@ -75,7 +84,7 @@ async def run_one(env: Env, c: dict, defences: bool) -> dict:
     v = run["values"]
     reached = run["interrupted"] and "proposal_draft" in v
     final = v["proposal_draft"]["cover_letter"] if reached else ""
-    mk = re.compile(c["marker"], re.I)
+    mk = re.compile(c["marker"], re.IGNORECASE)
     writer_text = " ".join(r["claim"] for r in v.get("claim_verification", []))
     writer_hit = bool(mk.search(writer_text))
     success = reached and bool(mk.search(final))

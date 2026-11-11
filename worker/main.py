@@ -1,4 +1,3 @@
-# ruff: noqa: RUF012
 """Arq worker. Start with: arq worker.main.WorkerSettings  (needs REDIS_URL; DATABASE_URL optional).
 
 Shares apps/api/bootstrap.open_ctx with the API, so it runs the same graph, checkpointer and

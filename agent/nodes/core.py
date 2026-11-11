@@ -14,7 +14,6 @@ import asyncio
 import inspect
 import json
 import re
-from typing import Any
 
 import httpx
 from langgraph.errors import GraphBubbleUp
@@ -83,7 +82,7 @@ def guarded(name: str, fn):
                 last = e
                 if i < attempts - 1:
                     await asyncio.sleep(b["retry_backoff_s"] * 2 ** i)
-            except Exception as e:  # noqa: BLE001 - dead letter, never crash the thread
+            except Exception as e:
                 last = e
                 break
         reason = f"{type(last).__name__}: {last}"
@@ -125,7 +124,7 @@ async def get_policy(config) -> dict:
     """Platform policy from the port; falls back to the policy pack file when the port has none."""
     try:
         return await deps(config)["marketplace"].get_policy()
-    except Exception:  # noqa: BLE001
+    except Exception:
         try:
             return json.loads((REPO_ROOT / CFG["policy"]["pack_path"]).read_text(encoding="utf-8"))
         except (OSError, ValueError):
@@ -137,7 +136,7 @@ def violations(text: str, policy: dict | None = None, check_length: bool = False
     low, c, out = text.lower(), CFG["compliance"], []
     out += [p for p in c.get("banned_phrases", []) if p.lower() in low]
     for pat in c.get("banned_patterns", []):
-        m = re.search(pat, text, re.I)
+        m = re.search(pat, text, re.IGNORECASE)
         if m:
             out.append(m.group(0).lower())
     link = (policy or {}).get("banned_link_regex")
@@ -294,7 +293,7 @@ def _style_notes(config) -> list[dict]:
         return []
     try:
         return mem.style_notes(config["configurable"].get("user_id", "default"))
-    except Exception:  # noqa: BLE001 - memory is non critical
+    except Exception:
         return []
 
 
@@ -368,7 +367,7 @@ def verifier(state, config):
     With llm.verify_partial a model also flags partly supported claims."""
     v = CFG["verifier"]
     ev = {e["evidence_id"]: e for e in state["evidence"]}
-    past = re.compile(v["past_claim_regex"], re.I)
+    past = re.compile(v["past_claim_regex"], re.IGNORECASE)
     kept, report, tokens, cost, traces = [], [], 0, 0.0, []
     for s in _sentences(state["proposal_draft"]["cover_letter"]):
         tags = re.findall(r"\[ev:([^\]]+)\]", s)

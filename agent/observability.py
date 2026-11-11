@@ -54,7 +54,7 @@ def setup_tracing() -> bool:
         run_trees.get_cached_client(anonymizer=build_anonymizer())  # first caller wins
         log.info("LangSmith tracing on, project %s", os.environ["LANGSMITH_PROJECT"])
         return True
-    except Exception as exc:  # noqa: BLE001  tracing must never take the app down
+    except Exception as exc:
         log.warning("tracing setup failed, continuing without: %s", type(exc).__name__)
         os.environ["LANGSMITH_TRACING"] = "false"
         return False

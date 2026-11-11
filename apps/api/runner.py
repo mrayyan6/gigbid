@@ -153,7 +153,7 @@ async def execute_run(ctx: AppCtx, user_id: str, persona: str, job_id: str, tid:
         status = "queued"
         if chan:
             await chan.publish("error", {"detail": f"marketplace unavailable: {e}", "queued": True})
-    except Exception as e:  # noqa: BLE001  dead letter: visible failed run, never a silent drop
+    except Exception as e:
         status = "failed"
         if chan:
             await chan.publish("error", {"detail": type(e).__name__ + ": " + str(e)[:300]})

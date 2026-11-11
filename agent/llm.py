@@ -126,7 +126,7 @@ def parse_json(text: str | None) -> dict | None:
     """Tolerant JSON object parse (models sometimes wrap output in prose or code fences)."""
     if not text:
         return None
-    m = re.search(r"\{.*\}", text, re.S)
+    m = re.search(r"\{.*\}", text, re.DOTALL)
     if not m:
         return None
     try:

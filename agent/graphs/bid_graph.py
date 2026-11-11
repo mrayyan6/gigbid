@@ -64,7 +64,7 @@ async def recheck_edit(state, config):
             promoted = mem.record_edit(config["configurable"].get("user_id", "default"),
                                        config["configurable"]["thread_id"],
                                        state["proposal_draft"]["cover_letter"], a["text"])
-        except Exception:  # noqa: BLE001 - memory must never block a send
+        except Exception:
             promoted = []
     d = dict(state["proposal_draft"], cover_letter=a["text"])
     return {"proposal_draft": d, **core._t("recheck", action="edit", promoted=promoted)}
@@ -116,4 +116,4 @@ def build_bid_graph(checkpointer=None):
     return g.compile(checkpointer=checkpointer)
 
 
-__all__ = ["build_bid_graph", "Command"]
+__all__ = ["Command", "build_bid_graph"]

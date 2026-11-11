@@ -174,9 +174,7 @@ def score_args(expected: dict, actual: dict, schema_keys: set[str]) -> tuple[boo
             continue
         if k not in schema_keys:
             errs.append(f"{k}: unknown argument")
-        elif k == "limit" and v == 20:  # the schema default, harmless
-            continue
-        elif k == "dry_run" and v is False:
+        elif k == "limit" and v == 20 or k == "dry_run" and v is False:  # the schema default, harmless
             continue
         elif v not in (None, "", []):
             errs.append(f"{k}: unexpected value {v!r}")

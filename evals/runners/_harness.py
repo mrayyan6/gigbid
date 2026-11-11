@@ -12,6 +12,7 @@ from pathlib import Path
 
 import httpx
 import yaml
+from dotenv import load_dotenv
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.types import Command
 
@@ -19,7 +20,6 @@ from agent import llm
 from agent.graphs.bid_graph import build_bid_graph
 from agent.nodes import core
 from evals.runners.judge_calibration import PROMPT as JUDGE_PROMPT
-from dotenv import load_dotenv
 
 load_dotenv()  # GROQ_API_KEY etc for the hosted profile; never printed
 from gigsim import generate
@@ -128,7 +128,7 @@ def audit_unsupported(sentences: list[str], evidence: list[dict], job: dict, pri
     claim about past work without a valid [ev:id] tag, or cites evidence but states a number that is in
     neither the cited evidence nor the job context (price, timeline, budget)."""
     num = re.compile(CFG["audit"]["number_regex"])
-    past = re.compile(core.CFG["verifier"]["past_claim_regex"], re.I)
+    past = re.compile(core.CFG["verifier"]["past_claim_regex"], re.IGNORECASE)
     ev = {e["evidence_id"]: e for e in evidence}
     ctx = " ".join(map(str, [price, job.get("duration_days"), job["budget"]["min"], job["budget"]["max"],
                              len(job.get("required_skills", []))]))
@@ -150,7 +150,7 @@ def audit_unsupported(sentences: list[str], evidence: list[dict], job: dict, pri
 
 def verifier_rule_unsupported(sentences: list[str], evidence: list[dict]) -> int:
     """The Verifier node rule applied to any list of sentences: past-work sentence without a valid tag."""
-    past = re.compile(core.CFG["verifier"]["past_claim_regex"], re.I)
+    past = re.compile(core.CFG["verifier"]["past_claim_regex"], re.IGNORECASE)
     ev = {e["evidence_id"] for e in evidence}
     n = 0
     for s in sentences:

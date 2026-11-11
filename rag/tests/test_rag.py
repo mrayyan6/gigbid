@@ -1,6 +1,6 @@
+from evals.runners.rag_eval import metrics
 from rag.query import decompose
 from rag.retriever import VARIANTS, get_retriever
-from evals.runners.rag_eval import metrics
 
 JOB = "Admin. We need help. Required: FastAPI, PostgreSQL, Next.js. Deliver a documented, tested solution."
 

@@ -26,19 +26,19 @@ os.environ["LLM_ENABLED"] = "1"
 os.environ["LANGSMITH_TRACING"] = "true"
 os.environ.setdefault("LANGSMITH_PROJECT", "gigbid")
 
-from dotenv import load_dotenv  # noqa: E402
+from dotenv import load_dotenv
 
 load_dotenv(ROOT / ".env")
 os.environ["LANGSMITH_TRACING"] = "true"
 
-from langchain_core.tracers.context import collect_runs  # noqa: E402
-from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver  # noqa: E402
-from langgraph.types import Command  # noqa: E402
+from langchain_core.tracers.context import collect_runs
+from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
+from langgraph.types import Command
 
-from agent.graphs.bid_graph import build_bid_graph  # noqa: E402
-from agent.observability import setup_tracing  # noqa: E402
-from evals.runners._harness import Env, dev_jobs  # noqa: E402
-from rag.retriever import get_retriever  # noqa: E402
+from agent.graphs.bid_graph import build_bid_graph
+from agent.observability import setup_tracing
+from evals.runners._harness import Env, dev_jobs
+from rag.retriever import get_retriever
 
 OUT = ROOT / "evals" / "results" / "traces.json"
 

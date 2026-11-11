@@ -17,7 +17,7 @@ permissions:
 
 env:
   PYTHON_VERSION: "3.13"
-  NODE_VERSION: "20"
+  NODE_VERSION: "24"
   GIGBID_TEST_MODE: "1"
 
 jobs:
@@ -89,8 +89,8 @@ jobs:
       - name: Install web deps and build
         working-directory: apps/web
         run: |
-          npm install -g npm@11.6.1  # the lock file was written by npm 11, Node 20 ships npm 10
-          npm ci
+          npm install -g npm@11.6.1
+          npm install --no-audit --no-fund  # npm ci rejects a lockfile written on Windows
           npm run build
       - name: Install Playwright browser
         working-directory: apps/web

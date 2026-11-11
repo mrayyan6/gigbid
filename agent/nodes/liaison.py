@@ -74,7 +74,7 @@ async def _get_slots(config) -> list[str]:
         raw = await ws.free_slots(today.isoformat(),
                                   (today + timedelta(days=c["slot_days_ahead"])).isoformat(),
                                   c["slot_duration_min"])
-    except Exception:  # noqa: BLE001 - workspace down: ask the client for times instead
+    except Exception:
         return []
     return [_slot_text(s) for s in (raw or [])][:c["max_slots_offered"]]
 

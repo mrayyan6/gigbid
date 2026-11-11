@@ -124,7 +124,6 @@ async def test_absent_optional_rules_mean_no_rule(mp, patch_policy):
     base = json.loads(gapp.POLICY.read_text(encoding="utf-8"))
     for k in ("min_budget_usd", "max_proposals_per_day", "boost_fee_connects", "banned_link_regex"):
         base.pop(k, None)
-    patch_policy.__wrapped__ if False else None
     import pathlib
     f = pathlib.Path(gapp.POLICY).with_name("p2.json")
     f.write_text(json.dumps(base), encoding="utf-8")

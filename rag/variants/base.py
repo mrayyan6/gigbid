@@ -7,8 +7,8 @@ Interface for every variant: search(requirement, k, filters) -> list of evidence
 from __future__ import annotations
 
 from rag.config import cfg
-from rag.index.corpus import Corpus
 from rag.index import rerank as rr
+from rag.index.corpus import Corpus
 from rag.query import decompose
 
 

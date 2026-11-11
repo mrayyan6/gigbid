@@ -56,7 +56,7 @@ async def decide(tid: str, body: ApprovalIn, user: UserOut = Depends(get_current
     if body.action == "edit" and ctx.memory is not None:
         try:  # edits feed style memory, which only promotes by explicit rule
             promoted = list(ctx.memory.record_edit(user.id, tid, draft_text, body.text or ""))
-        except Exception:  # noqa: BLE001  memory must never block an approval
+        except Exception:
             promoted = []
     after = await runner.snapshot(ctx, user.id, row["persona"], tid)
     return ApprovalOut(thread_id=tid, status=status, outcome=(after.values or {}).get("outcome"),

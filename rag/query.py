@@ -35,4 +35,4 @@ def requirement_name(req: str) -> str:
     """Inverse of the template, used to look up related skills."""
     tpl = cfg()["decompose"]["requirement_template"]
     pre = tpl.split("{req}")[0]
-    return req[len(pre):] if req.startswith(pre) else req
+    return req.removeprefix(pre)

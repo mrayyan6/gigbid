@@ -9,7 +9,6 @@ Run: python scripts/deploy_hf.py [--space gigbid-demo]
 from __future__ import annotations
 
 import argparse
-import os
 import secrets
 import string
 import subprocess
@@ -19,8 +18,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from dotenv import dotenv_values  # noqa: E402
-from huggingface_hub import HfApi  # noqa: E402
+from dotenv import dotenv_values
+from huggingface_hub import HfApi
 
 ENV = ROOT / ".env"
 SECRET_KEYS = ["JWT_SECRET", "TOKEN_ENCRYPTION_KEY", "MARKETPLACE_MCP_TOKEN", "WORKSPACE_MCP_TOKEN",

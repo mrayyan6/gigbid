@@ -11,8 +11,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from agent.graphs.bid_graph import build_bid_graph  # noqa: E402
-from agent.graphs.conversation_graph import build_conversation_graph  # noqa: E402
+from agent.graphs.bid_graph import build_bid_graph
+from agent.graphs.conversation_graph import build_conversation_graph
 
 OUT = ROOT / "docs" / "images"
 

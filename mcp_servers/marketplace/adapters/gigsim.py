@@ -6,7 +6,7 @@ from typing import Any
 
 import httpx
 
-from agent.marketplace_port import MarketplaceUnavailable  # noqa: F401 (re-exported)
+from agent.marketplace_port import MarketplaceUnavailable
 
 RETRY_STATUS = {429, 500, 502, 503, 504}
 

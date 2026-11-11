@@ -17,7 +17,7 @@ RES = ROOT / "evals" / "results"
 
 def sections() -> dict[str, str]:
     text = (ROOT / "docs" / "results_tables.md").read_text(encoding="utf-8")
-    parts = re.split(r"^## ", text, flags=re.M)[1:]
+    parts = re.split(r"^## ", text, flags=re.MULTILINE)[1:]
     return {p.split("\n", 1)[0].strip(): p.split("\n", 1)[1].strip() for p in parts}
 
 

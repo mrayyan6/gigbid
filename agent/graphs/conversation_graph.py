@@ -45,4 +45,4 @@ def build_conversation_graph(checkpointer=None):
     return g.compile(checkpointer=checkpointer)
 
 
-__all__ = ["build_conversation_graph", "Command"]
+__all__ = ["Command", "build_conversation_graph"]

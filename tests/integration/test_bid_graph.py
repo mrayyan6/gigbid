@@ -181,6 +181,7 @@ async def test_approved_edit_feeds_style_memory_after_two_edits(env):
 
 async def test_llm_writer_critic_and_fallback(env, monkeypatch):
     import json
+
     from agent import llm
     monkeypatch.setenv("LLM_ENABLED", "1")
     state = {"fail": False}
