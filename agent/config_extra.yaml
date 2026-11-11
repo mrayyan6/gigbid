@@ -124,3 +124,8 @@ third_party_mcp:
     image: ghcr.io/github/github-mcp-server
     toolsets: [repos]         # read-only: used by rag/ingest to load README files
     read_only: true
+
+# Owned by the evals lane. defences=false turns off delimiting of untrusted job text and the injection risk
+# patterns so evals/runners/injection_eval.py can measure attack success rate before and after.
+security:
+  defences: true

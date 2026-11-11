@@ -1,0 +1,56 @@
+{
+ "meta": {
+  "description": "40 hand-written tasks for R&D question A (tool design). Each task has one correct tool and the arguments that must be present. Ids come from evals/datasets/dev_jobs.json. Scoring rules: strings compare case-insensitively after trimming whitespace and trailing punctuation, numbers compare with tolerance 0.01, booleans compare exactly with an absent dry_run meaning false, idempotency_key is scored on presence only (a string of at least 8 characters). Arguments not listed in 'args' are not scored.",
+  "n_tasks": 40
+ },
+ "tasks": [
+  {"id": 1, "instruction": "Find jobs about FastAPI.", "tool": "search_jobs", "args": {"query": "FastAPI"}},
+  {"id": 2, "instruction": "Look for open jobs that mention Next.js. Show me at most 5.", "tool": "search_jobs", "args": {"query": "Next.js", "limit": 5}},
+  {"id": 3, "instruction": "Search the data persona's feed for jobs about ETL.", "tool": "search_jobs", "args": {"query": "ETL", "persona": "data"}},
+  {"id": 4, "instruction": "List up to 10 jobs from the web persona feed.", "tool": "search_jobs", "args": {"persona": "web", "limit": 10}},
+  {"id": 5, "instruction": "I want to see postings that need PostgreSQL.", "tool": "search_jobs", "args": {"query": "PostgreSQL"}},
+  {"id": 6, "instruction": "Search for jobs about churn, 3 results only.", "tool": "search_jobs", "args": {"query": "churn", "limit": 3}},
+  {"id": 7, "instruction": "Any jobs about dashboards in the ai_ml persona feed?", "tool": "search_jobs", "args": {"query": "dashboards", "persona": "ai_ml"}},
+  {"id": 8, "instruction": "Browse the marketplace for work that involves Kubernetes.", "tool": "search_jobs", "args": {"query": "Kubernetes"}},
+
+  {"id": 9, "instruction": "Show me the full details of job dev-ai_ml-0003.", "tool": "get_job", "args": {"job_id": "dev-ai_ml-0003"}},
+  {"id": 10, "instruction": "What is the budget range for dev-web-0001?", "tool": "get_job", "args": {"job_id": "dev-web-0001"}},
+  {"id": 11, "instruction": "Which skills does dev-data-0002 require?", "tool": "get_job", "args": {"job_id": "dev-data-0002"}},
+  {"id": 12, "instruction": "Open posting dev-ai_ml-0005 and read its description.", "tool": "get_job", "args": {"job_id": "dev-ai_ml-0005"}},
+  {"id": 13, "instruction": "How many Connects would it cost me to apply to dev-web-0000?", "tool": "get_job", "args": {"job_id": "dev-web-0000"}},
+
+  {"id": 14, "instruction": "Is client c012 payment verified?", "tool": "get_client_history", "args": {"client_id": "c012"}},
+  {"id": 15, "instruction": "What has client c030 spent in total, and what is their hire rate?", "tool": "get_client_history", "args": {"client_id": "c030"}},
+  {"id": 16, "instruction": "Check the track record of client c006 before we apply.", "tool": "get_client_history", "args": {"client_id": "c006"}},
+  {"id": 17, "instruction": "Pull the reviews that freelancers left for client c019.", "tool": "get_client_history", "args": {"client_id": "c019"}},
+  {"id": 18, "instruction": "Job dev-web-0002 was posted by client c024. Look up that client's history.", "tool": "get_client_history", "args": {"client_id": "c024"}},
+
+  {"id": 19, "instruction": "How many Connects do I have left?", "tool": "get_connects_balance", "args": {}},
+  {"id": 20, "instruction": "Check my current Connects balance.", "tool": "get_connects_balance", "args": {}},
+  {"id": 21, "instruction": "Before I plan more proposals this week, tell me what I have left in my account.", "tool": "get_connects_balance", "args": {}},
+  {"id": 22, "instruction": "What is my remaining bidding credit balance?", "tool": "get_connects_balance", "args": {}},
+
+  {"id": 23, "instruction": "What are the current platform rules for proposals?", "tool": "get_policy", "args": {}},
+  {"id": 24, "instruction": "Has the Connects multiplier changed? Check the platform policy.", "tool": "get_policy", "args": {}},
+  {"id": 25, "instruction": "What is the minimum job budget the platform allows right now?", "tool": "get_policy", "args": {}},
+  {"id": 26, "instruction": "Are external links allowed in proposals under the current rules?", "tool": "get_policy", "args": {}},
+
+  {"id": 27, "instruction": "Show me the conversation with client c000.", "tool": "list_messages", "args": {"client_id": "c000"}},
+  {"id": 28, "instruction": "Do I have any messages from clients?", "tool": "list_messages", "args": {}},
+  {"id": 29, "instruction": "Read what client c020 wrote to me.", "tool": "list_messages", "args": {"client_id": "c020"}},
+  {"id": 30, "instruction": "List all my messages.", "tool": "list_messages", "args": {}},
+
+  {"id": 31, "instruction": "Save a draft proposal for job dev-web-0000 with the text 'I built a realtime chat backend with websockets.' at 1800 USD. Use idempotency key draft-0001-aaaa. Do not send it to the client.", "tool": "create_proposal_draft", "args": {"job_id": "dev-web-0000", "cover_letter": "I built a realtime chat backend with websockets.", "bid_amount": 1800, "idempotency_key": "*", "dry_run": false}},
+  {"id": 32, "instruction": "Store a draft, not a submission, for dev-data-0000 with the text 'Weekly updates and a clear plan.' and a bid of 950 USD. Idempotency key draft-0002-bbbb.", "tool": "create_proposal_draft", "args": {"job_id": "dev-data-0000", "cover_letter": "Weekly updates and a clear plan.", "bid_amount": 950, "idempotency_key": "*", "dry_run": false}},
+  {"id": 33, "instruction": "Preview a draft for dev-ai_ml-0001 with the letter 'I trained defect classifiers.' priced at 2400 USD. Idempotency key draft-0003-cccc. Do not store it, preview only.", "tool": "create_proposal_draft", "args": {"job_id": "dev-ai_ml-0001", "cover_letter": "I trained defect classifiers.", "bid_amount": 2400, "idempotency_key": "*", "dry_run": true}},
+
+  {"id": 34, "instruction": "The user approved it. Submit to dev-ai_ml-0002 the cover letter 'I shipped a ticket triage classifier.' for 1500 USD. Idempotency key sub-0001-dddd.", "tool": "submit_proposal", "args": {"job_id": "dev-ai_ml-0002", "cover_letter": "I shipped a ticket triage classifier.", "bid_amount": 1500, "idempotency_key": "*", "dry_run": false}},
+  {"id": 35, "instruction": "Send my proposal for real to job dev-web-0001 with the text 'Payment integration delivered in 14 days.' at 2200 USD. Idempotency key sub-0002-eeee.", "tool": "submit_proposal", "args": {"job_id": "dev-web-0001", "cover_letter": "Payment integration delivered in 14 days.", "bid_amount": 2200, "idempotency_key": "*", "dry_run": false}},
+  {"id": 36, "instruction": "Show me exactly what would be sent and the Connects cost if I submit 'I improved churn prediction recall.' to dev-ai_ml-0003 for 3000 USD. Idempotency key sub-0003-ffff. Do not actually send it.", "tool": "submit_proposal", "args": {"job_id": "dev-ai_ml-0003", "cover_letter": "I improved churn prediction recall.", "bid_amount": 3000, "idempotency_key": "*", "dry_run": true}},
+  {"id": 37, "instruction": "Apply to dev-data-0001 with 'I built cohort retention models.' at 1200 USD, it has been approved. Idempotency key sub-0004-gggg.", "tool": "submit_proposal", "args": {"job_id": "dev-data-0001", "cover_letter": "I built cohort retention models.", "bid_amount": 1200, "idempotency_key": "*", "dry_run": false}},
+
+  {"id": 38, "instruction": "Reply to client c000 with 'Thanks, I can start Monday.' Idempotency key msg-0001-hhhh.", "tool": "send_message", "args": {"client_id": "c000", "text": "Thanks, I can start Monday.", "idempotency_key": "*", "dry_run": false}},
+  {"id": 39, "instruction": "Message client c016 saying 'Here are three time slots for a call.' using idempotency key msg-0002-iiii.", "tool": "send_message", "args": {"client_id": "c016", "text": "Here are three time slots for a call.", "idempotency_key": "*", "dry_run": false}},
+  {"id": 40, "instruction": "Preview, without sending, the message 'Happy to adjust the scope.' to client c024. Idempotency key msg-0003-jjjj.", "tool": "send_message", "args": {"client_id": "c024", "text": "Happy to adjust the scope.", "idempotency_key": "*", "dry_run": true}}
+ ]
+}

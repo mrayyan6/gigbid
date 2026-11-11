@@ -42,6 +42,16 @@ def budgets(config=None) -> dict:
     return deep_merge(CFG["budgets"], over)
 
 
+def defences_on() -> bool:
+    """security.defences in config_extra.yaml; the injection eval flips it to measure attack success."""
+    return bool(CFG.get("security", {}).get("defences", True))
+
+
+def untrusted(tag: str, text: str) -> str:
+    """Delimit untrusted text (job posts) so prompts can tell data from instructions. No-op when defences are off."""
+    return f"<{tag}>\n{text}\n</{tag}>" if defences_on() else text
+
+
 def llm_fields(node: str, res: llm.LLMResult) -> dict:
     """State update for one LLM call: tokens, cost and a trace entry (no prompt or output text)."""
     return {"tokens": res.tokens, "cost_usd": res.cost_usd,
@@ -156,7 +166,7 @@ def analyst(state, config):
     deliverables, extra = None, {}
     if llm.enabled() and CFG["llm"]["llm_analyst"]:
         res = llm.complete("analyst", load_prompt("analyst"),
-                           f"<job_post>\n{j['title']}\n{j['description']}\n</job_post>", json_mode=True)
+                           untrusted("job_post", f"{j['title']}\n{j['description']}"), json_mode=True)
         obj = llm.parse_json(res.text)
         if obj and isinstance(obj.get("deliverables"), list):
             deliverables = [str(x).strip() for x in obj["deliverables"] if str(x).strip()]
@@ -178,6 +188,8 @@ def risk(state, config):
     text = (j["title"] + " " + j["description"]).lower()
     flags = set(j.get("warning_signals", []))
     for flag, pats in CFG["risk"]["patterns"].items():
+        if flag == "injection" and not defences_on():
+            continue
         if any(p in text for p in pats):
             flags.add(flag)
     cl = j.get("client", {})
@@ -318,7 +330,7 @@ def writer(state, config):
     if llm.enabled():
         facts = "\n".join(f"- id={e['evidence_id']} | {e['title']} | skills: {', '.join(e['skills'])} | "
                           f"outcome: {e['outcome']}" for e in ev)
-        user = (f"<job_post>\nTitle: {j['title']}\n{j['description']}\n</job_post>\n"
+        user = (untrusted("job_post", f"Title: {j['title']}\n{j['description']}") + "\n"
                 f"Evidence (the only facts you may claim):\n{facts}\n"
                 f"Price: {state['price_quote']['amount']} USD. Timeline: {j['duration_days']} days.\n"
                 f"Style notes:\n" + ("\n".join(f"- {s}" for s in style_lines(notes)) or "- none") +
@@ -391,7 +403,7 @@ def critic(state, config):
     tokens, cost, traces = 0, 0.0, []
     if llm.enabled() and CFG["llm"]["llm_critic"]:
         res = llm.complete("critic", load_prompt("critic"),
-                           f"<job_post>\n{j['title']}\n{j['description']}\n</job_post>\n"
+                           untrusted("job_post", f"{j['title']}\n{j['description']}") + "\n"
                            f"<draft>\n{text}\n</draft>\nWord limit: {CFG['compliance']['max_words']}",
                            json_mode=True, max_tokens=300)
         obj = llm.parse_json(res.text) or {}

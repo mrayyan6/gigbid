@@ -1,0 +1,199 @@
+# GigBid local stack. From the repo root:
+#   docker compose --env-file .env -f infra/docker-compose.yml up -d --build
+# Add the local model server with:  --profile open
+# Secrets and settings come from the repo root .env (see .env.example). Values under `environment`
+# below win over .env, because inside the stack services reach each other by service name.
+name: gigbid
+
+x-app-env: &app-env
+  MARKETPLACE_MODE: mcp
+  MARKETPLACE_MCP_URL: http://mcp-marketplace:9100/mcp
+  GIGSIM_URL: http://gigsim:9000
+  DATABASE_URL: postgresql://gigbid:${POSTGRES_PASSWORD:-gigbid}@postgres:5432/gigbid
+  REDIS_URL: redis://redis:6379
+  OLLAMA_BASE_URL: http://ollama:11434
+
+x-env-file: &env-file
+  - path: ../.env
+    required: false
+
+x-python-health: &python-health
+  interval: 10s
+  timeout: 5s
+  retries: 12
+  start_period: 20s
+
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: infra/docker/web.Dockerfile
+      args:
+        API_URL: http://api:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/login').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      <<: *python-health
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ..
+      dockerfile: infra/docker/api.Dockerfile
+    env_file: *env-file
+    environment:
+      <<: *app-env
+      API_HOST: 0.0.0.0
+    ports:
+      - "8000:8000"
+    volumes:
+      - gigbid-data:/var/lib/gigbid
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mcp-marketplace:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/api/health', timeout=4).status == 200 else 1)"]
+      <<: *python-health
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ..
+      dockerfile: infra/docker/worker.Dockerfile
+    env_file: *env-file
+    environment:
+      <<: *app-env
+    volumes:
+      - gigbid-data:/var/lib/gigbid
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mcp-marketplace:
+        condition: service_healthy
+    restart: unless-stopped
+
+  mcp-marketplace:
+    build:
+      context: ..
+      dockerfile: infra/docker/mcp.Dockerfile
+    command: ["python", "-m", "mcp_servers.marketplace.server", "--http"]
+    env_file: *env-file
+    environment:
+      MARKETPLACE_BACKEND: gigsim
+      MARKETPLACE_MCP_PORT: "9100"
+      MCP_HOST: 0.0.0.0
+      GIGSIM_URL: http://gigsim:9000
+    ports:
+      - "9100:9100"
+    volumes:
+      - gigbid-data:/var/lib/gigbid
+    depends_on:
+      gigsim:
+        condition: service_healthy
+    healthcheck:
+      # Any HTTP answer (401 without the bearer token) proves the server is up.
+      test: ["CMD", "python", "-c", "import socket,sys; s=socket.create_connection(('localhost',9100),3); s.close()"]
+      <<: *python-health
+    restart: unless-stopped
+
+  mcp-portfolio:
+    build:
+      context: ..
+      dockerfile: infra/docker/mcp.Dockerfile
+    command: ["python", "-m", "mcp_servers.portfolio.server", "--http"]
+    env_file: *env-file
+    environment:
+      FASTMCP_HOST: 0.0.0.0
+      FASTMCP_PORT: "9101"
+    ports:
+      - "9101:9101"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket,sys; s=socket.create_connection(('localhost',9101),3); s.close()"]
+      <<: *python-health
+    restart: unless-stopped
+
+  mcp-workspace:
+    build:
+      context: ..
+      dockerfile: infra/docker/mcp.Dockerfile
+    command: ["python", "-m", "mcp_servers.workspace.server", "--http"]
+    env_file: *env-file
+    environment:
+      WORKSPACE_MCP_PORT: "9102"
+      MCP_HOST: 0.0.0.0
+    ports:
+      - "9102:9102"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket,sys; s=socket.create_connection(('localhost',9102),3); s.close()"]
+      <<: *python-health
+    restart: unless-stopped
+
+  gigsim:
+    build:
+      context: ..
+      dockerfile: infra/docker/gigsim.Dockerfile
+    ports:
+      - "9000:9000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:9000/health', timeout=4).status == 200 else 1)"]
+      <<: *python-health
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: gigbid
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gigbid}
+      POSTGRES_DB: gigbid
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gigbid -d gigbid"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama
+    profiles: [open]
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    # Optional GPU (needs the NVIDIA container toolkit). Uncomment to use it:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+    restart: unless-stopped
+
+volumes:
+  gigbid-data:
+  pgdata:
+  redisdata:
+  ollama:

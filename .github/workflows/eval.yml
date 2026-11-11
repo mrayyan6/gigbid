@@ -1,0 +1,44 @@
+name: eval
+
+# NOTE: disabled in the GitHub repo settings until the owner enables it on purpose.
+# Smoke eval gate: 30 jobs, template mode (no LLM, no network). Thresholds live in
+# evals/thresholds.yaml (bid_f1_min, unsupported_per_proposal_max), never in this file.
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-eval:
+    runs-on: ubuntu-latest
+    env:
+      GIGBID_TEST_MODE: "1"
+      LLM_ENABLED: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check that the gate exists
+        id: gate
+        run: |
+          if [ -f evals/thresholds.yaml ] && [ -f evals/runners/smoke_eval.py ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "evals/thresholds.yaml or evals/runners/smoke_eval.py is missing, gate skipped"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.present == 'true'
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install
+        if: steps.gate.outputs.present == 'true'
+        run: pip install -e ".[dev]"
+      - name: Generate GigSim data
+        if: steps.gate.outputs.present == 'true'
+        run: python -m gigsim.generate
+      - name: Smoke eval (fails when a threshold in evals/thresholds.yaml is crossed)
+        if: steps.gate.outputs.present == 'true'
+        run: python -m evals.runners.smoke_eval

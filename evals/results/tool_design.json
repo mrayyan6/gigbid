@@ -1,0 +1,2199 @@
+{
+ "meta": {
+  "model": "qwen2.5:7b-instruct",
+  "runtime": "ollama /api/chat native tool calling",
+  "temperature": 0,
+  "seed": 0,
+  "n_tasks": 40,
+  "tool_set_sizes": {
+   "fine": 9,
+   "coarse": 3,
+   "best": 9
+  },
+  "scoring": "see evals/datasets/tool_tasks.json meta; numeric strings are not accepted as numbers; unknown or unexpected non-empty arguments count as errors; only the first tool call is scored",
+  "tokens": "prompt_eval_count + eval_count, every request began with a random nonce so the prefix cache cannot hide the schema tokens",
+  "descriptions_v2": "agent/prompts/tool_descriptions_v2.md was written before the first run and not edited after seeing results",
+  "started": "2026-11-11 16:21:55",
+  "cache_check": {
+   "first_prompt_eval_count": 925,
+   "second_identical_prompt_eval_count": 925,
+   "note": "a much smaller second count means the prefix cache hides tokens; the study avoids this with a per-request nonce"
+  },
+  "finished": "2026-11-11 16:30:42"
+ },
+ "results": {
+  "fine": {
+   "n": 40,
+   "tool_selection_accuracy": 0.95,
+   "tool_selection_ci95": [
+    0.835,
+    0.986
+   ],
+   "arg_accuracy_overall": 0.825,
+   "arg_accuracy_ci95": [
+    0.68,
+    0.913
+   ],
+   "arg_accuracy_given_correct_tool": 0.868,
+   "tokens_per_task": {
+    "prompt": 971.4,
+    "completion": 36.2,
+    "total": 1007.6
+   },
+   "mean_latency_s": 3.65,
+   "n_tools": 9,
+   "tool_definition_chars": 5065,
+   "per_tool": {
+    "search_jobs": {
+     "n": 8,
+     "tool_ok": 8,
+     "args_ok": 5
+    },
+    "get_job": {
+     "n": 5,
+     "tool_ok": 4,
+     "args_ok": 4
+    },
+    "get_client_history": {
+     "n": 5,
+     "tool_ok": 5,
+     "args_ok": 5
+    },
+    "get_connects_balance": {
+     "n": 4,
+     "tool_ok": 4,
+     "args_ok": 4
+    },
+    "get_policy": {
+     "n": 4,
+     "tool_ok": 4,
+     "args_ok": 4
+    },
+    "list_messages": {
+     "n": 4,
+     "tool_ok": 4,
+     "args_ok": 4
+    },
+    "create_proposal_draft": {
+     "n": 3,
+     "tool_ok": 3,
+     "args_ok": 1
+    },
+    "submit_proposal": {
+     "n": 4,
+     "tool_ok": 3,
+     "args_ok": 3
+    },
+    "send_message": {
+     "n": 3,
+     "tool_ok": 3,
+     "args_ok": 3
+    }
+   },
+   "tool_confusions": {
+    "get_job -> create_proposal_draft": 1,
+    "submit_proposal -> create_proposal_draft": 1
+   },
+   "rows": [
+    {
+     "id": 1,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 956,
+     "completion_tokens": 27,
+     "latency_s": 2.99,
+     "called": "search_jobs",
+     "args": {
+      "query": "FastAPI",
+      "limit": 5
+     },
+     "tool_ok": true,
+     "args_ok": false,
+     "arg_errors": [
+      "limit: unexpected value 5"
+     ]
+    },
+    {
+     "id": 2,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 965,
+     "completion_tokens": 27,
+     "latency_s": 3.21,
+     "called": "search_jobs",
+     "args": {
+      "limit": 5,
+      "query": "Next.js"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 3,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 964,
+     "completion_tokens": 33,
+     "latency_s": 3.19,
+     "called": "search_jobs",
+     "args": {
+      "limit": 5,
+      "persona": "data",
+      "query": "ETL"
+     },
+     "tool_ok": true,
+     "args_ok": false,
+     "arg_errors": [
+      "limit: unexpected value 5"
+     ]
+    },
+    {
+     "id": 4,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 963,
+     "completion_tokens": 27,
+     "latency_s": 3.1,
+     "called": "search_jobs",
+     "args": {
+      "limit": 10,
+      "persona": "web"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 5,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 960,
+     "completion_tokens": 21,
+     "latency_s": 3.12,
+     "called": "search_jobs",
+     "args": {
+      "query": "PostgreSQL"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 6,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 959,
+     "completion_tokens": 32,
+     "latency_s": 3.37,
+     "called": "search_jobs",
+     "args": {
+      "persona": null,
+      "limit": 3,
+      "query": "churn"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 7,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 962,
+     "completion_tokens": 34,
+     "latency_s": 3.01,
+     "called": "search_jobs",
+     "args": {
+      "limit": 5,
+      "persona": "ai_ml",
+      "query": "dashboards"
+     },
+     "tool_ok": true,
+     "args_ok": false,
+     "arg_errors": [
+      "limit: unexpected value 5"
+     ]
+    },
+    {
+     "id": 8,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 959,
+     "completion_tokens": 21,
+     "latency_s": 2.88,
+     "called": "search_jobs",
+     "args": {
+      "query": "Kubernetes"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 9,
+     "expected_tool": "get_job",
+     "n_calls": 1,
+     "prompt_tokens": 968,
+     "completion_tokens": 29,
+     "latency_s": 3.05,
+     "called": "get_job",
+     "args": {
+      "job_id": "dev-ai_ml-0003"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 10,
+     "expected_tool": "get_job",
+     "n_calls": 1,
+     "prompt_tokens": 962,
+     "completion_tokens": 27,
+     "latency_s": 3.01,
+     "called": "get_job",
+     "args": {
+      "job_id": "dev-web-0001"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 11,
+     "expected_tool": "get_job",
+     "n_calls": 1,
+     "prompt_tokens": 962,
+     "completion_tokens": 27,
+     "latency_s": 3.05,
+     "called": "get_job",
+     "args": {
+      "job_id": "dev-data-0002"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 12,
+     "expected_tool": "get_job",
+     "n_calls": 1,
+     "prompt_tokens": 968,
+     "completion_tokens": 29,
+     "latency_s": 4.45,
+     "called": "get_job",
+     "args": {
+      "job_id": "dev-ai_ml-0005"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 13,
+     "expected_tool": "get_job",
+     "n_calls": 1,
+     "prompt_tokens": 969,
+     "completion_tokens": 50,
+     "latency_s": 3.66,
+     "called": "create_proposal_draft",
+     "args": {
+      "job_id": "dev-web-0000",
+      "dry_run": true,
+      "idempotency_key": "unique_key_123"
+     },
+     "tool_ok": false,
+     "args_ok": false,
+     "arg_errors": [
+      "wrong tool"
+     ]
+    },
+    {
+     "id": 14,
+     "expected_tool": "get_client_history",
+     "n_calls": 1,
+     "prompt_tokens": 961,
+     "completion_tokens": 25,
+     "latency_s": 2.96,
+     "called": "get_client_history",
+     "args": {
+      "client_id": "c012"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 15,
+     "expected_tool": "get_client_history",
+     "n_calls": 1,
+     "prompt_tokens": 970,
+     "completion_tokens": 25,
+     "latency_s": 2.95,
+     "called": "get_client_history",
+     "args": {
+      "client_id": "c030"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 16,
+     "expected_tool": "get_client_history",
+     "n_calls": 1,
+     "prompt_tokens": 966,
+     "completion_tokens": 25,
+     "latency_s": 2.96,
+     "called": "get_client_history",
+     "args": {
+      "client_id": "c006"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 17,
+     "expected_tool": "get_client_history",
+     "n_calls": 1,
+     "prompt_tokens": 964,
+     "completion_tokens": 25,
+     "latency_s": 2.9,
+     "called": "get_client_history",
+     "args": {
+      "client_id": "c019"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 18,
+     "expected_tool": "get_client_history",
+     "n_calls": 1,
+     "prompt_tokens": 973,
+     "completion_tokens": 25,
+     "latency_s": 2.64,
+     "called": "get_client_history",
+     "args": {
+      "client_id": "c024"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 19,
+     "expected_tool": "get_connects_balance",
+     "n_calls": 1,
+     "prompt_tokens": 960,
+     "completion_tokens": 18,
+     "latency_s": 2.42,
+     "called": "get_connects_balance",
+     "args": {},
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 20,
+     "expected_tool": "get_connects_balance",
+     "n_calls": 1,
+     "prompt_tokens": 959,
+     "completion_tokens": 18,
+     "latency_s": 2.5,
+     "called": "get_connects_balance",
+     "args": {},
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 21,
+     "expected_tool": "get_connects_balance",
+     "n_calls": 1,
+     "prompt_tokens": 969,
+     "completion_tokens": 18,
+     "latency_s": 2.58,
+     "called": "get_connects_balance",
+     "args": {},
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 22,
+     "expected_tool": "get_connects_balance",
+     "n_calls": 1,
+     "prompt_tokens": 958,
+     "completion_tokens": 18,
+     "latency_s": 2.38,
+     "called": "get_connects_balance",
+     "args": {},
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 23,
+     "expected_tool": "get_policy",
+     "n_calls": 1,
+     "prompt_tokens": 960,
+     "completion_tokens": 16,
+     "latency_s": 2.58,
+     "called": "get_policy",
+     "args": {},
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 24,
+     "expected_tool": "get_policy",
+     "n_calls": 1,
+     "prompt_tokens": 965,
+     "completion_tokens": 16,
+     "latency_s": 2.34,
+     "called": "get_policy",
+     "args": {},
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 25,
+     "expected_tool": "get_policy",
+     "n_calls": 1,
+     "prompt_tokens": 963,
+     "completion_tokens": 16,
+     "latency_s": 2.35,
+     "called": "get_policy",
+     "args": {},
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 26,
+     "expected_tool": "get_policy",
+     "n_calls": 1,
+     "prompt_tokens": 964,
+     "completion_tokens": 16,
+     "latency_s": 2.59,
+     "called": "get_policy",
+     "args": {},
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 27,
+     "expected_tool": "list_messages",
+     "n_calls": 1,
+     "prompt_tokens": 959,
+     "completion_tokens": 24,
+     "latency_s": 2.68,
+     "called": "list_messages",
+     "args": {
+      "client_id": "c000"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 28,
+     "expected_tool": "list_messages",
+     "n_calls": 1,
+     "prompt_tokens": 958,
+     "completion_tokens": 20,
+     "latency_s": 2.71,
+     "called": "list_messages",
+     "args": {
+      "client_id": null
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 29,
+     "expected_tool": "list_messages",
+     "n_calls": 1,
+     "prompt_tokens": 958,
+     "completion_tokens": 24,
+     "latency_s": 2.72,
+     "called": "list_messages",
+     "args": {
+      "client_id": "c020"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 30,
+     "expected_tool": "list_messages",
+     "n_calls": 1,
+     "prompt_tokens": 956,
+     "completion_tokens": 20,
+     "latency_s": 4.6,
+     "called": "list_messages",
+     "args": {
+      "client_id": null
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 31,
+     "expected_tool": "create_proposal_draft",
+     "n_calls": 1,
+     "prompt_tokens": 1007,
+     "completion_tokens": 84,
+     "latency_s": 6.49,
+     "called": "create_proposal_draft",
+     "args": {
+      "job_id": "dev-web-0000",
+      "screening_answers": null,
+      "bid_amount": 1800,
+      "cover_letter": "I built a realtime chat backend with websockets.",
+      "dry_run": true,
+      "idempotency_key": "draft-0001-aaaa"
+     },
+     "tool_ok": true,
+     "args_ok": false,
+     "arg_errors": [
+      "dry_run: want False got True"
+     ]
+    },
+    {
+     "id": 32,
+     "expected_tool": "create_proposal_draft",
+     "n_calls": 1,
+     "prompt_tokens": 1002,
+     "completion_tokens": 80,
+     "latency_s": 6.33,
+     "called": "create_proposal_draft",
+     "args": {
+      "bid_amount": 950,
+      "cover_letter": "Weekly updates and a clear plan.",
+      "dry_run": true,
+      "idempotency_key": "draft-0002-bbbb",
+      "job_id": "dev-data-0000",
+      "screening_answers": null
+     },
+     "tool_ok": true,
+     "args_ok": false,
+     "arg_errors": [
+      "dry_run: want False got True"
+     ]
+    },
+    {
+     "id": 33,
+     "expected_tool": "create_proposal_draft",
+     "n_calls": 1,
+     "prompt_tokens": 1006,
+     "completion_tokens": 81,
+     "latency_s": 6.69,
+     "called": "create_proposal_draft",
+     "args": {
+      "bid_amount": 2400,
+      "cover_letter": "I trained defect classifiers.",
+      "dry_run": true,
+      "idempotency_key": "draft-0003-cccc",
+      "job_id": "dev-ai_ml-0001",
+      "screening_answers": null
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 34,
+     "expected_tool": "submit_proposal",
+     "n_calls": 1,
+     "prompt_tokens": 1003,
+     "completion_tokens": 76,
+     "latency_s": 6.02,
+     "called": "submit_proposal",
+     "args": {
+      "cover_letter": "I shipped a ticket triage classifier.",
+      "dry_run": false,
+      "idempotency_key": "sub-0001-dddd",
+      "job_id": "dev-ai_ml-0002",
+      "bid_amount": 1500
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 35,
+     "expected_tool": "submit_proposal",
+     "n_calls": 1,
+     "prompt_tokens": 998,
+     "completion_tokens": 75,
+     "latency_s": 6.22,
+     "called": "submit_proposal",
+     "args": {
+      "bid_amount": 2200,
+      "cover_letter": "Payment integration delivered in 14 days.",
+      "dry_run": false,
+      "idempotency_key": "sub-0002-eeee",
+      "job_id": "dev-web-0001"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 36,
+     "expected_tool": "submit_proposal",
+     "n_calls": 1,
+     "prompt_tokens": 1012,
+     "completion_tokens": 82,
+     "latency_s": 6.17,
+     "called": "create_proposal_draft",
+     "args": {
+      "bid_amount": 3000,
+      "cover_letter": "I improved churn prediction recall.",
+      "dry_run": true,
+      "idempotency_key": "sub-0003-ffff",
+      "job_id": "dev-ai_ml-0003",
+      "screening_answers": null
+     },
+     "tool_ok": false,
+     "args_ok": false,
+     "arg_errors": [
+      "wrong tool"
+     ]
+    },
+    {
+     "id": 37,
+     "expected_tool": "submit_proposal",
+     "n_calls": 1,
+     "prompt_tokens": 993,
+     "completion_tokens": 73,
+     "latency_s": 5.25,
+     "called": "submit_proposal",
+     "args": {
+      "bid_amount": 1200,
+      "cover_letter": "I built cohort retention models.",
+      "dry_run": false,
+      "idempotency_key": "sub-0004-gggg",
+      "job_id": "dev-data-0001"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 38,
+     "expected_tool": "send_message",
+     "n_calls": 1,
+     "prompt_tokens": 982,
+     "completion_tokens": 52,
+     "latency_s": 4.72,
+     "called": "send_message",
+     "args": {
+      "client_id": "c000",
+      "text": "Thanks, I can start Monday.",
+      "idempotency_key": "msg-0001-hhhh"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 39,
+     "expected_tool": "send_message",
+     "n_calls": 1,
+     "prompt_tokens": 984,
+     "completion_tokens": 55,
+     "latency_s": 4.95,
+     "called": "send_message",
+     "args": {
+      "text": "Here are three time slots for a call.",
+      "idempotency_key": "msg-0002-iiii",
+      "client_id": "c016"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 40,
+     "expected_tool": "send_message",
+     "n_calls": 1,
+     "prompt_tokens": 987,
+     "completion_tokens": 58,
+     "latency_s": 4.05,
+     "called": "send_message",
+     "args": {
+      "client_id": "c024",
+      "text": "Happy to adjust the scope.",
+      "idempotency_key": "msg-0003-jjjj",
+      "dry_run": true
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    }
+   ]
+  },
+  "coarse": {
+   "n": 40,
+   "tool_selection_accuracy": 0.675,
+   "tool_selection_ci95": [
+    0.52,
+    0.799
+   ],
+   "arg_accuracy_overall": 0.575,
+   "arg_accuracy_ci95": [
+    0.422,
+    0.715
+   ],
+   "arg_accuracy_given_correct_tool": 0.852,
+   "tokens_per_task": {
+    "prompt": 670.7,
+    "completion": 39.5,
+    "total": 710.1
+   },
+   "mean_latency_s": 3.4,
+   "n_tools": 3,
+   "tool_definition_chars": 2434,
+   "per_tool": {
+    "search_jobs": {
+     "n": 8,
+     "tool_ok": 8,
+     "args_ok": 5
+    },
+    "get_job": {
+     "n": 5,
+     "tool_ok": 2,
+     "args_ok": 2
+    },
+    "get_client_history": {
+     "n": 5,
+     "tool_ok": 1,
+     "args_ok": 1
+    },
+    "get_connects_balance": {
+     "n": 4,
+     "tool_ok": 0,
+     "args_ok": 0
+    },
+    "get_policy": {
+     "n": 4,
+     "tool_ok": 2,
+     "args_ok": 2
+    },
+    "list_messages": {
+     "n": 4,
+     "tool_ok": 4,
+     "args_ok": 3
+    },
+    "create_proposal_draft": {
+     "n": 3,
+     "tool_ok": 3,
+     "args_ok": 3
+    },
+    "submit_proposal": {
+     "n": 4,
+     "tool_ok": 4,
+     "args_ok": 4
+    },
+    "send_message": {
+     "n": 3,
+     "tool_ok": 3,
+     "args_ok": 3
+    }
+   },
+   "tool_confusions": {
+    "get_job -> None": 1,
+    "get_job -> search_jobs": 1,
+    "get_job -> submit_proposal": 1,
+    "get_client_history -> None": 4,
+    "get_connects_balance -> None": 4,
+    "get_policy -> search_jobs": 1,
+    "get_policy -> None": 1
+   },
+   "rows": [
+    {
+     "id": 1,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 654,
+     "completion_tokens": 35,
+     "latency_s": 3.14,
+     "called": "search_jobs",
+     "args": {
+      "persona": "FastAPI",
+      "limit": 5
+     },
+     "tool_ok": true,
+     "args_ok": false,
+     "arg_errors": [
+      "query: want 'FastAPI' got None",
+      "persona: unexpected value 'FastAPI'",
+      "limit: unexpected value 5"
+     ]
+    },
+    {
+     "id": 2,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 667,
+     "completion_tokens": 35,
+     "latency_s": 3.37,
+     "called": "search_jobs",
+     "args": {
+      "query": "Next.js",
+      "limit": 5
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 3,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 665,
+     "completion_tokens": 42,
+     "latency_s": 3.34,
+     "called": "search_jobs",
+     "args": {
+      "query": "ETL",
+      "limit": 5,
+      "persona": "data persona"
+     },
+     "tool_ok": true,
+     "args_ok": false,
+     "arg_errors": [
+      "persona: want 'data' got 'data persona'",
+      "limit: unexpected value 5"
+     ]
+    },
+    {
+     "id": 4,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 666,
+     "completion_tokens": 35,
+     "latency_s": 2.99,
+     "called": "search_jobs",
+     "args": {
+      "persona": "web",
+      "limit": 10
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 5,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 660,
+     "completion_tokens": 29,
+     "latency_s": 2.92,
+     "called": "search_jobs",
+     "args": {
+      "query": "PostgreSQL"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 6,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 659,
+     "completion_tokens": 35,
+     "latency_s": 3.31,
+     "called": "search_jobs",
+     "args": {
+      "query": "churn",
+      "limit": 3
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 7,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 661,
+     "completion_tokens": 42,
+     "latency_s": 3.37,
+     "called": "search_jobs",
+     "args": {
+      "persona": "ai_ml",
+      "query": "dashboards",
+      "limit": 5
+     },
+     "tool_ok": true,
+     "args_ok": false,
+     "arg_errors": [
+      "limit: unexpected value 5"
+     ]
+    },
+    {
+     "id": 8,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 657,
+     "completion_tokens": 29,
+     "latency_s": 2.76,
+     "called": "search_jobs",
+     "args": {
+      "query": "Kubernetes"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 9,
+     "expected_tool": "get_job",
+     "n_calls": 0,
+     "prompt_tokens": 666,
+     "completion_tokens": 29,
+     "latency_s": 3.16,
+     "called": null,
+     "args": {},
+     "tool_ok": false,
+     "args_ok": false,
+     "arg_errors": [
+      "no tool call"
+     ]
+    },
+    {
+     "id": 10,
+     "expected_tool": "get_job",
+     "n_calls": 1,
+     "prompt_tokens": 665,
+     "completion_tokens": 40,
+     "latency_s": 3.25,
+     "called": "search_jobs",
+     "args": {
+      "limit": 1,
+      "query": "dev-web-0001"
+     },
+     "tool_ok": false,
+     "args_ok": false,
+     "arg_errors": [
+      "wrong tool"
+     ]
+    },
+    {
+     "id": 11,
+     "expected_tool": "get_job",
+     "n_calls": 1,
+     "prompt_tokens": 662,
+     "completion_tokens": 35,
+     "latency_s": 3.14,
+     "called": "get_job",
+     "args": {
+      "job_id": "dev-data-0002"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 12,
+     "expected_tool": "get_job",
+     "n_calls": 1,
+     "prompt_tokens": 667,
+     "completion_tokens": 37,
+     "latency_s": 3.07,
+     "called": "get_job",
+     "args": {
+      "job_id": "dev-ai_ml-0005"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 13,
+     "expected_tool": "get_job",
+     "n_calls": 1,
+     "prompt_tokens": 670,
+     "completion_tokens": 32,
+     "latency_s": 2.69,
+     "called": "submit_proposal",
+     "args": {
+      "job_id": "dev-web-0000"
+     },
+     "tool_ok": false,
+     "args_ok": false,
+     "arg_errors": [
+      "wrong tool"
+     ]
+    },
+    {
+     "id": 14,
+     "expected_tool": "get_client_history",
+     "n_calls": 0,
+     "prompt_tokens": 658,
+     "completion_tokens": 25,
+     "latency_s": 2.73,
+     "called": null,
+     "args": {},
+     "tool_ok": false,
+     "args_ok": false,
+     "arg_errors": [
+      "no tool call"
+     ]
+    },
+    {
+     "id": 15,
+     "expected_tool": "get_client_history",
+     "n_calls": 1,
+     "prompt_tokens": 667,
+     "completion_tokens": 33,
+     "latency_s": 2.7,
+     "called": "get_client_history",
+     "args": {
+      "client_id": "c030"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 16,
+     "expected_tool": "get_client_history",
+     "n_calls": 0,
+     "prompt_tokens": 662,
+     "completion_tokens": 25,
+     "latency_s": 2.73,
+     "called": null,
+     "args": {},
+     "tool_ok": false,
+     "args_ok": false,
+     "arg_errors": [
+      "no tool call"
+     ]
+    },
+    {
+     "id": 17,
+     "expected_tool": "get_client_history",
+     "n_calls": 0,
+     "prompt_tokens": 662,
+     "completion_tokens": 33,
+     "latency_s": 2.71,
+     "called": null,
+     "args": {},
+     "tool_ok": false,
+     "args_ok": false,
+     "arg_errors": [
+      "no tool call"
+     ]
+    },
+    {
+     "id": 18,
+     "expected_tool": "get_client_history",
+     "n_calls": 0,
+     "prompt_tokens": 675,
+     "completion_tokens": 25,
+     "latency_s": 2.27,
+     "called": null,
+     "args": {},
+     "tool_ok": false,
+     "args_ok": false,
+     "arg_errors": [
+      "no tool call"
+     ]
+    },
+    {
+     "id": 19,
+     "expected_tool": "get_connects_balance",
+     "n_calls": 0,
+     "prompt_tokens": 660,
+     "completion_tokens": 18,
+     "latency_s": 2.24,
+     "called": null,
+     "args": {},
+     "tool_ok": false,
+     "args_ok": false,
+     "arg_errors": [
+      "no tool call"
+     ]
+    },
+    {
+     "id": 20,
+     "expected_tool": "get_connects_balance",
+     "n_calls": 0,
+     "prompt_tokens": 659,
+     "completion_tokens": 18,
+     "latency_s": 2.03,
+     "called": null,
+     "args": {},
+     "tool_ok": false,
+     "args_ok": false,
+     "arg_errors": [
+      "no tool call"
+     ]
+    },
+    {
+     "id": 21,
+     "expected_tool": "get_connects_balance",
+     "n_calls": 0,
+     "prompt_tokens": 666,
+     "completion_tokens": 18,
+     "latency_s": 2.02,
+     "called": null,
+     "args": {},
+     "tool_ok": false,
+     "args_ok": false,
+     "arg_errors": [
+      "no tool call"
+     ]
+    },
+    {
+     "id": 22,
+     "expected_tool": "get_connects_balance",
+     "n_calls": 0,
+     "prompt_tokens": 658,
+     "completion_tokens": 18,
+     "latency_s": 2.24,
+     "called": null,
+     "args": {},
+     "tool_ok": false,
+     "args_ok": false,
+     "arg_errors": [
+      "no tool call"
+     ]
+    },
+    {
+     "id": 23,
+     "expected_tool": "get_policy",
+     "n_calls": 1,
+     "prompt_tokens": 659,
+     "completion_tokens": 22,
+     "latency_s": 2.25,
+     "called": "get_policy",
+     "args": {},
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 24,
+     "expected_tool": "get_policy",
+     "n_calls": 1,
+     "prompt_tokens": 664,
+     "completion_tokens": 22,
+     "latency_s": 2.43,
+     "called": "get_policy",
+     "args": {},
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 25,
+     "expected_tool": "get_policy",
+     "n_calls": 1,
+     "prompt_tokens": 661,
+     "completion_tokens": 28,
+     "latency_s": 2.4,
+     "called": "search_jobs",
+     "args": {
+      "limit": 1
+     },
+     "tool_ok": false,
+     "args_ok": false,
+     "arg_errors": [
+      "wrong tool"
+     ]
+    },
+    {
+     "id": 26,
+     "expected_tool": "get_policy",
+     "n_calls": 0,
+     "prompt_tokens": 661,
+     "completion_tokens": 21,
+     "latency_s": 2.61,
+     "called": null,
+     "args": {},
+     "tool_ok": false,
+     "args_ok": false,
+     "arg_errors": [
+      "no tool call"
+     ]
+    },
+    {
+     "id": 27,
+     "expected_tool": "list_messages",
+     "n_calls": 1,
+     "prompt_tokens": 662,
+     "completion_tokens": 35,
+     "latency_s": 2.59,
+     "called": "list_messages",
+     "args": {
+      "client_id": "c000",
+      "dry_run": false
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 28,
+     "expected_tool": "list_messages",
+     "n_calls": 1,
+     "prompt_tokens": 655,
+     "completion_tokens": 19,
+     "latency_s": 2.57,
+     "called": "list_messages",
+     "args": {},
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 29,
+     "expected_tool": "list_messages",
+     "n_calls": 1,
+     "prompt_tokens": 660,
+     "completion_tokens": 35,
+     "latency_s": 2.83,
+     "called": "list_messages",
+     "args": {
+      "client_id": "c020",
+      "dry_run": false
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 30,
+     "expected_tool": "list_messages",
+     "n_calls": 1,
+     "prompt_tokens": 656,
+     "completion_tokens": 28,
+     "latency_s": 4.15,
+     "called": "list_messages",
+     "args": {
+      "client_id": "my_client_id"
+     },
+     "tool_ok": true,
+     "args_ok": false,
+     "arg_errors": [
+      "client_id: unexpected value 'my_client_id'"
+     ]
+    },
+    {
+     "id": 31,
+     "expected_tool": "create_proposal_draft",
+     "n_calls": 1,
+     "prompt_tokens": 707,
+     "completion_tokens": 75,
+     "latency_s": 5.43,
+     "called": "create_proposal_draft",
+     "args": {
+      "cover_letter": "I built a realtime chat backend with websockets.",
+      "bid_amount": 1800,
+      "idempotency_key": "draft-0001-aaaa",
+      "job_id": "dev-web-0000"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 32,
+     "expected_tool": "create_proposal_draft",
+     "n_calls": 1,
+     "prompt_tokens": 698,
+     "completion_tokens": 71,
+     "latency_s": 5.46,
+     "called": "create_proposal_draft",
+     "args": {
+      "bid_amount": 950,
+      "cover_letter": "Weekly updates and a clear plan.",
+      "idempotency_key": "draft-0002-bbbb",
+      "job_id": "dev-data-0000"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 33,
+     "expected_tool": "create_proposal_draft",
+     "n_calls": 1,
+     "prompt_tokens": 704,
+     "completion_tokens": 78,
+     "latency_s": 5.7,
+     "called": "create_proposal_draft",
+     "args": {
+      "cover_letter": "I trained defect classifiers.",
+      "bid_amount": 2400,
+      "idempotency_key": "draft-0003-cccc",
+      "dry_run": true,
+      "job_id": "dev-ai_ml-0001"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 34,
+     "expected_tool": "submit_proposal",
+     "n_calls": 1,
+     "prompt_tokens": 699,
+     "completion_tokens": 74,
+     "latency_s": 5.48,
+     "called": "submit_proposal",
+     "args": {
+      "idempotency_key": "sub-0001-dddd",
+      "job_id": "dev-ai_ml-0002",
+      "bid_amount": 1500,
+      "cover_letter": "I shipped a ticket triage classifier."
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 35,
+     "expected_tool": "submit_proposal",
+     "n_calls": 1,
+     "prompt_tokens": 701,
+     "completion_tokens": 73,
+     "latency_s": 5.62,
+     "called": "submit_proposal",
+     "args": {
+      "job_id": "dev-web-0001",
+      "bid_amount": 2200,
+      "cover_letter": "Payment integration delivered in 14 days.",
+      "idempotency_key": "sub-0002-eeee"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 36,
+     "expected_tool": "submit_proposal",
+     "n_calls": 1,
+     "prompt_tokens": 710,
+     "completion_tokens": 78,
+     "latency_s": 5.48,
+     "called": "submit_proposal",
+     "args": {
+      "bid_amount": 3000,
+      "cover_letter": "I improved churn prediction recall.",
+      "dry_run": true,
+      "idempotency_key": "sub-0003-ffff",
+      "job_id": "dev-ai_ml-0003"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 37,
+     "expected_tool": "submit_proposal",
+     "n_calls": 1,
+     "prompt_tokens": 696,
+     "completion_tokens": 71,
+     "latency_s": 4.86,
+     "called": "submit_proposal",
+     "args": {
+      "job_id": "dev-data-0001",
+      "bid_amount": 1200,
+      "cover_letter": "I built cohort retention models.",
+      "idempotency_key": "sub-0004-gggg"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 38,
+     "expected_tool": "send_message",
+     "n_calls": 1,
+     "prompt_tokens": 676,
+     "completion_tokens": 57,
+     "latency_s": 4.66,
+     "called": "send_message",
+     "args": {
+      "text": "Thanks, I can start Monday.",
+      "idempotency_key": "msg-0001-hhhh",
+      "client_id": "c000"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 39,
+     "expected_tool": "send_message",
+     "n_calls": 1,
+     "prompt_tokens": 685,
+     "completion_tokens": 60,
+     "latency_s": 4.87,
+     "called": "send_message",
+     "args": {
+      "text": "Here are three time slots for a call.",
+      "idempotency_key": "msg-0002-iiii",
+      "client_id": "c016"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 40,
+     "expected_tool": "send_message",
+     "n_calls": 1,
+     "prompt_tokens": 687,
+     "completion_tokens": 64,
+     "latency_s": 4.31,
+     "called": "send_message",
+     "args": {
+      "client_id": "c024",
+      "dry_run": true,
+      "idempotency_key": "msg-0003-jjjj",
+      "text": "Happy to adjust the scope."
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    }
+   ]
+  },
+  "best": {
+   "n": 40,
+   "tool_selection_accuracy": 0.975,
+   "tool_selection_ci95": [
+    0.871,
+    0.996
+   ],
+   "arg_accuracy_overall": 0.9,
+   "arg_accuracy_ci95": [
+    0.769,
+    0.96
+   ],
+   "arg_accuracy_given_correct_tool": 0.923,
+   "tokens_per_task": {
+    "prompt": 1593.2,
+    "completion": 36.4,
+    "total": 1629.6
+   },
+   "mean_latency_s": 4.65,
+   "n_tools": 9,
+   "tool_definition_chars": 7631,
+   "per_tool": {
+    "search_jobs": {
+     "n": 8,
+     "tool_ok": 8,
+     "args_ok": 6
+    },
+    "get_job": {
+     "n": 5,
+     "tool_ok": 4,
+     "args_ok": 4
+    },
+    "get_client_history": {
+     "n": 5,
+     "tool_ok": 5,
+     "args_ok": 5
+    },
+    "get_connects_balance": {
+     "n": 4,
+     "tool_ok": 4,
+     "args_ok": 4
+    },
+    "get_policy": {
+     "n": 4,
+     "tool_ok": 4,
+     "args_ok": 4
+    },
+    "list_messages": {
+     "n": 4,
+     "tool_ok": 4,
+     "args_ok": 4
+    },
+    "create_proposal_draft": {
+     "n": 3,
+     "tool_ok": 3,
+     "args_ok": 2
+    },
+    "submit_proposal": {
+     "n": 4,
+     "tool_ok": 4,
+     "args_ok": 4
+    },
+    "send_message": {
+     "n": 3,
+     "tool_ok": 3,
+     "args_ok": 3
+    }
+   },
+   "tool_confusions": {
+    "get_job -> submit_proposal": 1
+   },
+   "rows": [
+    {
+     "id": 1,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 1578,
+     "completion_tokens": 21,
+     "latency_s": 3.71,
+     "called": "search_jobs",
+     "args": {
+      "query": "FastAPI"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 2,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 1591,
+     "completion_tokens": 27,
+     "latency_s": 4.02,
+     "called": "search_jobs",
+     "args": {
+      "limit": 5,
+      "query": "Next.js"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 3,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 1586,
+     "completion_tokens": 27,
+     "latency_s": 4.04,
+     "called": "search_jobs",
+     "args": {
+      "query": "ETL",
+      "persona": "data"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 4,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 1585,
+     "completion_tokens": 27,
+     "latency_s": 3.92,
+     "called": "search_jobs",
+     "args": {
+      "persona": "web",
+      "limit": 10
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 5,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 1582,
+     "completion_tokens": 21,
+     "latency_s": 4.2,
+     "called": "search_jobs",
+     "args": {
+      "query": "PostgreSQL"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 6,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 1583,
+     "completion_tokens": 34,
+     "latency_s": 4.4,
+     "called": "search_jobs",
+     "args": {
+      "limit": 3,
+      "query": "churn",
+      "persona": "ai_ml"
+     },
+     "tool_ok": true,
+     "args_ok": false,
+     "arg_errors": [
+      "persona: unexpected value 'ai_ml'"
+     ]
+    },
+    {
+     "id": 7,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 1584,
+     "completion_tokens": 34,
+     "latency_s": 4.16,
+     "called": "search_jobs",
+     "args": {
+      "query": "dashboards",
+      "persona": "ai_ml",
+      "limit": 5
+     },
+     "tool_ok": true,
+     "args_ok": false,
+     "arg_errors": [
+      "limit: unexpected value 5"
+     ]
+    },
+    {
+     "id": 8,
+     "expected_tool": "search_jobs",
+     "n_calls": 1,
+     "prompt_tokens": 1582,
+     "completion_tokens": 21,
+     "latency_s": 6.19,
+     "called": "search_jobs",
+     "args": {
+      "query": "Kubernetes"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 9,
+     "expected_tool": "get_job",
+     "n_calls": 1,
+     "prompt_tokens": 1587,
+     "completion_tokens": 29,
+     "latency_s": 4.11,
+     "called": "get_job",
+     "args": {
+      "job_id": "dev-ai_ml-0003"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 10,
+     "expected_tool": "get_job",
+     "n_calls": 1,
+     "prompt_tokens": 1585,
+     "completion_tokens": 27,
+     "latency_s": 4.32,
+     "called": "get_job",
+     "args": {
+      "job_id": "dev-web-0001"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 11,
+     "expected_tool": "get_job",
+     "n_calls": 1,
+     "prompt_tokens": 1585,
+     "completion_tokens": 27,
+     "latency_s": 5.0,
+     "called": "get_job",
+     "args": {
+      "job_id": "dev-data-0002"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 12,
+     "expected_tool": "get_job",
+     "n_calls": 1,
+     "prompt_tokens": 1589,
+     "completion_tokens": 29,
+     "latency_s": 4.0,
+     "called": "get_job",
+     "args": {
+      "job_id": "dev-ai_ml-0005"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 13,
+     "expected_tool": "get_job",
+     "n_calls": 1,
+     "prompt_tokens": 1592,
+     "completion_tokens": 61,
+     "latency_s": 5.12,
+     "called": "submit_proposal",
+     "args": {
+      "bid_amount": 0,
+      "cover_letter": "",
+      "dry_run": true,
+      "idempotency_key": "",
+      "job_id": "dev-web-0000",
+      "screening_answers": null
+     },
+     "tool_ok": false,
+     "args_ok": false,
+     "arg_errors": [
+      "wrong tool"
+     ]
+    },
+    {
+     "id": 14,
+     "expected_tool": "get_client_history",
+     "n_calls": 1,
+     "prompt_tokens": 1579,
+     "completion_tokens": 25,
+     "latency_s": 3.9,
+     "called": "get_client_history",
+     "args": {
+      "client_id": "c012"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 15,
+     "expected_tool": "get_client_history",
+     "n_calls": 1,
+     "prompt_tokens": 1591,
+     "completion_tokens": 25,
+     "latency_s": 3.98,
+     "called": "get_client_history",
+     "args": {
+      "client_id": "c030"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 16,
+     "expected_tool": "get_client_history",
+     "n_calls": 1,
+     "prompt_tokens": 1587,
+     "completion_tokens": 25,
+     "latency_s": 3.95,
+     "called": "get_client_history",
+     "args": {
+      "client_id": "c006"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 17,
+     "expected_tool": "get_client_history",
+     "n_calls": 1,
+     "prompt_tokens": 1588,
+     "completion_tokens": 25,
+     "latency_s": 3.75,
+     "called": "get_client_history",
+     "args": {
+      "client_id": "c019"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 18,
+     "expected_tool": "get_client_history",
+     "n_calls": 1,
+     "prompt_tokens": 1595,
+     "completion_tokens": 25,
+     "latency_s": 3.73,
+     "called": "get_client_history",
+     "args": {
+      "client_id": "c024"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 19,
+     "expected_tool": "get_connects_balance",
+     "n_calls": 1,
+     "prompt_tokens": 1580,
+     "completion_tokens": 18,
+     "latency_s": 3.57,
+     "called": "get_connects_balance",
+     "args": {},
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 20,
+     "expected_tool": "get_connects_balance",
+     "n_calls": 1,
+     "prompt_tokens": 1576,
+     "completion_tokens": 18,
+     "latency_s": 3.81,
+     "called": "get_connects_balance",
+     "args": {},
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 21,
+     "expected_tool": "get_connects_balance",
+     "n_calls": 1,
+     "prompt_tokens": 1593,
+     "completion_tokens": 18,
+     "latency_s": 3.39,
+     "called": "get_connects_balance",
+     "args": {},
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 22,
+     "expected_tool": "get_connects_balance",
+     "n_calls": 1,
+     "prompt_tokens": 1581,
+     "completion_tokens": 18,
+     "latency_s": 3.37,
+     "called": "get_connects_balance",
+     "args": {},
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 23,
+     "expected_tool": "get_policy",
+     "n_calls": 1,
+     "prompt_tokens": 1580,
+     "completion_tokens": 16,
+     "latency_s": 3.31,
+     "called": "get_policy",
+     "args": {},
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 24,
+     "expected_tool": "get_policy",
+     "n_calls": 1,
+     "prompt_tokens": 1587,
+     "completion_tokens": 16,
+     "latency_s": 3.36,
+     "called": "get_policy",
+     "args": {},
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 25,
+     "expected_tool": "get_policy",
+     "n_calls": 1,
+     "prompt_tokens": 1587,
+     "completion_tokens": 16,
+     "latency_s": 3.6,
+     "called": "get_policy",
+     "args": {},
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 26,
+     "expected_tool": "get_policy",
+     "n_calls": 1,
+     "prompt_tokens": 1584,
+     "completion_tokens": 16,
+     "latency_s": 3.52,
+     "called": "get_policy",
+     "args": {},
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 27,
+     "expected_tool": "list_messages",
+     "n_calls": 1,
+     "prompt_tokens": 1584,
+     "completion_tokens": 24,
+     "latency_s": 3.8,
+     "called": "list_messages",
+     "args": {
+      "client_id": "c000"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 28,
+     "expected_tool": "list_messages",
+     "n_calls": 1,
+     "prompt_tokens": 1580,
+     "completion_tokens": 20,
+     "latency_s": 3.59,
+     "called": "list_messages",
+     "args": {
+      "client_id": null
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 29,
+     "expected_tool": "list_messages",
+     "n_calls": 1,
+     "prompt_tokens": 1586,
+     "completion_tokens": 24,
+     "latency_s": 5.51,
+     "called": "list_messages",
+     "args": {
+      "client_id": "c020"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 30,
+     "expected_tool": "list_messages",
+     "n_calls": 1,
+     "prompt_tokens": 1576,
+     "completion_tokens": 20,
+     "latency_s": 5.81,
+     "called": "list_messages",
+     "args": {
+      "client_id": null
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 31,
+     "expected_tool": "create_proposal_draft",
+     "n_calls": 1,
+     "prompt_tokens": 1631,
+     "completion_tokens": 77,
+     "latency_s": 7.25,
+     "called": "create_proposal_draft",
+     "args": {
+      "bid_amount": 1800,
+      "cover_letter": "I built a realtime chat backend with websockets.",
+      "dry_run": true,
+      "idempotency_key": "draft-0001-aaaa",
+      "job_id": "dev-web-0000"
+     },
+     "tool_ok": true,
+     "args_ok": false,
+     "arg_errors": [
+      "dry_run: want False got True"
+     ]
+    },
+    {
+     "id": 32,
+     "expected_tool": "create_proposal_draft",
+     "n_calls": 1,
+     "prompt_tokens": 1625,
+     "completion_tokens": 80,
+     "latency_s": 7.47,
+     "called": "create_proposal_draft",
+     "args": {
+      "screening_answers": null,
+      "bid_amount": 950,
+      "cover_letter": "Weekly updates and a clear plan.",
+      "dry_run": false,
+      "idempotency_key": "draft-0002-bbbb",
+      "job_id": "dev-data-0000"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 33,
+     "expected_tool": "create_proposal_draft",
+     "n_calls": 1,
+     "prompt_tokens": 1623,
+     "completion_tokens": 81,
+     "latency_s": 7.25,
+     "called": "create_proposal_draft",
+     "args": {
+      "bid_amount": 2400,
+      "cover_letter": "I trained defect classifiers.",
+      "dry_run": true,
+      "idempotency_key": "draft-0003-cccc",
+      "job_id": "dev-ai_ml-0001",
+      "screening_answers": null
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 34,
+     "expected_tool": "submit_proposal",
+     "n_calls": 1,
+     "prompt_tokens": 1618,
+     "completion_tokens": 76,
+     "latency_s": 7.29,
+     "called": "submit_proposal",
+     "args": {
+      "bid_amount": 1500,
+      "cover_letter": "I shipped a ticket triage classifier.",
+      "dry_run": false,
+      "idempotency_key": "sub-0001-dddd",
+      "job_id": "dev-ai_ml-0002"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 35,
+     "expected_tool": "submit_proposal",
+     "n_calls": 1,
+     "prompt_tokens": 1624,
+     "completion_tokens": 75,
+     "latency_s": 7.16,
+     "called": "submit_proposal",
+     "args": {
+      "bid_amount": 2200,
+      "cover_letter": "Payment integration delivered in 14 days.",
+      "dry_run": false,
+      "idempotency_key": "sub-0002-eeee",
+      "job_id": "dev-web-0001"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 36,
+     "expected_tool": "submit_proposal",
+     "n_calls": 1,
+     "prompt_tokens": 1633,
+     "completion_tokens": 81,
+     "latency_s": 6.66,
+     "called": "submit_proposal",
+     "args": {
+      "bid_amount": 3000,
+      "cover_letter": "I improved churn prediction recall.",
+      "dry_run": true,
+      "idempotency_key": "sub-0003-ffff",
+      "job_id": "dev-ai_ml-0003",
+      "screening_answers": null
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 37,
+     "expected_tool": "submit_proposal",
+     "n_calls": 1,
+     "prompt_tokens": 1613,
+     "completion_tokens": 80,
+     "latency_s": 7.46,
+     "called": "submit_proposal",
+     "args": {
+      "dry_run": false,
+      "idempotency_key": "sub-0004-gggg",
+      "job_id": "dev-data-0001",
+      "screening_answers": null,
+      "bid_amount": 1200,
+      "cover_letter": "I built cohort retention models."
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 38,
+     "expected_tool": "send_message",
+     "n_calls": 1,
+     "prompt_tokens": 1604,
+     "completion_tokens": 58,
+     "latency_s": 6.05,
+     "called": "send_message",
+     "args": {
+      "text": "Thanks, I can start Monday.",
+      "idempotency_key": "msg-0001-hhhh",
+      "dry_run": false,
+      "client_id": "c000"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 39,
+     "expected_tool": "send_message",
+     "n_calls": 1,
+     "prompt_tokens": 1607,
+     "completion_tokens": 55,
+     "latency_s": 3.05,
+     "called": "send_message",
+     "args": {
+      "client_id": "c016",
+      "text": "Here are three time slots for a call.",
+      "idempotency_key": "msg-0002-iiii"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    },
+    {
+     "id": 40,
+     "expected_tool": "send_message",
+     "n_calls": 1,
+     "prompt_tokens": 1606,
+     "completion_tokens": 59,
+     "latency_s": 3.25,
+     "called": "send_message",
+     "args": {
+      "text": "Happy to adjust the scope.",
+      "client_id": "c024",
+      "dry_run": true,
+      "idempotency_key": "msg-0003-jjjj"
+     },
+     "tool_ok": true,
+     "args_ok": true,
+     "arg_errors": []
+    }
+   ]
+  }
+ }
+}

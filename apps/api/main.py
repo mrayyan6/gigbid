@@ -15,6 +15,7 @@ from fastapi import APIRouter, FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from agent.marketplace_port import MarketplaceUnavailable
+from agent.observability import setup_tracing
 from apps.api import auth as auth_mod
 from apps.api.bootstrap import open_ctx
 from apps.api.routers import (
@@ -37,6 +38,7 @@ from apps.api.runner import trace_id_var
 async def lifespan(app: FastAPI):
     async with open_ctx() as ctx:
         app.state.ctx = ctx
+        setup_tracing()  # after open_ctx so LANGSMITH_* from .env are loaded; off without a key
         await auth_mod.seed_reviewer(ctx)
         yield
 
