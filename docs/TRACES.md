@@ -29,12 +29,15 @@ Per node token and cost metadata can be attached with `agent.observability.usage
 
 ## Public traces
 
-Not yet captured. Fill this table after running the four scenarios with a LangSmith key, then make
-each trace public (Share, Public link) and paste the URL. Do not invent links.
+Captured by `scripts/make_traces.py` (hosted open profile, LLM on). Links and run ids are in
+`evals/results/traces.json`. All data in them is synthetic.
 
-| Scenario | What it shows | Trace id | Public link |
+| Scenario | What it shows | Job | Public link |
 |---|---|---|---|
-| Skipped scam job | injection and scam signals, early exit | not captured | not captured |
-| Approved proposal | full path, interrupt, approval, submit | not captured | not captured |
-| Critic loop | writer sent back by the critic (max 2) | not captured | not captured |
-| Crash and resume | run resumed from checkpoint after a kill | not captured | not captured |
+| Skipped scam job | scam and injection signals, early exit, nothing sent | dev-ai_ml-0011 | [trace](https://smith.langchain.com/public/17cd8b5c-4725-4c11-80cb-89a8faa1213f/r) |
+| Approved proposal | full path, approval interrupt, resume with approve, submit (run 1 stops at the interrupt, run 2 is the resume) | dev-ai_ml-0001 | [run to interrupt](https://smith.langchain.com/public/1f095679-3dec-4022-af76-88f6b57fcf90/r) and [resume](https://smith.langchain.com/public/fda3b80c-af0c-4f1e-a0af-46cea8d9164b/r) |
+| Critic loop | writer to verifier to critic send backs (the Critic rejected this draft until its cap of 2) | dev-ai_ml-0003 | [trace](https://smith.langchain.com/public/81d46882-8722-4546-b96f-d8e13d36c693/r) |
+| Crash and resume | run 1 stops at the approval interrupt and its process exits, run 2 is a new Python process on the same SQLite checkpoint file | dev-ai_ml-0005 | [before crash](https://smith.langchain.com/public/54923d56-1832-4545-8136-d56231d70e17/r) and [after restart](https://smith.langchain.com/public/3068922c-8da0-440e-841c-858bc9eee62c/r) |
+
+Crash and resume result: before the restart the thread was interrupted with 0 proposals in the marketplace. After the restart the approval was still pending (True), approving produced status `replied`, and after a second approve the marketplace held 1 proposal (exactly once).
+The marketplace in this scenario is the in process GigSim, so its state is rebuilt from the seed in the new process; the durable part under test is the graph checkpoint.

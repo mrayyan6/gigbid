@@ -1,0 +1,58 @@
+{
+ "project": "gigbid",
+ "profile": "open_hosted",
+ "traces": [
+  {
+   "scenario": "scam",
+   "job_id": "dev-ai_ml-0011",
+   "run_id": "01a1cbaf-5d88-760b-ab1d-97dc9c0a9b47",
+   "decision": "skip",
+   "revisions": null,
+   "interrupted": false,
+   "proposals_in_marketplace": 0,
+   "public_url": "https://smith.langchain.com/public/17cd8b5c-4725-4c11-80cb-89a8faa1213f/r"
+  },
+  {
+   "scenario": "approve",
+   "job_id": "dev-ai_ml-0001",
+   "run_id": "01a1cbaf-60e6-755c-9389-03f840bbb2c6",
+   "decision": "bid",
+   "revisions": 1,
+   "interrupted": true,
+   "resume_run_id": "01a1cbaf-6b02-714b-8243-9f4bddcbd142",
+   "status": "submitted",
+   "proposals_in_marketplace": 1,
+   "public_url": "https://smith.langchain.com/public/1f095679-3dec-4022-af76-88f6b57fcf90/r",
+   "resume_public_url": "https://smith.langchain.com/public/fda3b80c-af0c-4f1e-a0af-46cea8d9164b/r"
+  },
+  {
+   "scenario": "critic",
+   "job_id": "dev-ai_ml-0003",
+   "run_id": "01a1cbaf-6b5a-74bc-b3c2-891c19b23b69",
+   "decision": "bid",
+   "revisions": 0,
+   "interrupted": true,
+   "proposals_in_marketplace": 0,
+   "public_url": "https://smith.langchain.com/public/81d46882-8722-4546-b96f-d8e13d36c693/r"
+  },
+  {
+   "scenario": "crash",
+   "job_id": "dev-ai_ml-0005",
+   "before": {
+    "run_id": "01a1cbaf-7a3a-701b-af2e-75b174254b95",
+    "interrupted": true,
+    "proposals": 0
+   },
+   "after": {
+    "run_id": "01a1cbaf-f9f3-75d5-b885-d08fe6572ed0",
+    "pending_after_restart": true,
+    "status": "replied",
+    "proposals": 1
+   },
+   "run_id": "01a1cbaf-7a3a-701b-af2e-75b174254b95",
+   "resume_run_id": "01a1cbaf-f9f3-75d5-b885-d08fe6572ed0",
+   "public_url": "https://smith.langchain.com/public/54923d56-1832-4545-8136-d56231d70e17/r",
+   "resume_public_url": "https://smith.langchain.com/public/3068922c-8da0-440e-841c-858bc9eee62c/r"
+  }
+ ]
+}
