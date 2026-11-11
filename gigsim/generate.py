@@ -91,9 +91,13 @@ def _jobs(rng: random.Random, persona: str, n: int, prefix: str, clients: list[d
     return jobs
 
 
-def build(seed: int = 7) -> None:
+def build(seed: int = 7, out_dir: Path | str | None = None) -> None:
+    """Generate the synthetic dataset. With out_dir only the data files are written there (used by
+    the published Portfolio MCP server, which has no repo layout); otherwise the repo layout is
+    updated, including the policy pack and the dev set."""
     rng = random.Random(seed)
-    OUT.mkdir(parents=True, exist_ok=True)
+    out = Path(out_dir) if out_dir else OUT
+    out.mkdir(parents=True, exist_ok=True)
     clients = []
     for i in range(40):
         pref = rng.choice(["metrics", "speed", "communication", "domain_expertise", "low_price"])
@@ -133,8 +137,11 @@ def build(seed: int = 7) -> None:
                         "no result guarantees", "human approval required"]}
     for name, obj in {"clients": clients, "personas": personas, "portfolio": portfolio,
                       "past_proposals": past, "jobs": jobs, "dev_jobs": dev}.items():
-        (OUT / f"{name}.json").write_text(json.dumps(obj, indent=1), encoding="utf-8")
-    pol = ROOT / "data" / "policy_pack" / "gigsim_policy.json"
+        (out / f"{name}.json").write_text(json.dumps(obj, indent=1), encoding="utf-8")
+    if out_dir:
+        print(f"wrote {len(portfolio)} portfolio items to {out}")
+        return
+    pol =ROOT / "data" / "policy_pack" / "gigsim_policy.json"
     pol.parent.mkdir(parents=True, exist_ok=True)
     if not pol.exists():  # never clobber a policy that was edited (platform policy update)
         pol.write_text(json.dumps(policy, indent=1), encoding="utf-8")

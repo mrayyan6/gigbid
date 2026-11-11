@@ -17,6 +17,18 @@ class MarketplaceUnavailable(Exception):
     """The marketplace cannot be reached after bounded retries. Callers enter degraded mode."""
 
 
+class MarketplaceError(Exception):
+    """The marketplace answered with a rejection (policy, validation, balance). Not retried."""
+
+
+class ToolNotAllowed(Exception):
+    """An agent tried to call an MCP tool that is not on its allowlist."""
+
+
+class RequiresPlatformConfirmation(Exception):
+    """Live mode only: the proposal was saved as a draft and the user must confirm on the platform."""
+
+
 class MarketplacePort(Protocol):
     async def search_jobs(self, query: str = "", limit: int = 20,
                           persona: str | None = None) -> list[dict[str, Any]]: ...

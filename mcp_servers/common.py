@@ -10,6 +10,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG_PATH = ROOT / "agent" / "config.yaml"
+EXTRA_CONFIG_PATH = ROOT / "agent" / "config_extra.yaml"
 
 current_user: contextvars.ContextVar[str] = contextvars.ContextVar("gigbid_user", default="local")
 current_trace: contextvars.ContextVar[str] = contextvars.ContextVar("gigbid_trace", default="")
@@ -18,15 +19,18 @@ current_trace: contextvars.ContextVar[str] = contextvars.ContextVar("gigbid_trac
 def cfg(path: str, default: Any = None) -> Any:
     """Read a dotted key such as 'mcp.marketplace.rate_per_min' from agent/config.yaml.
     Falls back to `default` when the key is absent, so servers run before the key is added."""
-    try:
-        node: Any = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8")) or {}
-    except OSError:
-        return default
-    for part in path.split("."):
-        if not isinstance(node, dict) or part not in node:
-            return default
-        node = node[part]
-    return node
+    for file in (CONFIG_PATH, EXTRA_CONFIG_PATH):  # config_extra.yaml holds the `mcp:` block
+        try:
+            node: Any = yaml.safe_load(file.read_text(encoding="utf-8")) or {}
+        except OSError:
+            continue
+        for part in path.split("."):
+            if not isinstance(node, dict) or part not in node:
+                break
+            node = node[part]
+        else:
+            return node
+    return default
 
 
 class BearerAuthMiddleware:
