@@ -32,3 +32,25 @@ risk:
     injection: ["ignore all previous", "ignore previous instructions", "system:", "admin mode",
                 "reveal your system prompt", "ai assistants reading"]
     payment_fraud: ["bank login", "guaranteed 10x"]
+api:
+  jwt_ttl_minutes: 720
+  pbkdf2_iterations: 200000
+  checkpoint_db: data/processed/checkpoints.sqlite
+  users_db: data/processed/users.sqlite
+  health_probe_timeout_s: 2.0
+  stream_poll_interval_s: 0.4
+  stream_max_seconds: 120
+  default_settings:
+    autonomy: manual            # manual | auto_skip_low_fit (never auto-sends)
+    weekly_connects_budget: 100
+    min_hourly_rate: 25
+    keywords: []
+    saved_searches: []
+pipeline:
+  stages: [drafted, submitted, viewed, replied, interview, hired, lost]
+worker:
+  gigsim_scout_interval_minutes: 30
+  live_scout_interval_minutes: 120   # live mode: conservative, a few reads per hour, no scraping-like polling
+  processed_ttl_seconds: 604800
+  max_jobs_per_scout: 10
+  job_timeout_seconds: 300

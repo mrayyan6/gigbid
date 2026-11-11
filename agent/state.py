@@ -9,6 +9,27 @@ import operator
 from typing import Annotated, Any, TypedDict
 
 
+class ConversationState(TypedDict, total=False):
+    """One thread per client conversation (thread id = client id)."""
+    client_id: str
+    messages: list[dict[str, Any]]
+    last_message: dict[str, Any] | None  # latest client message, untrusted data
+    intent: str  # question | negotiation | interview_request | scam_signal
+    intent_reason: str
+    slots: list[str]
+    draft: str
+    flagged: bool
+    approval: dict[str, Any]
+    outcome: dict[str, Any]
+    steps: Annotated[int, operator.add]
+    tokens: Annotated[int, operator.add]
+    cost_usd: Annotated[float, operator.add]
+    status: str  # idle | running | rejected | sent | needs_attention | dead_letter | queued
+    queue: Annotated[list[dict[str, Any]], operator.add]
+    trace: Annotated[list[dict[str, Any]], operator.add]
+    errors: Annotated[list[str], operator.add]
+
+
 class GigBidState(TypedDict, total=False):
     job_id: str
     job: dict[str, Any]
@@ -25,6 +46,12 @@ class GigBidState(TypedDict, total=False):
     compliance_verdict: dict[str, Any]
     approval: dict[str, Any]
     outcome: dict[str, Any]
-    steps: int
+    steps: Annotated[int, operator.add]
+    tokens: Annotated[int, operator.add]
+    cost_usd: Annotated[float, operator.add]
+    status: str  # running | skipped | watching | blocked | needs_attention | dead_letter | queued | submitted | rejected
+    queue: Annotated[list[dict[str, Any]], operator.add]  # work parked while the marketplace is down
+    memory_notes: list[str]  # promoted style notes the writer used (never raw tool output)
+    strategy: str
     trace: Annotated[list[dict[str, Any]], operator.add]
     errors: Annotated[list[str], operator.add]

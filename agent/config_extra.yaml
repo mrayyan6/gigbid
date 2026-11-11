@@ -8,6 +8,7 @@ llm:
   verify_partial: false      # LLM "partly supported" check in the claim verifier
   llm_critic: true           # when LLM is enabled the critic adds LLM issues on top of the rules
   llm_analyst: true
+  max_critic_issues: 4
 providers:
   ollama:
     base_url: http://localhost:11434/v1
@@ -42,10 +43,11 @@ writer:
 budgets:
   node_retries: 2            # extra attempts for transient errors before dead letter
   retry_backoff_s: 0.5
-  retry_nodes: [scout, matcher, submit]
+  retry_nodes: [scout, matcher, submit, read_messages, send]
 policy:
   pack_path: data/policy_pack/gigsim_policy.json   # fallback when the port has no get_policy
 verifier:
+  drop_partial: false       # true removes partly supported claims too
   past_claim_regex: "\\b(I used|I have shipped|I built|my outcome|outcome was|I(?:'ve| have) (?:built|led|delivered|developed|worked|created|designed|shipped|managed)|I (?:led|delivered|developed|created|designed|managed)|my (?:previous|past|prior) (?:work|project|client)s?|\\d+\\+? years)\\b"
 compliance:
   banned_patterns:           # regex, case insensitive, checked on drafts, edits and messages
@@ -67,6 +69,8 @@ conversation:
   slot_days_ahead: 7
   slot_duration_min: 30
   max_slots_offered: 3
+  local_slots_fallback: true   # use a deterministic local calendar when no workspace tool is injected
+  local_slot_hours: [10, 15]
   intent_order: [scam_signal, interview_request, negotiation, question]
   intent_patterns:
     scam_signal: ["telegram", "whatsapp", "outside the platform", "off-platform", "send money",
@@ -83,3 +87,40 @@ conversation:
     interview_request: "Happy to talk. These slots work for me: {slots}. Please tell me which one suits you."
     interview_no_slots: "Happy to talk. Could you share two or three times that work for you this week?"
     scam_signal: "Thank you for reaching out. I keep all communication and payments on the platform, so I will decline to continue elsewhere."
+analyst:
+  max_deliverables: 4
+  template_sentences: 2
+
+# Owned by the MCP lane (L1). Read by mcp_servers/common.py cfg() and agent/mcp_client.py.
+mcp:
+  marketplace:
+    rate_per_min: 60          # per user, deliberately below GigSim rate_limit_per_min (120)
+    port: 9100
+  workspace:
+    port: 9200
+    workday_start: "09:00"
+    workday_end: "17:00"
+    slot_step_min: 30
+    max_slots: 20
+    skip_weekends: true
+  client:
+    timeout_s: 15             # per MCP call
+    retries: 2                # extra attempts, exponential backoff
+    backoff_s: 0.3
+  allowlists:                 # tool names each agent may call through the MCP client
+    scout: [search_jobs, get_job, get_client_history]
+    risk: [get_client_history]
+    pricing: [get_policy, get_connects_balance]
+    liaison: [list_messages, send_message]
+    approval: [create_proposal_draft, submit_proposal]
+    graph: [search_jobs, get_job, get_client_history, get_connects_balance, get_policy,
+            list_messages, create_proposal_draft, submit_proposal, send_message]
+  live:
+    url: https://mcp.upwork.com/mcp
+    poll_minutes: 60          # live reads: a few per hour, no scraping-like polling
+    poll_rationale: "Official MCP is rate limited and the platform bans bots; hourly reads are enough because proposals are human paced."
+third_party_mcp:
+  github:
+    image: ghcr.io/github/github-mcp-server
+    toolsets: [repos]         # read-only: used by rag/ingest to load README files
+    read_only: true

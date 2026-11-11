@@ -36,6 +36,8 @@ class PriceQuote(BaseModel):
     band_low: float
     band_high: float
     rationale: str
+    connects_cost: int | None = None
+    policy_version: int | None = None
 
 
 class ProposalDraft(BaseModel):
