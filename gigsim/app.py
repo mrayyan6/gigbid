@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "processed" / "gigsim"
 POLICY = ROOT / "data" / "policy_pack" / "gigsim_policy.json"
 TOKEN = "gigsim-dev-token"
+RATE_OVERRIDE: int | None = None  # eval harness only
 
 app = FastAPI(title="GigSim", version="0.1.0")
 _hits: dict[str, deque] = defaultdict(deque)
@@ -52,7 +53,7 @@ def auth(authorization: str = Header(default="")) -> str:
     q = _hits[authorization]
     while q and now - q[0] > 60:
         q.popleft()
-    if len(q) >= policy()["rate_limit_per_min"]:
+    if len(q) >= (RATE_OVERRIDE or policy()["rate_limit_per_min"]):
         raise HTTPException(429, "rate limited", headers={"Retry-After": "5"})
     q.append(now)
     return "user"

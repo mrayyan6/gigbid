@@ -26,7 +26,9 @@ def prf(tp: int, fp: int, fn: int) -> dict:
 
 async def run() -> dict:
     generate.build()
+    import gigsim.app as gs
     from gigsim.app import app, store
+    gs.RATE_OVERRIDE = 10**6  # in-process eval, no real traffic
     store.reset()
     mp = GigSimAdapter(base_url="http://t", transport=httpx.ASGITransport(app=app))
     dev = json.loads((OUT.parent / "datasets" / "dev_jobs.json").read_text(encoding="utf-8"))
