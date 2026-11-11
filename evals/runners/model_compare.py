@@ -18,7 +18,8 @@ import subprocess
 
 import httpx
 
-from evals.runners._harness import CFG, RESULTS
+from agent.nodes.config import CFG
+from evals.runners._harness import RESULTS
 from evals.runners.proposal_eval import summarise
 
 PROMPT = "Write a 120 word cover letter for a freelance data analyst bidding on a dashboard project."

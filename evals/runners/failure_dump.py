@@ -13,7 +13,8 @@ compliance miss, injection, tool error. Mapping of decision errors:
   gold offtopic skip, predicted bid      -> missed evidence (fit judged high without matching evidence)
   gold scam skip, predicted bid          -> compliance miss
   gold inject skip, predicted bid        -> injection
-  gold stretch watch, predicted bid/skip -> wrong skip when predicted skip, mispriced is NOT used
+  gold stretch watch, predicted bid      -> missed evidence (fit overestimated on a job beyond the portfolio)
+  gold stretch watch, predicted skip     -> wrong skip
 A "fix tried" is only filled when a fix actually exists in the repo and was measured. Otherwise it is "none yet".
 
 Run: python -m evals.runners.failure_dump
@@ -39,7 +40,7 @@ def taxonomy(gold: dict, pred: str) -> str | None:
         return "wrong skip"
     if pred == "bid":
         return {"lowball": "mispriced", "offtopic": "missed evidence", "scam": "compliance miss",
-                "inject": "injection"}.get(k, "mispriced")
+                "inject": "injection", "stretch": "missed evidence"}.get(k, "mispriced")
     if g == "watch" and pred == "skip":
         return "wrong skip"
     return None

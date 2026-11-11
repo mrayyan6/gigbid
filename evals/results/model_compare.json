@@ -1,0 +1,66 @@
+{
+ "meta": {
+  "variant": "v3_rerank",
+  "common_jobs": [
+   "dev-ai_ml-0030",
+   "dev-ai_ml-0045",
+   "dev-ai_ml-0054",
+   "dev-data-0008",
+   "dev-data-0021",
+   "dev-data-0043",
+   "dev-web-0029",
+   "dev-web-0048",
+   "dev-web-0049"
+  ],
+  "n_common": 9,
+  "local_hardware": "NVIDIA GeForce RTX 4060 Laptop GPU, 8188 MiB",
+  "os": "Windows-11-10.0.26300-SP0",
+  "judge_caveat": "the judge is the writer model of each config (self judging) and is uncalibrated, so judge scores are not comparable across configs",
+  "latency_caveat": "hosted latency includes Groq free tier token per minute pacing; local latency is 8 GB VRAM with partial CPU offload",
+  "cost_note": "local: 0 USD per token, laptop hardware not costed; hosted: list price per 1M tokens in agent/config_extra.yaml (third party listing, verify before quoting)"
+ },
+ "local_tokens_per_s": [
+  {
+   "model": "qwen2.5:7b-instruct",
+   "tokens_per_s": 38.3,
+   "eval_tokens": 160
+  },
+  {
+   "model": "llama3.2:3b",
+   "tokens_per_s": 77.7,
+   "eval_tokens": 140
+  }
+ ],
+ "configs": [
+  {
+   "config": "local_open",
+   "model": "ollama/qwen2.5:7b-instruct",
+   "analyst_model": "ollama/llama3.2:3b",
+   "n": 9,
+   "judge_score": 3.4444444444444446,
+   "unsupported_per_proposal": 0.0,
+   "unsupported_per_proposal_before": 0.2222222222222222,
+   "p50_latency_s": 103.07,
+   "p95_latency_s": 114.11,
+   "tokens_per_proposal": 2847.4444444444443,
+   "tokens_per_s": 38.3,
+   "cost_per_proposal_usd": 0.0,
+   "reply_rate": 0.2222222222222222
+  },
+  {
+   "config": "hosted_open",
+   "model": "groq/qwen/qwen3.8-27b",
+   "analyst_model": "groq/qwen/qwen3.8-27b",
+   "n": 9,
+   "judge_score": 3.4444444444444446,
+   "unsupported_per_proposal": 0.0,
+   "unsupported_per_proposal_before": 0.6666666666666666,
+   "p50_latency_s": 30.81,
+   "p95_latency_s": 32.31,
+   "tokens_per_proposal": 3226.5555555555557,
+   "tokens_per_s": null,
+   "cost_per_proposal_usd": 9.253333333333332e-05,
+   "reply_rate": 0.2222222222222222
+  }
+ ]
+}
