@@ -448,6 +448,13 @@ def summarize(rows: list[dict]) -> dict:
     }
 
 
+def _np(o):
+    """json default: numpy scalars (bool_, float64, int64) from scipy and numpy results."""
+    if hasattr(o, "item"):
+        return o.item()
+    raise TypeError(f"not JSON serializable: {type(o).__name__}")
+
+
 def aggregate(rows: list[dict]) -> dict:
     out = {}
     for a in ARCHS:
@@ -523,7 +530,7 @@ async def main(n: int, budget_min: float, archs: tuple[str, ...], out_path: Path
     meta["llm_http_calls_graph"] = len(STATS)
     meta["llm_http_call_errors_graph"] = sum("error" in s for s in STATS)
     out = {"meta": meta, "results": aggregate(rows), "rows": rows}
-    out_path.write_text(json.dumps(out, indent=1), encoding="utf-8")
+    out_path.write_text(json.dumps(out, indent=1, default=_np), encoding="utf-8")
     return out
 
 

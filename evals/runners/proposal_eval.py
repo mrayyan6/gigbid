@@ -161,5 +161,7 @@ if __name__ == "__main__":
     ap.add_argument("--variants", nargs="+", default=None, help="subset of: v0_naive best")
     a = ap.parse_args()
     out = asyncio.run(run(a.max_minutes, a.out, a.n, a.variants))
-    for v in out["meta"]["variants"].values():
+    for v in dict.fromkeys(out["meta"]["variants"].values()):
+        if v not in out:
+            continue
         print(v, {k: x for k, x in out[v].items()})

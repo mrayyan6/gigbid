@@ -59,6 +59,13 @@ def expected_reply_prob(rec: dict) -> float:
     return _reply_probability(job, store.clients[job["client_id"]], rec)
 
 
+def _np(o):
+    """json default: numpy scalars (bool_, float64, int64) from scipy and numpy results."""
+    if hasattr(o, "item"):
+        return o.item()
+    raise TypeError(f"not JSON serializable: {type(o).__name__}")
+
+
 async def run(max_minutes: float) -> dict:
     os.environ["LLM_ENABLED"] = "1"
     t0 = time.time()
@@ -122,12 +129,16 @@ async def run(max_minutes: float) -> dict:
             "welch_t": float(t.statistic), "p_value": float(t.pvalue),
             "note": "simulator internal probability, not observable in the real world"}
     res["rows"] = rows
-    (RESULTS / "x2_experiment.json").write_text(json.dumps(res, indent=1), encoding="utf-8")
+    (RESULTS / "x2_experiment.json").write_text(json.dumps(res, indent=1, default=_np), encoding="utf-8")
     return res
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--max-minutes", type=float, default=30.0)
-    r = asyncio.run(run(ap.parse_args().max_minutes))
-    print(json.dumps({k: v for k, v in r.items() if k != "rows"}, indent=1))
+    ap.add_argument("--n", type=int, default=None, help="override evals config x2.n_jobs (smoke tests only)")
+    a = ap.parse_args()
+    if a.n:
+        C["n_jobs"] = a.n
+    r = asyncio.run(run(a.max_minutes))
+    print(json.dumps({k: v for k, v in r.items() if k != "rows"}, indent=1, default=_np))
