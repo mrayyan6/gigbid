@@ -9,3 +9,4 @@ data/processed/
 .claude-context/
 data/raw/
 *.zip
+*.egg-info/
