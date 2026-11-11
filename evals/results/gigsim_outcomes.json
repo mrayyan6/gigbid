@@ -1,0 +1,142 @@
+{
+ "meta": {
+  "source": "evals/results/proposal_eval.json records",
+  "how": "each draft approved in process, GigSim draws a reply from the client hidden preference",
+  "hire_rate": "not measured (the simulator has no hire event)",
+  "caveat": "reply probability in GigSim depends on keyword and price rules, so this measures agreement with the simulator, not real market response"
+ },
+ "v0_naive": {
+  "n_submitted": 18,
+  "replies": 7,
+  "reply_rate": 0.3888888888888889,
+  "ci95": [
+   0.20304991926931162,
+   0.6138133141934384
+  ],
+  "by_persona": {
+   "ai_ml": {
+    "n_submitted": 6,
+    "replies": 4,
+    "reply_rate": 0.6666666666666666,
+    "ci95": [
+     0.29998832134152864,
+     0.9032306674407831
+    ]
+   },
+   "data": {
+    "n_submitted": 6,
+    "replies": 1,
+    "reply_rate": 0.16666666666666666,
+    "ci95": [
+     0.03005258587173032,
+     0.563509436563646
+    ]
+   },
+   "web": {
+    "n_submitted": 6,
+    "replies": 2,
+    "reply_rate": 0.3333333333333333,
+    "ci95": [
+     0.09676933255921683,
+     0.7000116786584712
+    ]
+   }
+  },
+  "by_kind": {
+   "good": {
+    "n_submitted": 10,
+    "replies": 4,
+    "reply_rate": 0.4,
+    "ci95": [
+     0.16817758120350967,
+     0.6873304525498135
+    ]
+   },
+   "lowball": {
+    "n_submitted": 4,
+    "replies": 0,
+    "reply_rate": 0.0,
+    "ci95": [
+     0.0,
+     0.48990002040399916
+    ]
+   },
+   "stretch": {
+    "n_submitted": 4,
+    "replies": 3,
+    "reply_rate": 0.75,
+    "ci95": [
+     0.3006360524426366,
+     0.9544139373553637
+    ]
+   }
+  }
+ },
+ "v3_rerank": {
+  "n_submitted": 17,
+  "replies": 4,
+  "reply_rate": 0.23529411764705882,
+  "ci95": [
+   0.0955488907167594,
+   0.47262245889171595
+  ],
+  "by_persona": {
+   "ai_ml": {
+    "n_submitted": 5,
+    "replies": 1,
+    "reply_rate": 0.2,
+    "ci95": [
+     0.03622316096978745,
+     0.6244717358814613
+    ]
+   },
+   "data": {
+    "n_submitted": 6,
+    "replies": 2,
+    "reply_rate": 0.3333333333333333,
+    "ci95": [
+     0.09676933255921683,
+     0.7000116786584712
+    ]
+   },
+   "web": {
+    "n_submitted": 6,
+    "replies": 1,
+    "reply_rate": 0.16666666666666666,
+    "ci95": [
+     0.03005258587173032,
+     0.563509436563646
+    ]
+   }
+  },
+  "by_kind": {
+   "good": {
+    "n_submitted": 9,
+    "replies": 1,
+    "reply_rate": 0.1111111111111111,
+    "ci95": [
+     0.019890371327130535,
+     0.4350062147680601
+    ]
+   },
+   "lowball": {
+    "n_submitted": 4,
+    "replies": 1,
+    "reply_rate": 0.25,
+    "ci95": [
+     0.045586062644636216,
+     0.6993639475573634
+    ]
+   },
+   "stretch": {
+    "n_submitted": 4,
+    "replies": 2,
+    "reply_rate": 0.5,
+    "ci95": [
+     0.15003570882017148,
+     0.8499642911798285
+    ]
+   }
+  }
+ }
+}

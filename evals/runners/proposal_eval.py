@@ -54,9 +54,9 @@ def summarise(rows: list[dict]) -> dict:
     j = [r["judge"] for r in rows if r["judge"] is not None]
     return {"n_proposals": n,
             "llm_writer_used_share": mean([float(r["llm_used"]) for r in rows]),
-            "unsupported_per_proposal_before": mean([r["verifier_before": verifier_rule_unsupported(draft_sentences_before(vals), vals["evidence"]),
-                       "verifier_after": verifier_rule_unsupported(draft_sentences_after(vals), vals["evidence"]),
-                       "audit_before"] for r in rows]),
+            "unsupported_per_proposal_before": mean([r["verifier_before"] for r in rows]),
+            "unsupported_per_proposal": mean([r["verifier_after"] for r in rows]),
+            "unsupported_audit_before": mean([r["audit_before"] for r in rows]),
             "unsupported_audit_after": mean([r["audit_after"] for r in rows]),
             "judge_score": mean(j), "judge_n": len(j),
             "p50_latency_s": pctl(lat, 0.5), "p95_latency_s": pctl(lat, 0.95),
@@ -66,9 +66,14 @@ def summarise(rows: list[dict]) -> dict:
             "reply_rate": gigsim_outcomes.rate(rows)["reply_rate"]}
 
 
-async def run(max_minutes: float) -> dict:
+async def run(max_minutes: float, out_name: str = "proposal_eval.json", n_override: int | None = None,
+              variants_override: list[str] | None = None) -> dict:
     os.environ["LLM_ENABLED"] = "1"
     t_start = time.time()
+    if n_override:
+        C["n_per_persona"] = n_override
+    if variants_override:
+        C["variants"] = variants_override
     env = Env()
     best = pick_best()
     names = {"v0_naive": "v0_naive", "best": best}
@@ -113,14 +118,14 @@ async def run(max_minutes: float) -> dict:
                 label_rows.append({"id": rec["id"], "persona": p, "job": job_text(j), "draft": draft})
                 print(f"{len(records):3d} {rec['id']:42s} {rec['latency_s']:6.1f}s judge={rec['judge']} "
                       f"audit {rec['audit_before']}->{rec['audit_after']} {rec['outcome_status']}", flush=True)
-                if not exported and len(label_rows) >= C["judge_export_n"]:
+                if out_name == "proposal_eval.json" and not exported and len(label_rows) >= C["judge_export_n"]:
                     exported = export_labels(label_rows)
                     print("exported judge_labels.csv", exported, flush=True)
             if stopped_early:
                 break
         if stopped_early:
             break
-    if not exported and label_rows:
+    if out_name == "proposal_eval.json" and not exported and label_rows:
         exported = export_labels(label_rows)
     res = {"meta": {"n_per_persona_requested": C["n_per_persona"], "variants": names,
                     "best_variant": best, "skipped_non_bid": skipped, "stopped_early": stopped_early,
@@ -128,28 +133,33 @@ async def run(max_minutes: float) -> dict:
                     "models": {n: llm.resolve_model(n) for n in ("analyst", "writer", "critic", "judge")},
                     "judge_labels_exported": exported, "n_labels_exported": min(len(label_rows),
                                                                                 C["judge_export_n"]),
-                    "latency_note": "wall time of the graph run to the approval interrupt on a shared laptop GPU "
-                                    "(Ollama also served other jobs during the run, so latency is an upper bound)",
-                    "cost_note": "local Ollama, 0 USD per token; hardware cost not included",
+                    "profile": os.environ.get("GIGBID_PROFILE", "open"),
+                    "latency_note": "wall time of the graph run to the approval interrupt (local runs share one laptop GPU)",
+                    "cost_note": "USD from per token list prices in agent/config_extra.yaml providers (0 for local Ollama, hardware cost not included)",
                     "unsupported_note": "unsupported_per_proposal(_before) use the Verifier rule: past-work sentences "
                                         "without a valid evidence tag. before = writer output of the last pass, "
                                         "after = final draft shown for approval. The audit columns add a number "
                                         "check on tagged sentences.",
-                    "judge_note": "judge = agent/prompts/judge.md on qwen2.5:7b-instruct, uncalibrated until "
+                    "judge_note": f"judge = agent/prompts/judge.md on {llm.resolve_model('judge')}, uncalibrated until "
                                   "judge_calibration.json has a kappa from the human labels"},
            **{v: summarise([r for r in records if r["variant"] == v]) for v in dict.fromkeys(variants)},
            "by_persona": {v: {p: summarise([r for r in records if r["variant"] == v and r["persona"] == p])
                               for p in PERSONAS} for v in dict.fromkeys(variants)},
            "records": records}
     RESULTS.mkdir(parents=True, exist_ok=True)
-    (RESULTS / "proposal_eval.json").write_text(json.dumps(res, indent=1), encoding="utf-8")
-    gigsim_outcomes.main()
+    (RESULTS / out_name).write_text(json.dumps(res, indent=1), encoding="utf-8")
+    if out_name == "proposal_eval.json":
+        gigsim_outcomes.main()
     return res
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--max-minutes", type=float, default=28.0)
-    out = asyncio.run(run(ap.parse_args().max_minutes))
+    ap.add_argument("--out", default="proposal_eval.json")
+    ap.add_argument("--n", type=int, default=None, help="override n per persona")
+    ap.add_argument("--variants", nargs="+", default=None, help="subset of: v0_naive best")
+    a = ap.parse_args()
+    out = asyncio.run(run(a.max_minutes, a.out, a.n, a.variants))
     for v in out["meta"]["variants"].values():
         print(v, {k: x for k, x in out[v].items()})
