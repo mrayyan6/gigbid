@@ -13,6 +13,11 @@ budgets:
   max_steps_per_thread: 40
   max_tokens_per_thread: 60000
   critic_max_revisions: 2
+  # Declared before measuring (profile open_hosted). evals/runners/budget_eval.py and proposal_eval.json report
+  # the measured values next to these.
+  declared:
+    job_analysed:      {p95_latency_s: 20, cost_usd: 0.0005}   # a job that ends at the decision node
+    proposal_drafted:  {p95_latency_s: 60, cost_usd: 0.002}    # bid job from scout to the approval screen
 decision:
   risk_skip: 0.6
   fit_bid: 0.5

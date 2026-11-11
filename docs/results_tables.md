@@ -127,3 +127,12 @@ Source: evals/results/x2_experiment.json.
 | data | 0.77 | 0.94 | 0.62 | 0.88 |
 
 Caveat: the metrics rise because every one of the 30 synthetic lowball jobs has a budget of exactly 40 USD, just under the self chosen 50 USD minimum, so the new rule removes them by construction. It is not evidence of better judgement. No node code changed; the only Python added is the test fixture conftest.py. self imposed change request, mirrors the announced 2 Nov platform policy update format; the instructor did not publish a concrete policy text for self built simulators. Source: evals/results/change_request.json.
+
+## Declared budgets against measured
+
+| Unit | Declared p95 / cost | Measured p95 | Measured cost (mean) | Sample | Within |
+|---|---|---|---|---|---|
+| job analysed | 20 s / 0.0005 USD | 3.2 s | 0.00006 USD | n = 16 | yes |
+| proposal drafted | 60 s / 0.002 USD | 32.8 s | 0.00007 USD | n = 18 (v0_naive) | yes |
+
+Profile open_hosted (Groq, free tier pacing included in latency). Dev set, not the hidden test. Source: evals/results/budget_eval.json and proposal_eval.json.

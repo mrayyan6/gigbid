@@ -1,5 +1,6 @@
 {
  "status": "not run",
- "reason": "judge_labels.csv does not exist",
+ "reason": "no rows have both user_score and judge_score",
+ "n_rows": 30,
  "n_labelled": 0
 }

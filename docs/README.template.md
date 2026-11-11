@@ -63,6 +63,10 @@ accuracy, unsupported claims and tokens. The ReAct agent was the fastest per job
 {{TABLE:Prompt injection attack success rate}}
 The defences did not produce a statistically clear improvement at this sample size.
 
+### Declared budgets
+
+{{TABLE:Declared budgets against measured}}
+
 ### Extension X2 and change request
 
 {{TABLE:Extension X2: proposal strategy A/B}}

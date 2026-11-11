@@ -1,0 +1,252 @@
+{
+ "meta": {
+  "profile": "open_hosted",
+  "writer_model": "groq/qwen/qwen3.8-27b",
+  "kinds": [
+   "offtopic",
+   "lowball",
+   "stretch"
+  ],
+  "per_kind": 8,
+  "n_total": 24,
+  "n_analysed_only": 16,
+  "note": "jobs that reached the approval screen are excluded from the per job analysed figures"
+ },
+ "declared": {
+  "job_analysed": {
+   "p95_latency_s": 20,
+   "cost_usd": 0.0005
+  },
+  "proposal_drafted": {
+   "p95_latency_s": 60,
+   "cost_usd": 0.002
+  }
+ },
+ "measured_job_analysed": {
+  "n": 16,
+  "p50_latency_s": 3.11,
+  "p95_latency_s": 3.2,
+  "tokens_mean": 162.625,
+  "cost_usd_mean": 6.17e-05,
+  "p95_within_budget": true,
+  "cost_within_budget": true
+ },
+ "rows": [
+  {
+   "job_id": "dev-data-0018",
+   "kind": "offtopic",
+   "action": "skip",
+   "latency_s": 0.59,
+   "tokens": 160,
+   "cost_usd": 0.00023040000000000002,
+   "interrupted": false
+  },
+  {
+   "job_id": "dev-data-0034",
+   "kind": "offtopic",
+   "action": "skip",
+   "latency_s": 0.39,
+   "tokens": 170,
+   "cost_usd": 0.0002544,
+   "interrupted": false
+  },
+  {
+   "job_id": "dev-web-0016",
+   "kind": "offtopic",
+   "action": "skip",
+   "latency_s": 0.39,
+   "tokens": 159,
+   "cost_usd": 0.0002264,
+   "interrupted": false
+  },
+  {
+   "job_id": "dev-data-0048",
+   "kind": "offtopic",
+   "action": "skip",
+   "latency_s": 0.76,
+   "tokens": 177,
+   "cost_usd": 0.000276,
+   "interrupted": false
+  },
+  {
+   "job_id": "dev-ai_ml-0000",
+   "kind": "offtopic",
+   "action": "watch",
+   "latency_s": 3.69,
+   "tokens": 161,
+   "cost_usd": 0.0,
+   "interrupted": false
+  },
+  {
+   "job_id": "dev-data-0016",
+   "kind": "offtopic",
+   "action": "skip",
+   "latency_s": 3.1,
+   "tokens": 163,
+   "cost_usd": 0.0,
+   "interrupted": false
+  },
+  {
+   "job_id": "dev-ai_ml-0023",
+   "kind": "offtopic",
+   "action": "skip",
+   "latency_s": 3.19,
+   "tokens": 159,
+   "cost_usd": 0.0,
+   "interrupted": false
+  },
+  {
+   "job_id": "dev-data-0057",
+   "kind": "offtopic",
+   "action": "skip",
+   "latency_s": 3.08,
+   "tokens": 160,
+   "cost_usd": 0.0,
+   "interrupted": false
+  },
+  {
+   "job_id": "dev-ai_ml-0030",
+   "kind": "lowball",
+   "action": "skip",
+   "latency_s": 3.18,
+   "tokens": 164,
+   "cost_usd": 0.0,
+   "interrupted": false
+  },
+  {
+   "job_id": "dev-data-0043",
+   "kind": "lowball",
+   "action": "skip",
+   "latency_s": 3.16,
+   "tokens": 157,
+   "cost_usd": 0.0,
+   "interrupted": false
+  },
+  {
+   "job_id": "dev-data-0004",
+   "kind": "lowball",
+   "action": "skip",
+   "latency_s": 3.11,
+   "tokens": 162,
+   "cost_usd": 0.0,
+   "interrupted": false
+  },
+  {
+   "job_id": "dev-data-0015",
+   "kind": "lowball",
+   "action": "skip",
+   "latency_s": 3.07,
+   "tokens": 161,
+   "cost_usd": 0.0,
+   "interrupted": false
+  },
+  {
+   "job_id": "dev-data-0001",
+   "kind": "lowball",
+   "action": "skip",
+   "latency_s": 3.13,
+   "tokens": 163,
+   "cost_usd": 0.0,
+   "interrupted": false
+  },
+  {
+   "job_id": "dev-web-0004",
+   "kind": "lowball",
+   "action": "skip",
+   "latency_s": 3.13,
+   "tokens": 163,
+   "cost_usd": 0.0,
+   "interrupted": false
+  },
+  {
+   "job_id": "dev-data-0013",
+   "kind": "lowball",
+   "action": "skip",
+   "latency_s": 3.2,
+   "tokens": 165,
+   "cost_usd": 0.0,
+   "interrupted": false
+  },
+  {
+   "job_id": "dev-ai_ml-0021",
+   "kind": "lowball",
+   "action": "skip",
+   "latency_s": 3.13,
+   "tokens": 158,
+   "cost_usd": 0.0,
+   "interrupted": false
+  },
+  {
+   "job_id": "dev-data-0008",
+   "kind": "stretch",
+   "action": "bid",
+   "latency_s": 28.76,
+   "tokens": 2907,
+   "cost_usd": 0.0,
+   "interrupted": true
+  },
+  {
+   "job_id": "dev-data-0051",
+   "kind": "stretch",
+   "action": "bid",
+   "latency_s": 29.94,
+   "tokens": 2928,
+   "cost_usd": 0.0,
+   "interrupted": true
+  },
+  {
+   "job_id": "dev-web-0032",
+   "kind": "stretch",
+   "action": "bid",
+   "latency_s": 30.28,
+   "tokens": 3160,
+   "cost_usd": 0.0,
+   "interrupted": true
+  },
+  {
+   "job_id": "dev-web-0052",
+   "kind": "stretch",
+   "action": "bid",
+   "latency_s": 30.81,
+   "tokens": 3582,
+   "cost_usd": 0.00024,
+   "interrupted": true
+  },
+  {
+   "job_id": "dev-ai_ml-0024",
+   "kind": "stretch",
+   "action": "bid",
+   "latency_s": 27.65,
+   "tokens": 2723,
+   "cost_usd": 0.0,
+   "interrupted": true
+  },
+  {
+   "job_id": "dev-web-0031",
+   "kind": "stretch",
+   "action": "bid",
+   "latency_s": 26.15,
+   "tokens": 3017,
+   "cost_usd": 0.0002408,
+   "interrupted": true
+  },
+  {
+   "job_id": "dev-web-0019",
+   "kind": "stretch",
+   "action": "bid",
+   "latency_s": 29.84,
+   "tokens": 3124,
+   "cost_usd": 0.0,
+   "interrupted": true
+  },
+  {
+   "job_id": "dev-ai_ml-0022",
+   "kind": "stretch",
+   "action": "bid",
+   "latency_s": 24.77,
+   "tokens": 2999,
+   "cost_usd": 0.0002504,
+   "interrupted": true
+  }
+ ]
+}

@@ -122,6 +122,18 @@ Writer model groq/qwen/qwen3.8-27b. Source: evals/results/injection_eval.json.
 
 The defences did not produce a statistically clear improvement at this sample size.
 
+### Declared budgets
+
+**Declared budgets against measured**
+
+| Unit | Declared p95 / cost | Measured p95 | Measured cost (mean) | Sample | Within |
+|---|---|---|---|---|---|
+| job analysed | 20 s / 0.0005 USD | 3.2 s | 0.00006 USD | n = 16 | yes |
+| proposal drafted | 60 s / 0.002 USD | 32.8 s | 0.00007 USD | n = 18 (v0_naive) | yes |
+
+Profile open_hosted (Groq, free tier pacing included in latency). Dev set, not the hidden test. Source: evals/results/budget_eval.json and proposal_eval.json.
+
+
 ### Extension X2 and change request
 
 **Extension X2: proposal strategy A/B**
