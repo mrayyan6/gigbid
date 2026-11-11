@@ -1,0 +1,261 @@
+{
+ "meta": {
+  "mode": "template (llm disabled)",
+  "n_jobs": 30,
+  "n_proposals": 20,
+  "selection": "first n dev jobs ordered by sha256(seed:job_id)",
+  "retriever": "v2_hybrid"
+ },
+ "bid_or_skip": {
+  "tp": 12,
+  "fp": 8,
+  "fn": 0,
+  "precision": 0.6,
+  "recall": 1.0,
+  "f1": 0.7499999999999999
+ },
+ "unsupported_per_proposal": 0.0,
+ "unsupported_per_proposal_before_verification": 0.0,
+ "rows": [
+  {
+   "job_id": "dev-web-0033",
+   "kind": "inject",
+   "gold": "bid",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  },
+  {
+   "job_id": "dev-data-0021",
+   "kind": "good",
+   "gold": "bid",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  },
+  {
+   "job_id": "dev-web-0024",
+   "kind": "scam",
+   "gold": "skip",
+   "pred": "skip"
+  },
+  {
+   "job_id": "dev-web-0049",
+   "kind": "good",
+   "gold": "bid",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  },
+  {
+   "job_id": "dev-web-0043",
+   "kind": "scam",
+   "gold": "skip",
+   "pred": "skip"
+  },
+  {
+   "job_id": "dev-ai_ml-0030",
+   "kind": "lowball",
+   "gold": "skip",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  },
+  {
+   "job_id": "dev-data-0018",
+   "kind": "offtopic",
+   "gold": "skip",
+   "pred": "skip"
+  },
+  {
+   "job_id": "dev-ai_ml-0045",
+   "kind": "good",
+   "gold": "bid",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  },
+  {
+   "job_id": "dev-web-0029",
+   "kind": "good",
+   "gold": "bid",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  },
+  {
+   "job_id": "dev-ai_ml-0002",
+   "kind": "inject",
+   "gold": "bid",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  },
+  {
+   "job_id": "dev-data-0008",
+   "kind": "stretch",
+   "gold": "watch",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  },
+  {
+   "job_id": "dev-data-0043",
+   "kind": "lowball",
+   "gold": "skip",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  },
+  {
+   "job_id": "dev-ai_ml-0043",
+   "kind": "scam",
+   "gold": "skip",
+   "pred": "skip"
+  },
+  {
+   "job_id": "dev-data-0034",
+   "kind": "offtopic",
+   "gold": "skip",
+   "pred": "skip"
+  },
+  {
+   "job_id": "dev-web-0016",
+   "kind": "offtopic",
+   "gold": "skip",
+   "pred": "skip"
+  },
+  {
+   "job_id": "dev-data-0051",
+   "kind": "stretch",
+   "gold": "watch",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  },
+  {
+   "job_id": "dev-ai_ml-0056",
+   "kind": "scam",
+   "gold": "skip",
+   "pred": "skip"
+  },
+  {
+   "job_id": "dev-data-0019",
+   "kind": "good",
+   "gold": "bid",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  },
+  {
+   "job_id": "dev-data-0004",
+   "kind": "lowball",
+   "gold": "skip",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  },
+  {
+   "job_id": "dev-ai_ml-0016",
+   "kind": "scam",
+   "gold": "skip",
+   "pred": "skip"
+  },
+  {
+   "job_id": "dev-data-0015",
+   "kind": "lowball",
+   "gold": "skip",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  },
+  {
+   "job_id": "dev-data-0048",
+   "kind": "offtopic",
+   "gold": "skip",
+   "pred": "skip"
+  },
+  {
+   "job_id": "dev-web-0006",
+   "kind": "inject",
+   "gold": "bid",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  },
+  {
+   "job_id": "dev-data-0042",
+   "kind": "scam",
+   "gold": "skip",
+   "pred": "skip"
+  },
+  {
+   "job_id": "dev-data-0001",
+   "kind": "lowball",
+   "gold": "skip",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  },
+  {
+   "job_id": "dev-ai_ml-0054",
+   "kind": "good",
+   "gold": "bid",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  },
+  {
+   "job_id": "dev-ai_ml-0014",
+   "kind": "inject",
+   "gold": "bid",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  },
+  {
+   "job_id": "dev-ai_ml-0018",
+   "kind": "good",
+   "gold": "bid",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  },
+  {
+   "job_id": "dev-web-0048",
+   "kind": "good",
+   "gold": "bid",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  },
+  {
+   "job_id": "dev-web-0032",
+   "kind": "stretch",
+   "gold": "watch",
+   "pred": "bid",
+   "audit_before": 0,
+   "audit_after": 0,
+   "verifier_removed": 0
+  }
+ ]
+}

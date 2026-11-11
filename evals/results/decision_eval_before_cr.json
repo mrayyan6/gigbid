@@ -1,0 +1,44 @@
+{
+ "ai_ml": {
+  "n": 60,
+  "bid_or_skip": {
+   "precision": 0.6,
+   "recall": 1.0,
+   "f1": 0.7499999999999999
+  },
+  "scam": {
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  "accuracy_3way": 0.65
+ },
+ "web": {
+  "n": 60,
+  "bid_or_skip": {
+   "precision": 0.6,
+   "recall": 1.0,
+   "f1": 0.7499999999999999
+  },
+  "scam": {
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  "accuracy_3way": 0.6833333333333333
+ },
+ "data": {
+  "n": 60,
+  "bid_or_skip": {
+   "precision": 0.625,
+   "recall": 1.0,
+   "f1": 0.7692307692307693
+  },
+  "scam": {
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  "accuracy_3way": 0.7
+ }
+}

@@ -1,0 +1,46 @@
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	read_messages(read_messages)
+	classify_intent(classify_intent)
+	draft_reply(draft_reply)
+	propose_slots(propose_slots)
+	flag_scam(flag_scam)
+	approval(approval)
+	recheck(recheck)
+	send(send)
+	needs_attention(needs_attention)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> read_messages;
+	approval -.-> __end__;
+	approval -.-> needs_attention;
+	approval -.-> recheck;
+	classify_intent -.-> __end__;
+	classify_intent -.-> draft_reply;
+	classify_intent -.-> flag_scam;
+	classify_intent -.-> needs_attention;
+	classify_intent -.-> propose_slots;
+	draft_reply -.-> __end__;
+	draft_reply -.-> approval;
+	draft_reply -.-> needs_attention;
+	flag_scam -.-> __end__;
+	flag_scam -.-> approval;
+	flag_scam -.-> needs_attention;
+	propose_slots -.-> __end__;
+	propose_slots -.-> approval;
+	propose_slots -.-> needs_attention;
+	read_messages -.-> __end__;
+	read_messages -.-> classify_intent;
+	read_messages -.-> needs_attention;
+	recheck -.-> __end__;
+	recheck -.-> needs_attention;
+	recheck -.-> send;
+	needs_attention --> __end__;
+	send --> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc

@@ -1,0 +1,7 @@
+# CI gate for evals/runners/smoke_eval.py. Values are the measured baseline (see
+# evals/results/smoke_eval.json) with a margin from evals/config.yaml. Raise the floor only with a new
+# measured baseline.
+bid_f1_min: 0.7
+unsupported_per_proposal_max: 0.1
+baseline_bid_f1: 0.75
+baseline_unsupported_per_proposal: 0.0
