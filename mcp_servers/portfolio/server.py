@@ -10,13 +10,16 @@ cache dir), PORTFOLIO_PERSONA (default ai_ml), RAG_VARIANT (default v2_hybrid).
 """
 from __future__ import annotations
 
+import os
 import sys
 
 from mcp.server.fastmcp import FastMCP
 
 from mcp_servers.portfolio import prompts, resources, tools
 
-mcp = FastMCP("gigbid-portfolio")
+# Host and port come from FASTMCP_HOST and FASTMCP_PORT. SDK 1.30 no longer reads them itself, so pass them in.
+mcp = FastMCP("gigbid-portfolio", host=os.environ.get("FASTMCP_HOST", "127.0.0.1"),
+              port=int(os.environ.get("FASTMCP_PORT", "8000")))
 tools.register(mcp)
 resources.register(mcp)
 prompts.register(mcp)
