@@ -16,12 +16,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends git ca-certific
 RUN git clone "$GIGBID_REPO" /src && cd /src && git checkout "$GIGBID_COMMIT" && rm -rf .git
 
 # == web: Next.js standalone build ==
-FROM node:20-slim AS web-build
+FROM node:24-slim AS web-build
 WORKDIR /web
 ENV API_URL=http://127.0.0.1:8000 \
     NEXT_TELEMETRY_DISABLED=1
 COPY --from=src /src/apps/web/package.json /src/apps/web/package-lock.json ./
-RUN npm install -g npm@11.6.1 && npm ci
+# npm ci fails on Linux with a lockfile written on Windows (missing nested picomatch), so use install
+RUN npm install -g npm@11.6.1 && npm install --no-audit --no-fund
 COPY --from=src /src/apps/web ./
 RUN mkdir -p public && npm run build
 

@@ -2,12 +2,13 @@
 #   docker build -f infra/docker/web.Dockerfile --build-arg API_URL=http://api:8000 .
 # next.config.mjs reads API_URL at BUILD time (rewrites are baked into the routes manifest), so
 # pass the URL the container will use to reach the API.
-FROM node:20-slim AS deps
+FROM node:24-slim AS deps
 WORKDIR /web
 COPY apps/web/package.json apps/web/package-lock.json ./
-RUN npm install -g npm@11.6.1 && npm ci
+# npm ci fails on Linux with a lockfile written on Windows (missing nested picomatch), so use install
+RUN npm install -g npm@11.6.1 && npm install --no-audit --no-fund
 
-FROM node:20-slim AS build
+FROM node:24-slim AS build
 WORKDIR /web
 ARG API_URL=http://api:8000
 ENV API_URL=${API_URL} \
@@ -16,7 +17,7 @@ COPY --from=deps /web/node_modules ./node_modules
 COPY apps/web ./
 RUN mkdir -p public && npm run build
 
-FROM node:20-slim AS runtime
+FROM node:24-slim AS runtime
 WORKDIR /web
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \

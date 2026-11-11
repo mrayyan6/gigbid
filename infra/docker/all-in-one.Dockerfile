@@ -5,12 +5,13 @@
 # Hugging Face Spaces use infra/hf_space/Dockerfile, which clones the repo and then does the same.
 
 # == web: Next.js standalone build ==
-FROM node:20-slim AS web-build
+FROM node:24-slim AS web-build
 WORKDIR /web
 ENV API_URL=http://127.0.0.1:8000 \
     NEXT_TELEMETRY_DISABLED=1
 COPY apps/web/package.json apps/web/package-lock.json ./
-RUN npm install -g npm@11.6.1 && npm ci
+# npm ci fails on Linux with a lockfile written on Windows (missing nested picomatch), so use install
+RUN npm install -g npm@11.6.1 && npm install --no-audit --no-fund
 COPY apps/web ./
 RUN mkdir -p public && npm run build
 
