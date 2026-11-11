@@ -2,17 +2,17 @@
  "meta": {
   "mode": "template (llm disabled)",
   "n_jobs": 30,
-  "n_proposals": 20,
+  "n_proposals": 15,
   "selection": "first n dev jobs ordered by sha256(seed:job_id)",
   "retriever": "v2_hybrid"
  },
  "bid_or_skip": {
   "tp": 12,
-  "fp": 8,
+  "fp": 3,
   "fn": 0,
-  "precision": 0.6,
+  "precision": 0.8,
   "recall": 1.0,
-  "f1": 0.7499999999999999
+  "f1": 0.888888888888889
  },
  "unsupported_per_proposal": 0.0,
  "unsupported_per_proposal_before_verification": 0.0,
@@ -60,10 +60,7 @@
    "job_id": "dev-ai_ml-0030",
    "kind": "lowball",
    "gold": "skip",
-   "pred": "bid",
-   "audit_before": 0,
-   "audit_after": 0,
-   "verifier_removed": 0
+   "pred": "skip"
   },
   {
    "job_id": "dev-data-0018",
@@ -111,10 +108,7 @@
    "job_id": "dev-data-0043",
    "kind": "lowball",
    "gold": "skip",
-   "pred": "bid",
-   "audit_before": 0,
-   "audit_after": 0,
-   "verifier_removed": 0
+   "pred": "skip"
   },
   {
    "job_id": "dev-ai_ml-0043",
@@ -162,10 +156,7 @@
    "job_id": "dev-data-0004",
    "kind": "lowball",
    "gold": "skip",
-   "pred": "bid",
-   "audit_before": 0,
-   "audit_after": 0,
-   "verifier_removed": 0
+   "pred": "skip"
   },
   {
    "job_id": "dev-ai_ml-0016",
@@ -177,10 +168,7 @@
    "job_id": "dev-data-0015",
    "kind": "lowball",
    "gold": "skip",
-   "pred": "bid",
-   "audit_before": 0,
-   "audit_after": 0,
-   "verifier_removed": 0
+   "pred": "skip"
   },
   {
    "job_id": "dev-data-0048",
@@ -207,10 +195,7 @@
    "job_id": "dev-data-0001",
    "kind": "lowball",
    "gold": "skip",
-   "pred": "bid",
-   "audit_before": 0,
-   "audit_after": 0,
-   "verifier_removed": 0
+   "pred": "skip"
   },
   {
    "job_id": "dev-ai_ml-0054",
