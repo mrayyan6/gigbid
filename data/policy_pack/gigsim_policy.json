@@ -1,0 +1,14 @@
+{
+ "version": 1,
+ "connects_multiplier": 1.0,
+ "min_budget_usd": 0,
+ "max_proposals_per_day": 20,
+ "rate_limit_per_min": 120,
+ "rules": [
+  "no off-platform contact",
+  "no unpaid trials",
+  "no fabricated experience",
+  "no result guarantees",
+  "human approval required"
+ ]
+}

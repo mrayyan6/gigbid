@@ -1,0 +1,36 @@
+[project]
+name = "gigbid"
+version = "0.1.0"
+description = "GigBid: agentic freelance bidding assistant (AI-4016 A2)"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi",
+  "uvicorn[standard]",
+  "pydantic>=2",
+  "pyyaml",
+  "langgraph",
+  "langgraph-checkpoint-sqlite",
+  "langchain-core",
+  "langchain-mcp-adapters",
+  "mcp",
+  "httpx",
+  "python-dotenv",
+  "rank-bm25",
+  "numpy",
+  "pandas",
+  "scikit-learn",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-asyncio", "ruff", "kaggle"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.setuptools]
+packages = []
