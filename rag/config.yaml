@@ -1,0 +1,28 @@
+# RAG rules and thresholds. Nothing below is hard coded in rag/*.py.
+embedding:
+  model: BAAI/bge-small-en-v1.5
+  cache_dir: data/processed
+chunking:
+  chunk_words: 60          # V0 fixed-size chunks; portfolio items are shorter, so most are one chunk
+  overlap_words: 10
+decompose:
+  min_words_without_marker: 40   # free text shorter than this is treated as one requirement
+  requirement_template: "Experience with {req}"
+  marker_regex: "(?i)required\\s*(?:skills)?\\s*:\\s*((?:[^.]|\\.(?=\\w))*)"
+fusion:
+  rrf_k: 60
+  candidate_pool: 50       # per ranker, before fusion
+reranker:
+  model: BAAI/bge-reranker-v2-m3-int8   # int8 export of the bge-reranker-v2-m3 named in agent/config.yaml
+  fallback_model: Xenova/ms-marco-MiniLM-L-6-v2
+  pool: 20                 # candidates passed to the cross-encoder per requirement
+corrective:
+  max_retries: 2
+  score_threshold: 0.0     # cross-encoder logit; 0 is the model's own relevant / not relevant boundary
+  related_skills: 3        # skills appended when a requirement is rewritten
+eval:
+  exclude_kinds: [scam, inject]   # retrieval is not what these jobs test
+  buckets:
+    four_plus_min: 4
+  bootstrap_resamples: 2000
+  seed: 7
