@@ -173,8 +173,7 @@ def x2() -> str:
 def change_request() -> str:
     d = load("change_request")
     if not d:
-        return "not run
-"
+        return "not run\n"
     k = d["by_kind"]
     rows = [["elapsed minutes (tag to tag)", d["elapsed_minutes"]], ["files changed", d["files_changed"]]]
     for name in ("config_or_docs", "code", "tests"):
@@ -183,16 +182,14 @@ def change_request() -> str:
     out = table(["Measure", "Value"], rows)
     m = d.get("decision_metrics", {})
     if m:
-        out += "
-" + table(["Persona", "Bid F1 before", "Bid F1 after", "Bid precision before", "Bid precision after"],
+        out += "\n" + table(["Persona", "Bid F1 before", "Bid F1 after", "Bid precision before", "Bid precision after"],
                             [[p, f(v["bid_f1_before"], 2), f(v["bid_f1_after"], 2), f(v["bid_precision_before"], 2),
                               f(v["bid_precision_after"], 2)] for p, v in m.items()])
-    return (out + "
-Caveat: the metrics rise because every one of the 30 synthetic lowball jobs has a budget of exactly "
+    return (out + "\nCaveat: the metrics rise because every one of the 30 synthetic lowball jobs has a budget of exactly "
             "40 USD, just under the self chosen 50 USD minimum, so the new rule removes them by construction. It is "
             "not evidence of better judgement. No node code changed; the only Python added is the test fixture "
-            "conftest.py. " + d["label"] + ". Source: evals/results/change_request.json.
-")
+            "conftest.py. " + d["label"] + ". Source: evals/results/change_request.json."
+            "\n")
 
 
 def main() -> None:

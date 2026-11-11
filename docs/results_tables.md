@@ -112,102 +112,18 @@ Source: evals/results/x2_experiment.json.
 
 ## Change request
 
-```json
-{
- "label": "self imposed change request, mirrors the announced 2 Nov platform policy update format; the instructor did not publish a concrete policy text for self built simulators",
- "start_commit": "c156a01feb677678ae01d5057af09161ae5f7dfb",
- "end_commit": "d04f2e70ffc28604c73242e7407ebfae3ce2230f",
- "elapsed_minutes": 3.7,
- "files_changed": 6,
- "by_kind": {
-  "code": {
-   "files": 1,
-   "added": 26,
-   "deleted": 0
-  },
-  "config_or_docs": {
-   "files": 2,
-   "added": 9,
-   "deleted": 5
-  },
-  "results": {
-   "files": 2,
-   "added": 53,
-   "deleted": 9
-  },
-  "tests": {
-   "files": 1,
-   "added": 64,
-   "deleted": 0
-  }
- },
- "files": [
-  {
-   "path": "conftest.py",
-   "added": 26,
-   "deleted": 0,
-   "kind": "code"
-  },
-  {
-   "path": "data/policy_pack/gigsim_policy.json",
-   "added": 8,
-   "deleted": 4,
-   "kind": "config_or_docs"
-  },
-  {
-   "path": "data/policy_pack/p2.json",
-   "added": 1,
-   "deleted": 1,
-   "kind": "config_or_docs"
-  },
-  {
-   "path": "evals/results/decision_eval.json",
-   "added": 9,
-   "deleted": 9,
-   "kind": "results"
-  },
-  {
-   "path": "evals/results/decision_eval_after_cr.json",
-   "added": 44,
-   "deleted": 0,
-   "kind": "results"
-  },
-  {
-   "path": "tests/integration/test_change_request.py",
-   "added": 64,
-   "deleted": 0,
-   "kind": "tests"
-  }
- ],
- "decision_metrics": {
-  "ai_ml": {
-   "bid_f1_before": 0.7499999999999999,
-   "bid_f1_after": 0.8852459016393442,
-   "bid_precision_before": 0.6,
-   "bid_precision_after": 0.7941176470588235,
-   "accuracy_3way_before": 0.65,
-   "accuracy_3way_after": 0.8333333333333334
-  },
-  "web": {
-   "bid_f1_before": 0.7499999999999999,
-   "bid_f1_after": 0.8059701492537313,
-   "bid_precision_before": 0.6,
-   "bid_precision_after": 0.675,
-   "accuracy_3way_before": 0.6833333333333333,
-   "accuracy_3way_after": 0.7666666666666667
-  },
-  "data": {
-   "bid_f1_before": 0.7692307692307693,
-   "bid_f1_after": 0.9375,
-   "bid_precision_before": 0.625,
-   "bid_precision_after": 0.8823529411764706,
-   "accuracy_3way_before": 0.7,
-   "accuracy_3way_after": 0.9333333333333333
-  }
- },
- "tests_added": [
-  "tests/integration/test_change_request.py"
- ]
-}
-```
-Source: evals/results/change_request.json.
+| Measure | Value |
+|---|---|
+| elapsed minutes (tag to tag) | 3.7 |
+| files changed | 6 |
+| config_or_docs lines | +9 / -5 in 2 file(s) |
+| code lines | +26 / -0 in 1 file(s) |
+| tests lines | +64 / -0 in 1 file(s) |
+
+| Persona | Bid F1 before | Bid F1 after | Bid precision before | Bid precision after |
+|---|---|---|---|---|
+| ai_ml | 0.75 | 0.89 | 0.60 | 0.79 |
+| web | 0.75 | 0.81 | 0.60 | 0.68 |
+| data | 0.77 | 0.94 | 0.62 | 0.88 |
+
+Caveat: the metrics rise because every one of the 30 synthetic lowball jobs has a budget of exactly 40 USD, just under the self chosen 50 USD minimum, so the new rule removes them by construction. It is not evidence of better judgement. No node code changed; the only Python added is the test fixture conftest.py. self imposed change request, mirrors the announced 2 Nov platform policy update format; the instructor did not publish a concrete policy text for self built simulators. Source: evals/results/change_request.json.
