@@ -1,0 +1,2103 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "GigBid API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login",
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Me",
+        "operationId": "me",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/jobs": {
+      "get": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "List Jobs",
+        "description": "Inbox: jobs for the user's persona, ranked by fit (scored runs first), then low risk.",
+        "operationId": "list_jobs",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 300,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Query"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobOut"
+                  },
+                  "title": "Response List Jobs"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/jobs/{job_id}": {
+      "get": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Get Job",
+        "operationId": "get_job",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobDetailOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/runs": {
+      "post": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Start Run",
+        "description": "Start (or return) the bid thread for a job. Never blocks on the graph.\n\nIdempotent: one thread per user and job. If the marketplace is down the run stays `queued`\nand is started automatically when it recovers.",
+        "operationId": "start_run",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunStartOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/runs/{tid}": {
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Get Run",
+        "operationId": "get_run",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Tid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/runs/{tid}/stream": {
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Stream Run",
+        "operationId": "stream_run",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Tid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SSE events: node, custom, interrupt, status, error, done. Auth via Bearer header or ?token= for EventSource.",
+            "content": {
+              "application/json": {
+                "schema": {}
+              },
+              "text/event-stream": {}
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/approvals": {
+      "get": {
+        "tags": [
+          "approvals"
+        ],
+        "summary": "List Approvals",
+        "description": "Pending approvals, read from checkpoint state so a refresh or API restart loses nothing.\n\nThe runs table status can lag a crash (it may still say `running`), so every candidate is\nconfirmed against the checkpoint.",
+        "operationId": "list_approvals",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ApprovalItem"
+                  },
+                  "type": "array",
+                  "title": "Response List Approvals"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/approvals/{tid}": {
+      "post": {
+        "tags": [
+          "approvals"
+        ],
+        "summary": "Decide",
+        "description": "Resume the interrupted thread with approve, edit (text) or reject (reason).",
+        "operationId": "decide_approval",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Tid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApprovalIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApprovalOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/proposals/{tid}/regenerate": {
+      "post": {
+        "tags": [
+          "proposals"
+        ],
+        "summary": "Regenerate",
+        "description": "Regenerate one paragraph of the pending draft.\n\nTODO(graph lane): the bid graph has no single paragraph rewrite entry point yet. This adapter\nvalidates ownership and the paragraph index, then reports regenerated=false so the UI can show\nthe message. Wire it to a writer rewrite function when agent/nodes/writer.py exposes one.",
+        "operationId": "regenerate_paragraph",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Tid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegenerateIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegenerateOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pipeline": {
+      "get": {
+        "tags": [
+          "pipeline"
+        ],
+        "summary": "Get Pipeline",
+        "description": "Kanban from checkpoint state plus marketplace events (a client message means `replied`).\n\nWorks while the marketplace is down (cards just stop advancing), so the board never errors.",
+        "operationId": "get_pipeline",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PipelineOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/messages": {
+      "get": {
+        "tags": [
+          "messages"
+        ],
+        "summary": "List Messages",
+        "operationId": "list_messages",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessagesOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/messages/{client_id}/draft": {
+      "post": {
+        "tags": [
+          "messages"
+        ],
+        "summary": "Draft Reply",
+        "description": "Suggest a reply to the latest client message. Nothing is sent: sending needs approval.",
+        "operationId": "draft_reply",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Client Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/DraftIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DraftOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/analytics": {
+      "get": {
+        "tags": [
+          "analytics"
+        ],
+        "summary": "Analytics",
+        "operationId": "get_analytics",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyticsOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/memory": {
+      "get": {
+        "tags": [
+          "memory"
+        ],
+        "summary": "List Memory",
+        "description": "Promoted memory only (style and outcome), scoped to the calling user.",
+        "operationId": "list_memory",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemoryOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/memory/{ns}/{key}": {
+      "delete": {
+        "tags": [
+          "memory"
+        ],
+        "summary": "Delete Memory",
+        "operationId": "delete_memory",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "ns",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Ns"
+            }
+          },
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings": {
+      "get": {
+        "tags": [
+          "settings"
+        ],
+        "summary": "Get Settings",
+        "operationId": "get_settings",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "settings"
+        ],
+        "summary": "Put Settings",
+        "description": "Autonomy can auto-skip low fit jobs but never auto-sends (enforced in the graph, not here).",
+        "operationId": "put_settings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SettingsModel"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/health": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Health",
+        "description": "Public. `marketplace: down` puts the UI in degraded mode. When it is up again, runs that\nwere queued during the outage are started.",
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AnalyticsOut": {
+        "properties": {
+          "runs_total": {
+            "type": "integer",
+            "title": "Runs Total"
+          },
+          "by_status": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "By Status"
+          },
+          "by_action": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "By Action"
+          },
+          "submitted": {
+            "type": "integer",
+            "title": "Submitted"
+          },
+          "rejected": {
+            "type": "integer",
+            "title": "Rejected"
+          },
+          "connects_spent": {
+            "type": "integer",
+            "title": "Connects Spent"
+          },
+          "replied": {
+            "type": "integer",
+            "title": "Replied"
+          },
+          "reply_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reply Rate"
+          },
+          "avg_steps": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Steps"
+          },
+          "top_rejection_reasons": {
+            "items": {
+              "$ref": "#/components/schemas/ReasonCount"
+            },
+            "type": "array",
+            "title": "Top Rejection Reasons"
+          }
+        },
+        "type": "object",
+        "required": [
+          "runs_total",
+          "by_status",
+          "by_action",
+          "submitted",
+          "rejected",
+          "connects_spent",
+          "replied"
+        ],
+        "title": "AnalyticsOut"
+      },
+      "ApprovalIn": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "approve",
+              "edit",
+              "reject"
+            ],
+            "title": "Action"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text",
+            "description": "Edited cover letter, for action=edit"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason",
+            "description": "Required for action=reject"
+          }
+        },
+        "type": "object",
+        "required": [
+          "action"
+        ],
+        "title": "ApprovalIn"
+      },
+      "ApprovalItem": {
+        "properties": {
+          "thread_id": {
+            "type": "string",
+            "title": "Thread Id"
+          },
+          "job_id": {
+            "type": "string",
+            "title": "Job Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "default": ""
+          },
+          "payload": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Payload"
+          }
+        },
+        "type": "object",
+        "required": [
+          "thread_id",
+          "job_id",
+          "payload"
+        ],
+        "title": "ApprovalItem"
+      },
+      "ApprovalOut": {
+        "properties": {
+          "thread_id": {
+            "type": "string",
+            "title": "Thread Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "running",
+              "awaiting_approval",
+              "completed",
+              "skipped",
+              "blocked",
+              "rejected",
+              "needs_attention",
+              "failed"
+            ],
+            "title": "Status"
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outcome"
+          },
+          "promoted_memory": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Promoted Memory"
+          }
+        },
+        "type": "object",
+        "required": [
+          "thread_id",
+          "status"
+        ],
+        "title": "ApprovalOut"
+      },
+      "DeleteOut": {
+        "properties": {
+          "deleted": {
+            "type": "boolean",
+            "title": "Deleted"
+          }
+        },
+        "type": "object",
+        "required": [
+          "deleted"
+        ],
+        "title": "DeleteOut"
+      },
+      "DraftIn": {
+        "properties": {
+          "instruction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instruction"
+          }
+        },
+        "type": "object",
+        "title": "DraftIn"
+      },
+      "DraftOut": {
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "title": "Client Id"
+          },
+          "intent": {
+            "type": "string",
+            "title": "Intent"
+          },
+          "draft": {
+            "type": "string",
+            "title": "Draft"
+          },
+          "slots": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Slots"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "awaiting_approval",
+              "flagged"
+            ],
+            "title": "Status",
+            "default": "awaiting_approval"
+          }
+        },
+        "type": "object",
+        "required": [
+          "client_id",
+          "intent",
+          "draft"
+        ],
+        "title": "DraftOut"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthOut": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "degraded"
+            ],
+            "title": "Status"
+          },
+          "marketplace": {
+            "type": "string",
+            "enum": [
+              "up",
+              "down"
+            ],
+            "title": "Marketplace"
+          },
+          "service": {
+            "type": "string",
+            "title": "Service",
+            "default": "gigbid-api"
+          },
+          "checkpointer": {
+            "type": "string",
+            "title": "Checkpointer",
+            "default": ""
+          },
+          "queued_runs": {
+            "type": "integer",
+            "title": "Queued Runs",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "marketplace"
+        ],
+        "title": "HealthOut"
+      },
+      "JobDetailOut": {
+        "properties": {
+          "job": {
+            "$ref": "#/components/schemas/JobOut"
+          },
+          "raw": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Raw"
+          },
+          "run": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RunOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "job",
+          "raw"
+        ],
+        "title": "JobDetailOut"
+      },
+      "JobOut": {
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "title": "Job Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": ""
+          },
+          "required_skills": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Required Skills"
+          },
+          "budget_min": {
+            "type": "number",
+            "title": "Budget Min",
+            "default": 0
+          },
+          "budget_max": {
+            "type": "number",
+            "title": "Budget Max",
+            "default": 0
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency",
+            "default": "USD"
+          },
+          "connects_cost": {
+            "type": "integer",
+            "title": "Connects Cost",
+            "default": 0
+          },
+          "client_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Id"
+          },
+          "risk_badges": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Risk Badges"
+          },
+          "fit_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fit Score"
+          },
+          "recommended_action": {
+            "type": "string",
+            "enum": [
+              "bid",
+              "watch",
+              "skip",
+              "unscored"
+            ],
+            "title": "Recommended Action",
+            "default": "unscored"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "thread_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Thread Id"
+          },
+          "run_status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "queued",
+                  "running",
+                  "awaiting_approval",
+                  "completed",
+                  "skipped",
+                  "blocked",
+                  "rejected",
+                  "needs_attention",
+                  "failed"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "job_id",
+          "title"
+        ],
+        "title": "JobOut"
+      },
+      "LoginIn": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginIn"
+      },
+      "MemoryItem": {
+        "properties": {
+          "ns": {
+            "type": "string",
+            "title": "Ns"
+          },
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "value": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ns",
+          "key",
+          "value"
+        ],
+        "title": "MemoryItem"
+      },
+      "MemoryOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MemoryItem"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "MemoryOut"
+      },
+      "MessageThreadOut": {
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "title": "Client Id"
+          },
+          "messages": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Messages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "client_id",
+          "messages"
+        ],
+        "title": "MessageThreadOut"
+      },
+      "MessagesOut": {
+        "properties": {
+          "threads": {
+            "items": {
+              "$ref": "#/components/schemas/MessageThreadOut"
+            },
+            "type": "array",
+            "title": "Threads"
+          }
+        },
+        "type": "object",
+        "required": [
+          "threads"
+        ],
+        "title": "MessagesOut"
+      },
+      "PipelineCard": {
+        "properties": {
+          "thread_id": {
+            "type": "string",
+            "title": "Thread Id"
+          },
+          "job_id": {
+            "type": "string",
+            "title": "Job Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "default": ""
+          },
+          "stage": {
+            "type": "string",
+            "title": "Stage"
+          },
+          "amount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount"
+          },
+          "client_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Id"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "thread_id",
+          "job_id",
+          "stage"
+        ],
+        "title": "PipelineCard"
+      },
+      "PipelineOut": {
+        "properties": {
+          "stages": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Stages"
+          },
+          "columns": {
+            "additionalProperties": {
+              "items": {
+                "$ref": "#/components/schemas/PipelineCard"
+              },
+              "type": "array"
+            },
+            "type": "object",
+            "title": "Columns"
+          }
+        },
+        "type": "object",
+        "required": [
+          "stages",
+          "columns"
+        ],
+        "title": "PipelineOut"
+      },
+      "ReasonCount": {
+        "properties": {
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reason",
+          "count"
+        ],
+        "title": "ReasonCount"
+      },
+      "RegenerateIn": {
+        "properties": {
+          "paragraph_index": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Paragraph Index"
+          }
+        },
+        "type": "object",
+        "required": [
+          "paragraph_index"
+        ],
+        "title": "RegenerateIn"
+      },
+      "RegenerateOut": {
+        "properties": {
+          "thread_id": {
+            "type": "string",
+            "title": "Thread Id"
+          },
+          "paragraph_index": {
+            "type": "integer",
+            "title": "Paragraph Index"
+          },
+          "regenerated": {
+            "type": "boolean",
+            "title": "Regenerated"
+          },
+          "draft": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Draft"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "thread_id",
+          "paragraph_index",
+          "regenerated"
+        ],
+        "title": "RegenerateOut"
+      },
+      "RunIn": {
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "title": "Job Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "job_id"
+        ],
+        "title": "RunIn"
+      },
+      "RunOut": {
+        "properties": {
+          "thread_id": {
+            "type": "string",
+            "title": "Thread Id"
+          },
+          "job_id": {
+            "type": "string",
+            "title": "Job Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "running",
+              "awaiting_approval",
+              "completed",
+              "skipped",
+              "blocked",
+              "rejected",
+              "needs_attention",
+              "failed"
+            ],
+            "title": "Status"
+          },
+          "next": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Next"
+          },
+          "pending_approval": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Pending Approval"
+          },
+          "job": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Job"
+          },
+          "job_spec": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Job Spec"
+          },
+          "risk_report": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Risk Report"
+          },
+          "fit_report": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fit Report"
+          },
+          "evidence": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Evidence"
+          },
+          "decision": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision"
+          },
+          "price_quote": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Quote"
+          },
+          "proposal_draft": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Proposal Draft"
+          },
+          "claim_verification": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Claim Verification"
+          },
+          "critique": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Critique"
+          },
+          "compliance_verdict": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Compliance Verdict"
+          },
+          "approval": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approval"
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outcome"
+          },
+          "trace": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Trace"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Errors"
+          },
+          "trace_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trace Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "thread_id",
+          "job_id",
+          "status"
+        ],
+        "title": "RunOut"
+      },
+      "RunStartOut": {
+        "properties": {
+          "thread_id": {
+            "type": "string",
+            "title": "Thread Id"
+          },
+          "job_id": {
+            "type": "string",
+            "title": "Job Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "running",
+              "awaiting_approval",
+              "completed",
+              "skipped",
+              "blocked",
+              "rejected",
+              "needs_attention",
+              "failed"
+            ],
+            "title": "Status"
+          },
+          "trace_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trace Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "thread_id",
+          "job_id",
+          "status"
+        ],
+        "title": "RunStartOut"
+      },
+      "SavedSearch": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "default": ""
+          },
+          "interval_minutes": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Interval Minutes",
+            "default": 30
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "SavedSearch"
+      },
+      "SettingsModel": {
+        "properties": {
+          "autonomy": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "auto_skip_low_fit"
+            ],
+            "title": "Autonomy",
+            "default": "manual"
+          },
+          "weekly_connects_budget": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Weekly Connects Budget",
+            "default": 100
+          },
+          "min_hourly_rate": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Min Hourly Rate",
+            "default": 25
+          },
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Keywords"
+          },
+          "saved_searches": {
+            "items": {
+              "$ref": "#/components/schemas/SavedSearch"
+            },
+            "type": "array",
+            "title": "Saved Searches"
+          }
+        },
+        "type": "object",
+        "title": "SettingsModel"
+      },
+      "SettingsOut": {
+        "properties": {
+          "autonomy": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "auto_skip_low_fit"
+            ],
+            "title": "Autonomy",
+            "default": "manual"
+          },
+          "weekly_connects_budget": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Weekly Connects Budget",
+            "default": 100
+          },
+          "min_hourly_rate": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Min Hourly Rate",
+            "default": 25
+          },
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Keywords"
+          },
+          "saved_searches": {
+            "items": {
+              "$ref": "#/components/schemas/SavedSearch"
+            },
+            "type": "array",
+            "title": "Saved Searches"
+          },
+          "persona": {
+            "type": "string",
+            "title": "Persona"
+          },
+          "marketplace_mode": {
+            "type": "string",
+            "title": "Marketplace Mode"
+          },
+          "upwork_status": {
+            "type": "string",
+            "title": "Upwork Status",
+            "default": "not connected (live mode untested)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "persona",
+          "marketplace_mode"
+        ],
+        "title": "SettingsOut"
+      },
+      "TokenOut": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserOut"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "user"
+        ],
+        "title": "TokenOut"
+      },
+      "UserOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "persona": {
+            "type": "string",
+            "title": "Persona"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "persona"
+        ],
+        "title": "UserOut"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
