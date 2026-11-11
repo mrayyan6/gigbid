@@ -19,6 +19,9 @@ from agent import llm
 from agent.graphs.bid_graph import build_bid_graph
 from agent.nodes import core
 from evals.runners.judge_calibration import PROMPT as JUDGE_PROMPT
+from dotenv import load_dotenv
+
+load_dotenv()  # GROQ_API_KEY etc for the hosted profile; never printed
 from gigsim import generate
 from mcp_servers.marketplace.adapters.gigsim import GigSimAdapter
 

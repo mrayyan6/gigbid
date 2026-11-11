@@ -18,8 +18,8 @@ providers:
   groq:
     base_url: https://api.groq.com/openai/v1
     api_key_env: GROQ_API_KEY
-    usd_per_1m_in: 0.05      # llama-3.1-8b-instant list price, verify before quoting
-    usd_per_1m_out: 0.08
+    usd_per_1m_in: 0.80      # qwen3.8-27b on Groq per a third party listing (typingmind), verify before quoting
+    usd_per_1m_out: 4.00
 routing:
   open:
     default: ollama/qwen2.5:7b-instruct
@@ -34,7 +34,7 @@ routing:
       liaison: ollama/qwen2.5:7b-instruct
       judge: ollama/qwen2.5:7b-instruct
   open_hosted:
-    default: groq/llama-3.1-8b-instant
+    default: groq/qwen/qwen3.8-27b
     fallback: ollama/llama3.2:3b
     nodes: {}
 writer:
