@@ -1,52 +1,37 @@
 """Crash-and-resume: a proposal waiting for approval survives an API restart and is submitted once."""
-import httpx
-import pytest
-
-from gigsim import generate
-
-
-async def _client(db):
-    import os
-    os.environ["CHECKPOINT_DB"] = str(db)
-    from apps.api.main import app, lifespan
-    cm = lifespan(app)
-    await cm.__aenter__()
-    return app, cm
+from tests.integration.api_helpers import (
+    boot,
+    client,
+    find_bid_run,
+    gigsim_up,  # noqa: F401  (fixture)
+    make_user,
+    set_env,
+    wait_status,
+)
 
 
-@pytest.fixture
-async def gigsim_up(monkeypatch):
-    generate.build()
-    import gigsim.app as gs
-    gs.RATE_OVERRIDE = 10**6
-    gs.store.reset()
-    import mcp_servers.marketplace.adapters.gigsim as ad
-    orig = ad.GigSimAdapter.__init__
-
-    def init(self, *a, **k):
-        orig(self, base_url="http://t", transport=httpx.ASGITransport(app=gs.app))
-    monkeypatch.setattr(ad.GigSimAdapter, "__init__", init)
-    return gs
-
-
-async def test_pending_approval_survives_restart(tmp_path, gigsim_up):
-    db = tmp_path / "ck.sqlite"
-    app, cm = await _client(db)
-    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://a") as c:
-        jobs = (await c.get("/jobs", params={"limit": 300})).json()
-        for j in jobs:
-            r = (await c.post("/runs", json={"job_id": j["job_id"]})).json()
-            if r["pending_approval"]:
-                break
-        tid = r["thread_id"]
+async def test_pending_approval_survives_restart(tmp_path, monkeypatch, gigsim_up):  # noqa: F811
+    set_env(monkeypatch, tmp_path)
+    app, cm = await boot()
+    async with client(app) as c:
+        h = await make_user(app, "rev@example.test")
+        run = await find_bid_run(c, h)
+        tid = run["thread_id"]
+        assert [a["thread_id"] for a in (await c.get("/api/approvals", headers=h)).json()] == [tid]
     await cm.__aexit__(None, None, None)  # "kill" the API
 
-    app, cm = await _client(db)  # restart with same DB
-    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://a") as c:
-        run = (await c.get(f"/runs/{tid}")).json()
-        assert run["pending_approval"], "approval lost after restart"
+    app, cm = await boot()  # restart with same DB
+    async with client(app) as c:
+        h = {"Authorization": h["Authorization"]}  # same token still valid (same JWT secret)
+        pend = (await c.get("/api/approvals", headers=h)).json()
+        assert pend and pend[0]["thread_id"] == tid, "approval lost after restart"
         assert gigsim_up.store.proposals == {}
-        done = (await c.post(f"/runs/{tid}/approval", json={"action": "approve"})).json()
-        assert done["outcome"]["proposal_id"]
+        done = (await c.post(f"/api/approvals/{tid}", json={"action": "approve"},
+                             headers=h)).json()
+        assert done["status"] == "completed" and done["outcome"]["proposal_id"]
+        again = await c.post(f"/api/approvals/{tid}", json={"action": "approve"}, headers=h)
+        assert again.status_code == 409  # a second approve cannot submit twice
+        run = await wait_status(c, h, tid, {"completed"})
+        assert run["outcome"]["proposal_id"]
     await cm.__aexit__(None, None, None)
     assert len(gigsim_up.store.proposals) == 1

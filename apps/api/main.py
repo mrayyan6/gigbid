@@ -1,91 +1,90 @@
-"""FastAPI backend. Runs bid-graph threads and resumes them on approval.
+"""FastAPI backend. Contract: see apps/api/schemas and apps/web/openapi.json (all under /api).
 
-Auth is a stub (single dev token); multi-user auth, SSE streaming and Postgres are TODO.
 Run: uvicorn apps.api.main:app --port 8000 (GigSim on :9000).
+Env: DATABASE_URL (Postgres checkpointer and app tables, else SQLite), REDIS_URL (Arq queue, else
+inline background tasks), JWT_SECRET, REVIEWER_EMAIL, REVIEWER_PASSWORD, REVIEWER_PERSONA,
+GIGBID_TEST_MODE=1 (enables POST /api/test/marketplace-down, disables .env loading).
 """
 from __future__ import annotations
 
-import os
+import uuid
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException
-from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
-from langgraph.types import Command
-from pydantic import BaseModel
+import httpx
+from fastapi import APIRouter, FastAPI, Request
+from fastapi.responses import JSONResponse
 
-from agent.graphs.bid_graph import build_bid_graph
-from agent.marketplace_port import get_marketplace
-from rag.retriever import get_retriever
-
-state: dict = {}
+from agent.marketplace_port import MarketplaceUnavailable
+from apps.api import auth as auth_mod
+from apps.api.bootstrap import open_ctx
+from apps.api.routers import (
+    analytics,
+    approvals,
+    health,
+    jobs,
+    memory,
+    messages,
+    pipeline,
+    proposals,
+    runs,
+    settings,
+)
+from apps.api.routers import auth as auth_router
+from apps.api.runner import trace_id_var
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    path = os.environ.get("CHECKPOINT_DB", "data/processed/checkpoints.sqlite")
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    async with AsyncSqliteSaver.from_conn_string(path) as saver:
-        state["graph"] = build_bid_graph(saver)
-        state["mp"] = get_marketplace()
-        state["retr"] = {}
+    async with open_ctx() as ctx:
+        app.state.ctx = ctx
+        await auth_mod.seed_reviewer(ctx)
         yield
 
 
-app = FastAPI(title="GigBid API", version="0.1.0", lifespan=lifespan)
+class TraceIdMiddleware:
+    """Pure ASGI (safe for SSE). One trace id per request: taken from X-Trace-Id if the caller sent
+    one, else a new uuid. It is put in a contextvar (read when a run starts, then stored in graph
+    config metadata) and echoed in the response header."""
+
+    def __init__(self, app) -> None:
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
+        hdrs = dict(scope["headers"])
+        tid = (hdrs.get(b"x-trace-id") or b"").decode()[:64] or uuid.uuid4().hex
+        token = trace_id_var.set(tid)
+
+        async def send_with_header(msg):
+            if msg["type"] == "http.response.start":
+                msg.setdefault("headers", []).append((b"x-trace-id", tid.encode()))
+            await send(msg)
+        try:
+            await self.app(scope, receive, send_with_header)
+        finally:
+            trace_id_var.reset(token)
 
 
-def _cfg(thread_id: str, persona: str) -> dict:
-    retr = state["retr"].setdefault(persona, get_retriever("v2_hybrid", persona))
-    return {"configurable": {"thread_id": thread_id, "marketplace": state["mp"], "retriever": retr}}
+app = FastAPI(title="GigBid API", version="1.0.0", lifespan=lifespan)
+app.add_middleware(TraceIdMiddleware)
 
 
-@app.get("/health")
-async def health():
-    return {"status": "ok", "service": "gigbid-api"}
+@app.exception_handler(MarketplaceUnavailable)
+async def _marketplace_down(_: Request, exc: MarketplaceUnavailable):
+    return JSONResponse({"detail": f"marketplace unavailable: {exc}"}, status_code=503,
+                        headers={"Retry-After": "5"})
 
 
-@app.get("/jobs")
-async def jobs(persona: str = "ai_ml", limit: int = 20):
-    return await state["mp"].search_jobs(limit=limit, persona=persona)
+@app.exception_handler(httpx.HTTPStatusError)
+async def _upstream_status(_: Request, exc: httpx.HTTPStatusError):
+    code = exc.response.status_code
+    return JSONResponse({"detail": f"marketplace said {code}"}, status_code=code if code < 500 else 502)
 
 
-class RunIn(BaseModel):
-    job_id: str
-    persona: str = "ai_ml"
-
-
-@app.post("/runs")
-async def start_run(body: RunIn):
-    tid = f"run-{body.job_id}"
-    out = await state["graph"].ainvoke({"job_id": body.job_id}, _cfg(tid, body.persona))
-    return _summary(tid, out)
-
-
-@app.get("/runs/{thread_id}")
-async def get_run(thread_id: str, persona: str = "ai_ml"):
-    snap = await state["graph"].aget_state(_cfg(thread_id, persona))
-    if not snap.values:
-        raise HTTPException(404, "unknown run")
-    pending = [i.value for t in snap.tasks for i in t.interrupts]
-    return {"thread_id": thread_id, "next": list(snap.next), "pending_approval": pending,
-            "values": snap.values}
-
-
-class ApprovalIn(BaseModel):
-    action: str  # approve | edit | reject
-    text: str | None = None
-    reason: str | None = None
-
-
-@app.post("/runs/{thread_id}/approval")
-async def approve(thread_id: str, body: ApprovalIn, persona: str = "ai_ml"):
-    if body.action not in ("approve", "edit", "reject"):
-        raise HTTPException(422, "bad action")
-    out = await state["graph"].ainvoke(Command(resume=body.model_dump()), _cfg(thread_id, persona))
-    return _summary(thread_id, out)
-
-
-def _summary(tid: str, out: dict) -> dict:
-    return {"thread_id": tid, "decision": out.get("decision"),
-            "pending_approval": [i.value for i in out.get("__interrupt__", [])],
-            "outcome": out.get("outcome")}
+api = APIRouter(prefix="/api")
+for r in (auth_router, jobs, runs, approvals, proposals, pipeline, messages, analytics, memory,
+          settings, health):
+    api.include_router(r.router)
+api.include_router(health.test_router)
+app.include_router(api)

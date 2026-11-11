@@ -1,10 +1,12 @@
-.PHONY: dev test eval seed lint demo
+.PHONY: dev worker test eval seed lint demo
 PY=.venv/Scripts/python
 seed:
 	$(PY) -m gigsim.generate
 dev:
 	$(PY) -m uvicorn gigsim.app:app --port 9000 &
-	$(PY) -m uvicorn apps.api.main:app --port 8000
+	$(PY) -m apps.api
+worker:
+	.venv/Scripts/arq worker.main.WorkerSettings
 test:
 	$(PY) -m pytest -q
 eval:

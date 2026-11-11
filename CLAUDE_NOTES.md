@@ -13,3 +13,11 @@ Done and tested (`make test`, 9 tests pass): gigsim/ (own synthetic simulator, g
 Measured (evals/results/): retrieval Recall@5 V0 ~0.52-0.63 vs V2 ~0.53-0.65 (V2 NOT clearly better, negative result); decision F1 ~0.75 per persona, scam P/R 1.0 (circular: synthetic scam templates match the risk patterns, say so in report).
 Config change vs kit: models are qwen2.5:7b-instruct / llama3.1:8b (what is installed). LLM nodes are deterministic templates; llm.enabled=false.
 NOT done: Marketplace/Workspace MCP servers, V3 rerank/V8/V9, conversation graph, memory store + promotion, Postgres/Redis/worker, auth, SSE, whole web UI (Next.js + Playwright), Docker/compose, CI gates, tracing, injection ASR measurement, judge calibration, R&D questions A/B/C, deploy, report, video, extension X2, kaggle data (no token).
+
+## API lane (T0.3, T2.5, T2.6) status
+- Contract frozen: apps/web/openapi.json (18 endpoints under /api, regenerate with app.openapi()). Add fields only.
+- apps/api: bootstrap.py (ctx, Postgres or SQLite checkpointer), auth/ (PBKDF2, JWT, reviewer seed), runner.py (runs, SSE hub, drain of queued runs), streaming.py, routers/. POST /api/runs returns 202 and runs in Arq (REDIS_URL) or inline task.
+- Degraded mode: POST /api/test/marketplace-down (GIGBID_TEST_MODE=1), /api/health marketplace up|down, runs queue and drain on recovery.
+- worker/: Arq tasks with processed and inflight Redis keys plus checkpoint resume.
+- TODO adapters: paragraph regenerate (writer), draft_reply (regex intent, no Workspace slots), pipeline stages beyond replied, MCP trace header.
+- Windows dev: psycopg needs the selector loop, use `python -m apps.api` (make dev).
