@@ -56,9 +56,9 @@ Best pipeline v3_rerank, n = 121. Source: evals/results/ablation.json.
 
 | Persona | n | Bid P | Bid R | Bid F1 | Scam P | Scam R |
 |---|---|---|---|---|---|---|
-| ai_ml | 60 | 0.60 | 1.00 | 0.75 | 1.00 | 1.00 |
-| web | 60 | 0.60 | 1.00 | 0.75 | 1.00 | 1.00 |
-| data | 60 | 0.62 | 1.00 | 0.77 | 1.00 | 1.00 |
+| ai_ml | 60 | 0.79 | 1.00 | 0.89 | 1.00 | 1.00 |
+| web | 60 | 0.68 | 1.00 | 0.81 | 1.00 | 1.00 |
+| data | 60 | 0.88 | 1.00 | 0.94 | 1.00 | 1.00 |
 
 Scam precision and recall are circular (synthetic scam templates match the risk patterns), see docs/DATA_CARD.md. Source: evals/results/decision_eval.json.
 
@@ -83,16 +83,131 @@ Model qwen2.5:7b-instruct, n = 40 tasks. Source: evals/results/tool_design.json.
 
 ## R&D C: architecture comparison
 
-not run
+| Architecture | Bid-or-skip acc | Bid F1 | Unsupported per letter | Violating letters shipped | Expected reply prob | Tokens per job | p50 latency s |
+|---|---|---|---|---|---|---|---|
+| react | 0.233 | 0.34 | 0.64 | 0 | 0.220 | 23508 | 18.5 |
+| supervisor | 0.6 | 0.33 | 0.88 | 0 | 0.223 | 13113 | 53.8 |
+| graph | 0.667 | 0.67 | 0.00 | 0 | 0.274 | 1990 | 36.6 |
+
+Source: evals/results/arch_compare.json. meta: {"model": "qwen2.5:7b-instruct", "n_jobs_completed": 30}
 
 ## Two LLM configurations
 
-not run
+| Config | Writer model | n | Judge | Unsupported | p50 latency s | tokens/s | USD per proposal |
+|---|---|---|---|---|---|---|---|
+| local_open | ollama/qwen2.5:7b-instruct | 9 | 3.44 | 0.00 | 103.1 | 38.3 | 0.00000 |
+| hosted_open | groq/qwen/qwen3.8-27b | 9 | 3.44 | 0.00 | 30.8 | n/a | 0.00009 |
+
+Source: evals/results/model_compare.json.
 
 ## Extension X2: proposal strategy A/B
 
-not run
+| Strategy | n | Replies | Reply rate |
+|---|---|---|---|
+| A | 19 | 5 | 0.263 |
+| B | 20 | 3 | 0.150 |
+
+Two proportion test: {"rate_A": 0.2631578947368421, "rate_B": 0.15, "diff_B_minus_A": -0.1131578947368421, "ci95_diff": [-0.36553839144532785, 0.13922260197164363], "z": -0.874748326648604, "p_value_two_sided": 0.3817108587689375, "fisher_exact_p": 0.4505764505764504, "significant_at_0.05": false, "min_detectable_diff_80pct_power": 0.3620903551747944}
+Source: evals/results/x2_experiment.json.
 
 ## Change request
 
-not run
+```json
+{
+ "label": "self imposed change request, mirrors the announced 2 Nov platform policy update format; the instructor did not publish a concrete policy text for self built simulators",
+ "start_commit": "c156a01feb677678ae01d5057af09161ae5f7dfb",
+ "end_commit": "d04f2e70ffc28604c73242e7407ebfae3ce2230f",
+ "elapsed_minutes": 3.7,
+ "files_changed": 6,
+ "by_kind": {
+  "code": {
+   "files": 1,
+   "added": 26,
+   "deleted": 0
+  },
+  "config_or_docs": {
+   "files": 2,
+   "added": 9,
+   "deleted": 5
+  },
+  "results": {
+   "files": 2,
+   "added": 53,
+   "deleted": 9
+  },
+  "tests": {
+   "files": 1,
+   "added": 64,
+   "deleted": 0
+  }
+ },
+ "files": [
+  {
+   "path": "conftest.py",
+   "added": 26,
+   "deleted": 0,
+   "kind": "code"
+  },
+  {
+   "path": "data/policy_pack/gigsim_policy.json",
+   "added": 8,
+   "deleted": 4,
+   "kind": "config_or_docs"
+  },
+  {
+   "path": "data/policy_pack/p2.json",
+   "added": 1,
+   "deleted": 1,
+   "kind": "config_or_docs"
+  },
+  {
+   "path": "evals/results/decision_eval.json",
+   "added": 9,
+   "deleted": 9,
+   "kind": "results"
+  },
+  {
+   "path": "evals/results/decision_eval_after_cr.json",
+   "added": 44,
+   "deleted": 0,
+   "kind": "results"
+  },
+  {
+   "path": "tests/integration/test_change_request.py",
+   "added": 64,
+   "deleted": 0,
+   "kind": "tests"
+  }
+ ],
+ "decision_metrics": {
+  "ai_ml": {
+   "bid_f1_before": 0.7499999999999999,
+   "bid_f1_after": 0.8852459016393442,
+   "bid_precision_before": 0.6,
+   "bid_precision_after": 0.7941176470588235,
+   "accuracy_3way_before": 0.65,
+   "accuracy_3way_after": 0.8333333333333334
+  },
+  "web": {
+   "bid_f1_before": 0.7499999999999999,
+   "bid_f1_after": 0.8059701492537313,
+   "bid_precision_before": 0.6,
+   "bid_precision_after": 0.675,
+   "accuracy_3way_before": 0.6833333333333333,
+   "accuracy_3way_after": 0.7666666666666667
+  },
+  "data": {
+   "bid_f1_before": 0.7692307692307693,
+   "bid_f1_after": 0.9375,
+   "bid_precision_before": 0.625,
+   "bid_precision_after": 0.8823529411764706,
+   "accuracy_3way_before": 0.7,
+   "accuracy_3way_after": 0.9333333333333333
+  }
+ },
+ "tests_added": [
+  "tests/integration/test_change_request.py"
+ ]
+}
+```
+Source: evals/results/change_request.json.
