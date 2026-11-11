@@ -1,0 +1,85 @@
+# Extra config owned by the graph and memory lane. Deep merged OVER agent/config.yaml at load
+# (see agent/nodes/config.py). Rules, thresholds, model routing and templates live here, not in code.
+llm:
+  enabled: false             # keep false by default so tests are deterministic; env LLM_ENABLED=1 overrides
+  timeout_s: 90
+  temperature: 0.2
+  max_output_tokens: 700
+  verify_partial: false      # LLM "partly supported" check in the claim verifier
+  llm_critic: true           # when LLM is enabled the critic adds LLM issues on top of the rules
+  llm_analyst: true
+providers:
+  ollama:
+    base_url: http://localhost:11434/v1
+    api_key_env: ""
+    usd_per_1m_in: 0.0       # local, hardware cost only
+    usd_per_1m_out: 0.0
+  groq:
+    base_url: https://api.groq.com/openai/v1
+    api_key_env: GROQ_API_KEY
+    usd_per_1m_in: 0.05      # llama-3.1-8b-instant list price, verify before quoting
+    usd_per_1m_out: 0.08
+routing:
+  open:
+    default: ollama/qwen2.5:7b-instruct
+    fallback: ollama/llama3.2:3b
+    nodes:
+      analyst: ollama/llama3.2:3b
+      intent: ollama/llama3.2:3b
+      risk: ollama/llama3.2:3b
+      verifier: ollama/llama3.2:3b
+      writer: ollama/qwen2.5:7b-instruct
+      critic: ollama/qwen2.5:7b-instruct
+      liaison: ollama/qwen2.5:7b-instruct
+      judge: ollama/qwen2.5:7b-instruct
+  open_hosted:
+    default: groq/llama-3.1-8b-instant
+    fallback: ollama/llama3.2:3b
+    nodes: {}
+writer:
+  strategy: writer           # prompt file name; writer_b is the X2 variant (outcome and timeline first)
+  max_evidence: 3
+budgets:
+  node_retries: 2            # extra attempts for transient errors before dead letter
+  retry_backoff_s: 0.5
+  retry_nodes: [scout, matcher, submit]
+policy:
+  pack_path: data/policy_pack/gigsim_policy.json   # fallback when the port has no get_policy
+verifier:
+  past_claim_regex: "\\b(I used|I have shipped|I built|my outcome|outcome was|I(?:'ve| have) (?:built|led|delivered|developed|worked|created|designed|shipped|managed)|I (?:led|delivered|developed|created|designed|managed)|my (?:previous|past|prior) (?:work|project|client)s?|\\d+\\+? years)\\b"
+compliance:
+  banned_patterns:           # regex, case insensitive, checked on drafts, edits and messages
+    - "\\b(?:whats\\s?app|telegram|signal app)\\b"
+    - "\\bguarantee[sd]?\\b"
+    - "\\b100\\s?%\\s?(?:success|satisfaction)"
+memory:
+  style:
+    window: 5                # look at the last N approved edits
+    min_count: 2             # a signal must appear in at least this many of them
+    max_phrase_words: 4
+    min_phrase_chars: 4
+    ignore_words: [the, a, an, and, or, of, to, in, on, for, with, i, my, is, are, it, that, this, we, you, your]
+  outcome:
+    min_outcomes: 3          # promote reply_rate for a category after at least this many outcomes
+  persist_path: data/processed/memory.json
+conversation:
+  max_messages_context: 6
+  slot_days_ahead: 7
+  slot_duration_min: 30
+  max_slots_offered: 3
+  intent_order: [scam_signal, interview_request, negotiation, question]
+  intent_patterns:
+    scam_signal: ["telegram", "whatsapp", "outside the platform", "off-platform", "send money",
+                  "registration fee", "bank login", "gift card", "pay me first", "ignore previous"]
+    interview_request: ["interview", "call", "meet", "zoom", "video chat", "schedule", "available to talk",
+                        "free to talk"]
+    negotiation: ["budget", "lower", "discount", "cheaper", "rate", "price", "reduce", "too expensive",
+                  "negotiate"]
+    question: ["?", "could you", "can you", "how ", "what ", "when ", "do you"]
+  default_intent: question
+  templates:
+    question: "Thanks for your message. I will answer your question in detail shortly. Could you share any constraints on scope or timeline so I can be precise?"
+    negotiation: "Thanks for the feedback on budget. I can discuss scope options that fit your budget while keeping the main deliverables. Which part is most important to you?"
+    interview_request: "Happy to talk. These slots work for me: {slots}. Please tell me which one suits you."
+    interview_no_slots: "Happy to talk. Could you share two or three times that work for you this week?"
+    scam_signal: "Thank you for reaching out. I keep all communication and payments on the platform, so I will decline to continue elsewhere."

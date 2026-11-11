@@ -4,16 +4,21 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import time
 from collections import defaultdict, deque
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, Header, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
+
+from gigsim import generate
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "processed" / "gigsim"
 POLICY = ROOT / "data" / "policy_pack" / "gigsim_policy.json"
+if not (DATA / "jobs.json").exists():  # fresh clone: data/processed is git-ignored
+    generate.build()
 TOKEN = "gigsim-dev-token"
 RATE_OVERRIDE: int | None = None  # eval harness only
 
@@ -64,7 +69,8 @@ def public_job(j: dict) -> dict:
 
 
 def connects_cost(j: dict) -> int:
-    return round(j["connects_cost"] * policy()["connects_multiplier"])
+    p = policy()
+    return round(j["connects_cost"] * p["connects_multiplier"]) + int(p.get("boost_fee_connects", 0))
 
 
 @app.get("/health")
@@ -72,10 +78,49 @@ def health():
     return {"status": "ok", "service": "gigsim"}
 
 
+@app.get("/policy")
+def get_policy(_: str = Depends(auth)):
+    """Current platform policy. Agents read this instead of hard-coding platform rules."""
+    return policy()
+
+
 @app.post("/admin/reset")
 def reset(_: str = Depends(auth)):
     store.reset()
     return {"ok": True}
+
+
+class JobIn(BaseModel):
+    model_config = ConfigDict(extra="allow")
+    job_id: str
+    title: str
+    description: str
+    required_skills: list[str]
+    budget: dict
+    client_id: str
+    connects_cost: int = 10
+
+
+@app.post("/admin/jobs/load")
+def load_jobs(jobs: list[JobIn], _: str = Depends(auth)):
+    """Inject a batch of jobs (for example an instructor's hidden test batch). Unknown clients get
+    a neutral stub. Missing gold fields default to a neutral label and the budget as fair band."""
+    for jin in jobs:
+        j = jin.model_dump()
+        b = j["budget"]
+        j.setdefault("duration_days", 14)
+        j.setdefault("screening_questions", [])
+        j.setdefault("warning_signals", [])
+        j.setdefault("source", "admin_load")
+        j["gold"] = {"action": "bid", "kind": "loaded", "scam": False, "injected": False,
+                     "fair_price_band": [b.get("min", 0), b.get("max", 0)], "persona": "loaded",
+                     **j.get("gold", {})}
+        store.jobs[j["job_id"]] = j
+        store.clients.setdefault(j["client_id"], {
+            "client_id": j["client_id"], "name": j["client_id"], "industry": "other",
+            "payment_verified": True, "total_spent": 0, "hire_rate": 0.0, "avg_rating": 0.0,
+            "hidden_preference": "metrics", "source": "admin_load"})
+    return {"loaded": len(jobs), "total_jobs": len(store.jobs)}
 
 
 @app.get("/jobs")
@@ -144,6 +189,15 @@ def _draw(key: str) -> float:
     return int(hashlib.sha256(key.encode()).hexdigest()[:8], 16) / 0xFFFFFFFF
 
 
+def _check_daily_cap(pol: dict, user: str) -> None:
+    cap = pol.get("max_proposals_per_day")
+    if cap is None:
+        return
+    recent = [p for p in store.proposals.values() if time.time() - p["created_at"] < 86400]
+    if len(recent) >= cap:
+        raise HTTPException(429, "daily proposal limit reached", headers={"Retry-After": "3600"})
+
+
 @app.post("/proposals")
 def create_proposal(body: ProposalIn, dry_run: bool = False,
                     idempotency_key: str = Header(default=""), user: str = Depends(auth)):
@@ -151,13 +205,20 @@ def create_proposal(body: ProposalIn, dry_run: bool = False,
     if not job:
         raise HTTPException(404, "job not found")
     cost = connects_cost(job)
+    pol = policy()
+    if "min_budget_usd" in pol and job["budget"]["max"] < pol["min_budget_usd"]:
+        raise HTTPException(422, f"job budget below platform minimum {pol['min_budget_usd']} USD")
+    if pol.get("banned_link_regex") and re.search(pol["banned_link_regex"], body.cover_letter):
+        raise HTTPException(422, "proposal contains a link that the platform policy forbids")
     if dry_run:
+        _check_daily_cap(pol, user)
         return {"dry_run": True, "would_send": body.model_dump(), "connects_cost": cost,
                 "balance_after": store.connects[user] - cost}
     if not idempotency_key:
         raise HTTPException(400, "Idempotency-Key header required")
     if idempotency_key in store.idem:
         return {**store.proposals[store.idem[idempotency_key]], "idempotent_replay": True}
+    _check_daily_cap(pol, user)
     if store.connects[user] < cost:
         raise HTTPException(402, "not enough connects")
     store.connects[user] -= cost

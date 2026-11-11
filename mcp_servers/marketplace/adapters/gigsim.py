@@ -6,11 +6,9 @@ from typing import Any
 
 import httpx
 
+from agent.marketplace_port import MarketplaceUnavailable  # noqa: F401 (re-exported)
+
 RETRY_STATUS = {429, 500, 502, 503, 504}
-
-
-class MarketplaceUnavailable(Exception):
-    """Raised when GigSim cannot be reached after bounded retries (degraded mode)."""
 
 
 class GigSimAdapter:
@@ -58,6 +56,9 @@ class GigSimAdapter:
 
     async def list_messages(self, client_id: str | None = None):
         return await self._req("GET", "/messages", params={"client_id": client_id} if client_id else None)
+
+    async def get_policy(self):
+        return await self._req("GET", "/policy")
 
     async def create_proposal(self, payload: dict, idempotency_key: str, dry_run: bool = False):
         return await self._req("POST", "/proposals", json=payload, params={"dry_run": dry_run},

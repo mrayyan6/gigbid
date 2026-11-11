@@ -136,7 +136,8 @@ def build(seed: int = 7) -> None:
         (OUT / f"{name}.json").write_text(json.dumps(obj, indent=1), encoding="utf-8")
     pol = ROOT / "data" / "policy_pack" / "gigsim_policy.json"
     pol.parent.mkdir(parents=True, exist_ok=True)
-    pol.write_text(json.dumps(policy, indent=1), encoding="utf-8")
+    if not pol.exists():  # never clobber a policy that was edited (platform policy update)
+        pol.write_text(json.dumps(policy, indent=1), encoding="utf-8")
     ds = ROOT / "evals" / "datasets"
     ds.mkdir(parents=True, exist_ok=True)
     (ds / "dev_jobs.json").write_text(json.dumps(dev, indent=1), encoding="utf-8")
