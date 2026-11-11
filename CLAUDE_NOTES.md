@@ -44,3 +44,12 @@ Next steps in order: 1) check agents' results, run full pytest and npx playwrigh
 - RUNNING overnight (local Ollama qwen2.5:7b): arch_compare --n 30 --budget-min 150, log in %TEMP%/arch.log. Do NOT run other CPU/GPU heavy work or change data/policy_pack/gigsim_policy.json until it finishes.
 - Pending order: 1) arch_compare finish; 2) model_compare + failure_dump; 3) after Groq quota resets (about 07:15 PKT 12 Nov): rerun x2_experiment (full 40 jobs, first attempt lost to a save crash) and LangSmith traces; 4) change request (cr-start, edit policy json, test, cr-end, change_request_stats); 5) push, deploy HF Space, smoke; 6) README, REPORT, WRITEUP; 7) user: label 30 drafts (evals/datasets/judge_labels.csv), record video, post reviewer password in Classroom.
 - Critic note: critic_revisions_mean is 3.0 everywhere. revisions counts failed critiques, so 3 means 2 send-backs then proceed (within the cap). The Critic rejects every draft, which costs latency.
+
+### YOUR ACTIONS (owner checklist, no secrets here) as of 2026-11-11 21:15 PKT
+1. Label 30 drafts: evals/datasets/judge_labels.csv, fill the user_score column (1 to 5, same rubric as agent/prompts/judge.md). Then tell Claude, it runs evals.runners.judge_calibration for Cohen kappa.
+2. Record the 3 minute demo video: inbox to approved proposal, one scam caught, one injected instruction ignored, one client reply handled. Upload and send the link. Do it AFTER deploy is live (or on localhost if deploy slips).
+3. Reviewer password: Claude generates it at deploy time and tells you in chat. You paste it into the PRIVATE Classroom comment only, never the repo.
+4. Publish the 1200 to 1800 word write-up (Claude drafts docs/WRITEUP_DRAFT.md) and send the link.
+5. Decide on a LICENSE file (none yet).
+6. Submit on Google Classroom before 2026-11-12 23:59 PKT: live URL, GitHub link, report PDF, video link, Portfolio MCP and write-up links.
+- Docker Desktop: installed (Docker 29.9.2, Compose 5.6.1), engine NOT running (app not started). Claude starts it after the overnight eval ends, to test the compose build. The public deploy does not need local Docker (Hugging Face builds the image).
