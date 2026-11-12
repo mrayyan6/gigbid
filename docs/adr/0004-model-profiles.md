@@ -23,5 +23,5 @@ comparison of at least two open configurations. The laptop has an 8 GB RTX 4060.
 - Groq free tier: 8,000 tokens per minute and 1,000 requests per day. This capped sample sizes (n = 17 to 40
   per arm) and is stated in every results file.
 - Hosted price per token is from a third party listing and is marked "verify before quoting" in the config.
-- Judge and writer are the same model within a config, so judge scores are uncalibrated and not comparable
-  across configs until Cohen's kappa against my own labels exists.
+- Judge and writer are the same model within a config, so judge scores are not comparable across configs.
+  Kappa against 30 labels (written by an AI assistant, with instructor permission) is 0.59, see AI_USAGE.md.

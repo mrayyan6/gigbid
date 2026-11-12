@@ -12,8 +12,24 @@ wrong that was caught. All numbers in the project come from `evals/results/`, ne
 | Groq hosted open weight model | Public deployment profile only (no GPU on the host) | `agent/config.yaml` |
 
 The assistant wrote code that I reviewed and ran. I own the design decisions (extension X2, the shared
-marketplace port, the self imposed change request, which RAG variants ship). Judge calibration labels are
-mine, never filled by the assistant.
+marketplace port, the self imposed change request, which RAG variants ship). The 30 judge calibration labels
+were NOT written by me, see the next section.
+
+## AI used for judge calibration labels (disclosed)
+
+The brief says to label 30 items yourself. My instructor confirmed that AI may be used for this labelling.
+So the 30 `user_score` values in `evals/datasets/judge_labels.csv` were written by Claude Code (Sonnet class),
+scoring each draft 1 to 5 overall with the same rubric as `agent/prompts/judge.md` (specificity, grounding,
+clarity, tone). I did not hand label them. Consequences, stated plainly:
+
+- The judge model is a different model (hosted Qwen through Groq), so the labeller and the judge are at least
+  independent systems, but both are LLMs. The kappa measures agreement between two LLMs, not between the judge
+  and a human. A human check on a sample would be a stronger result and is listed as not done.
+- Result (`evals/results/judge_calibration.json`): n = 30, quadratic weighted kappa 0.59, unweighted kappa 0.45,
+  exact agreement 70 percent, within one point 100 percent. The mean scores were 2.2 (labeller) and 2.1 (judge).
+- Both scored the drafts low (most 2 of 5), because most drafts have unsupported or mismatched claims.
+- The labeller was asked to be strict on invented skills (claiming Rust or Kubernetes without evidence),
+  placeholder text such as "[Your Name]", and evidence tags that do not match the claim.
 
 ## Things the assistant got wrong
 

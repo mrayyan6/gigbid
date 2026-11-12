@@ -1,6 +1,26 @@
 {
- "status": "not run",
- "reason": "no rows have both user_score and judge_score",
- "n_rows": 30,
- "n_labelled": 0
+ "status": "ok",
+ "n_labelled": 30,
+ "kappa_quadratic": 0.5871559633027523,
+ "kappa_unweighted": 0.4512195121951219,
+ "exact_agreement": 0.7,
+ "within_one": 1.0,
+ "mean_user": 2.2,
+ "mean_judge": 2.1,
+ "largest_disagreements": [
+  {
+   "id": "v0_naive:dev-ai_ml-0030",
+   "user_score": 3,
+   "judge_score": 2,
+   "job": "Fraud Anomaly Detection project. We need help with fraud anomaly detection. Required: LLM, NLP. Deliver a documented, tested solution.",
+   "draft": "To tackle the Fraud Anomaly Detection project, I'll leverage my expertise in LLM and NLP to develop a documented and tested solution. By applying machine learning techniques, I aim to identify and flag suspicious transactions, thereby reducing false positives and manual effort. With a focus on model evaluation and MLOps, I'll ensure the solution is scalable and maintainable. The outcome of my previous work on Demand Forecasting, where I reduced manual effort by 40 percent [ev:ai_ml-cs-05], demonstrates my ability to drive efficiency and accuracy in similar projects. I'll deliver a high-quality"
+  },
+  {
+   "id": "v3_rerank:dev-ai_ml-0030",
+   "user_score": 2,
+   "judge_score": 1,
+   "job": "Fraud Anomaly Detection project. We need help with fraud anomaly detection. Required: LLM, NLP. Deliver a documented, tested solution.",
+   "draft": "I'm excited to take on the Fraud Anomaly Detection project, where I'll utilize my expertise in LLM and NLP to develop a documented and tested solution. With a focus on delivering a high-quality outcome, I aim to reduce manual effort and improve efficiency. For this project, I'll employ my skills in LLM and MLOps to build a robust model that detects anomalies in fraud data. I'll leverage model evaluation techniques to ensure the accuracy and reliability of the solution. With a strong understanding of PyTorch and MLOps, I'll deliver a solution that meets the project requirements. The project tim"
+  }
+ ]
 }

@@ -68,3 +68,9 @@ Next steps in order: 1) check agents' results, run full pytest and npx playwrigh
 - STILL OPEN (owner): 1) public hosting (HF Docker Spaces need PRO, see docs/DEPLOY.md; then python scripts/deploy_hf.py and scripts/smoke_live.py <url>); 2) 30 judge labels are NOT in evals/datasets/judge_labels.csv (0 scored at 08:00), then run python -m evals.runners.judge_calibration and re-render tables; 3) 3 minute video; 4) reviewer password (in .env as REVIEWER_PASSWORD) into the private Classroom comment; 5) publish write-up (docs/WRITEUP_DRAFT.md); 6) LICENSE decision; 7) Classroom submission.
 - STILL OPEN (Claude): README live URL and video link placeholders (GIGBID_LIVE_URL, GIGBID_VIDEO_URL env then scripts/build_readme.py), re-render report PDF after judge kappa, incremental re-indexing (not implemented), message drafts still regex based in API, final check_repo and CI green before the last push.
 - Do NOT start the Cloudflare tunnel again unless the user asks (they interrupted it once).
+
+### Update 2026-11-12 17:10 PKT
+- Judge calibration DONE: instructor allowed AI labelling, so Claude wrote the 30 user_score values (not the user). kappa quadratic 0.59, unweighted 0.45, exact agreement 0.70, within one 1.0 (evals/results/judge_calibration.json). Disclosed in docs/AI_USAGE.md (new section), README, REPORT, ADR 0004. Report PDF and README regenerated. To rerun the judge: LLM_ENABLED=1 GIGBID_PROFILE=open_hosted.
+- Reviewer password set in .env (simple one, user asked). Must also be set in the deploy env. Never commit .env.
+- User will record the video. LICENSE explained to user, decision pending.
+- STILL OPEN: public hosting choice, deploy + smoke, README live URL and video link, write-up publish, Classroom submission, final push + CI green.
