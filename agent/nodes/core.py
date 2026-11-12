@@ -120,10 +120,19 @@ def needs_attention(state, config=None):
 
 
 # ---------------------------------------------------------------- policy and compliance
-async def get_policy(config) -> dict:
-    """Platform policy from the port; falls back to the policy pack file when the port has none."""
+def agent_mp(config, agent: str):
+    """The marketplace port restricted to one agent's tool allowlist (config mcp.allowlists).
+
+    Ports without allowlists (the direct GigSim adapter used by fast tests) are returned unchanged."""
+    mp = deps(config)["marketplace"]
+    return mp.as_agent(agent) if hasattr(mp, "as_agent") else mp
+
+
+async def get_policy(config, agent: str = "scout") -> dict:
+    """Platform policy through the given agent's allowlist; falls back to the policy pack file when the port
+    cannot answer, which includes an agent that has no marketplace tools (Compliance Guard)."""
     try:
-        return await deps(config)["marketplace"].get_policy()
+        return await agent_mp(config, agent).get_policy()
     except Exception:
         try:
             return json.loads((REPO_ROOT / CFG["policy"]["pack_path"]).read_text(encoding="utf-8"))
@@ -150,13 +159,19 @@ def violations(text: str, policy: dict | None = None, check_length: bool = False
 
 
 # ---------------------------------------------------------------- nodes
+async def policy_of(state, config, agent: str) -> dict:
+    """Policy the scout stored in state when the run started, so downstream agents (and the Compliance Guard,
+    which has no marketplace tools) never need the marketplace. Falls back to a lookup through `agent`."""
+    return state.get("policy") or await get_policy(config, agent)
+
+
 async def scout(state, config):
-    mp = deps(config)["marketplace"]
+    mp = agent_mp(config, "scout")
     job = await mp.get_job(state["job_id"])
     client = {}
     if job.get("client_id"):
         client = await mp.get_client_history(job["client_id"])
-    return {"job": {**job, "client": client}, "status": "running",
+    return {"job": {**job, "client": client}, "policy": await get_policy(config, "scout"), "status": "running",
             **_t("scout", tool="get_job", args={"job_id": state["job_id"]})}
 
 
@@ -225,7 +240,7 @@ async def matcher(state, config):
 
 async def decide(state, config):
     d, rk, ft = CFG["decision"], state["risk_report"], state["fit_report"]
-    pol = await get_policy(config)
+    pol = await policy_of(state, config, "decide")
     floor = pol.get("min_budget_usd", 0)
     if floor and state["job"]["budget"]["max"] < floor:
         dec = h.BidDecision(action="skip", reason=f"below platform minimum budget {floor} USD")
@@ -247,7 +262,7 @@ def route_decision(state):
 
 async def pricing(state, config):
     p, b, j = CFG["pricing"], state["job"]["budget"], state["job"]
-    pol = await get_policy(config)
+    pol = await policy_of(state, config, "pricing")
     lo, hi = b["min"], b["max"]
     amt = lo + (hi - lo) * p["target_position"]
     # j["connects_cost"] is the effective platform cost (multiplier and boost fee already applied by the
@@ -458,7 +473,7 @@ def route_critic(state):
 
 
 async def compliance(state, config):
-    pol = await get_policy(config)
+    pol = await policy_of(state, config, "compliance")
     bad = violations(state["proposal_draft"]["cover_letter"], pol, check_length=True)
     v = h.ComplianceVerdict(allowed=not bad, violations=bad)
     out = {"compliance_verdict": v.model_dump(), **_t("compliance", allowed=v.allowed)}

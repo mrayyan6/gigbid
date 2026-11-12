@@ -185,8 +185,8 @@ Source: evals/results/model_compare.json.
 - The LLM judge is not calibrated until Cohen's kappa against human labels exists (`evals/results/judge_calibration.json`).
 - The live Upwork adapter is a documented stub and was never run against a real account. The GitHub MCP server is
   configured and documented, not exercised in the evaluated paths.
-- Incremental re-indexing of the portfolio is not implemented. Per agent tool allowlists are enforced in the MCP
-  client but not yet inside the graph nodes.
+- Incremental re-indexing of the portfolio is not implemented. Per agent tool allowlists are enforced inside the
+  graph (`tests/integration/test_graph_allowlists.py`), and the Compliance Guard has no marketplace access.
 - The Critic rejects every draft, so every proposal uses both send backs (extra latency).
 - Public hosting: see the live URL line above for its current status.
 

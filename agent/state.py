@@ -33,6 +33,7 @@ class ConversationState(TypedDict, total=False):
 class GigBidState(TypedDict, total=False):
     job_id: str
     job: dict[str, Any]
+    policy: dict[str, Any]  # platform policy read once by the scout, so later agents need no marketplace call
     job_spec: dict[str, Any]
     risk_report: dict[str, Any]
     fit_report: dict[str, Any]

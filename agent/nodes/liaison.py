@@ -86,7 +86,7 @@ def _history(state) -> str:
 
 # ---------------------------------------------------------------- nodes
 async def read_messages(state, config):
-    msgs = await core.deps(config)["marketplace"].list_messages(state["client_id"])
+    msgs = await core.agent_mp(config, "liaison").list_messages(state["client_id"])
     last = next((m for m in reversed(msgs) if m.get("from") == "client"), None)
     status = "running" if last else "idle"
     return {"messages": msgs, "last_message": last, "status": status,
@@ -132,7 +132,7 @@ async def _compose(state, config, intent: str, slots: list[str]) -> tuple[str, d
         res = llm.complete("liaison", load_prompt("liaison"), user, max_tokens=220)
         extra = core.llm_fields("compose", res)
         text = res.text
-        if text and core.violations(text, await core.get_policy(config)):
+        if text and core.violations(text, await core.get_policy(config, "liaison")):
             text = None  # unsafe model output: use the vetted template
     return text or template, extra
 
@@ -182,7 +182,7 @@ async def recheck(state, config):
     if a["action"] == "reject":
         return {"status": "rejected", **_t("recheck", action="reject", reason=a.get("reason"))}
     if a["action"] == "edit":
-        bad = core.violations(a["text"], await core.get_policy(config))
+        bad = core.violations(a["text"], await core.get_policy(config, "liaison"))
         if bad:
             return {"approval": {"action": "reject", "reason": f"edit violates policy: {bad}"},
                     "status": "rejected", **_t("recheck", action="reject", violations=bad)}
@@ -196,5 +196,5 @@ def route_approval(state):
 
 async def send(state, config):
     key = _key(state, config)
-    rec = await core.deps(config)["marketplace"].send_message(state["client_id"], state["draft"], key)
+    rec = await core.agent_mp(config, "liaison").send_message(state["client_id"], state["draft"], key)
     return {"outcome": rec, "status": "sent", **_t("send", tool="send_message", key=key)}

@@ -108,11 +108,15 @@ mcp:
     retries: 2                # extra attempts, exponential backoff
     backoff_s: 0.3
   allowlists:                 # tool names each agent may call through the MCP client
-    scout: [search_jobs, get_job, get_client_history]
+    # One list per graph node that may touch the marketplace. A node with no entry or an empty list has no
+    # marketplace access: analyst, matcher, writer, verifier, critic and compliance are in that group.
+    scout: [search_jobs, get_job, get_client_history, get_policy]
     risk: [get_client_history]
+    decide: [get_policy]
     pricing: [get_policy, get_connects_balance]
-    liaison: [list_messages, send_message]
-    approval: [create_proposal_draft, submit_proposal]
+    compliance: []
+    liaison: [list_messages, send_message, get_policy]
+    approval: [create_proposal_draft, submit_proposal, get_policy]
     graph: [search_jobs, get_job, get_client_history, get_connects_balance, get_policy,
             list_messages, create_proposal_draft, submit_proposal, send_message]
   live:

@@ -21,6 +21,11 @@ class GuardedMarketplace:
         self._inner = inner
         self._ctx = ctx
 
+    def as_agent(self, agent: str):
+        """Role restricted view of the inner port, still behind the test switch."""
+        inner = self._inner.as_agent(agent) if hasattr(self._inner, "as_agent") else self._inner
+        return GuardedMarketplace(inner, self._ctx)
+
     def __getattr__(self, name: str):
         attr = getattr(self._inner, name)
         if not callable(attr):

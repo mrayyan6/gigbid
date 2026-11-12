@@ -54,7 +54,7 @@ async def env(tmp_path):
     raw = GigSimAdapter(base_url="http://t", transport=httpx.ASGITransport(app=app), retries=1)
     sw = Switchable(raw)
     server.configure(adapter=sw, audit_path=tmp_path / "audit.jsonl", rate_per_min=10000)
-    mp = MCPMarketplace(caller(), allowlists=ALLOW, retries=1, backoff_s=0.01, timeout_s=10)
+    mp = MCPMarketplace(caller(), retries=1, backoff_s=0.01, timeout_s=10)  # the real per role allowlists from config
     jobs = await raw.search_jobs(limit=400, persona="ai_ml")
     yield raw, sw, mp, jobs
     server.configure()
@@ -67,7 +67,8 @@ def cfg(mp, tid):
 
 async def test_allowlist_blocks_tool_outside_agent_list(env):
     _, _, mp, jobs = env
-    scout = mp.as_agent("scout")
+    strict = MCPMarketplace(caller(), allowlists=ALLOW, retries=1, backoff_s=0.01, timeout_s=10)
+    scout = strict.as_agent("scout")
     assert (await scout.get_job(jobs[0]["job_id"]))["job_id"] == jobs[0]["job_id"]
     with pytest.raises(ToolNotAllowed):
         await scout.send_message("c001", "hi", "key-allowlist-1")

@@ -173,5 +173,4 @@ concurrent load, and the Critic rejects every draft, which spends both send back
 ## Honest list of what is not done
 
 Kaggle datasets unused; judge not calibrated and no human pairwise panel; V4 to V7 and V9 not built; incremental
-re-indexing missing; per agent tool allowlists not enforced inside the graph nodes; Inspector screenshots not
-captured; the live Upwork and GitHub MCP paths not exercised; sample sizes 17 to 40 so most intervals are wide.
+re-indexing missing; Inspector screenshots taken for the Portfolio server only and without an execution result; the live Upwork and GitHub MCP paths not exercised; sample sizes 17 to 40 so most intervals are wide.

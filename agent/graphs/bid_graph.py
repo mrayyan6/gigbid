@@ -31,7 +31,7 @@ def _body(state, text: str | None = None) -> dict:
 
 async def approval(state, config):
     """interrupt() BEFORE any external write. Payload carries everything the UI must show."""
-    mp = core.deps(config)["marketplace"]
+    mp = core.agent_mp(config, "approval")
     payload = {"job_id": state["job_id"], "draft": state["proposal_draft"],
                "evidence": state["evidence"], "risk": state["risk_report"],
                "price": state["price_quote"], "claims": state["claim_verification"],
@@ -53,7 +53,7 @@ async def recheck_edit(state, config):
         return {"status": "rejected", **core._t("recheck", action="reject", reason=a.get("reason"))}
     if a["action"] != "edit":
         return {}
-    bad = core.violations(a["text"], await core.get_policy(config))
+    bad = core.violations(a["text"], await core.get_policy(config, "approval"))
     if bad:
         return {"approval": {"action": "reject", "reason": f"edit violates policy: {bad}"},
                 "status": "rejected", "compliance_verdict": {"allowed": False, "violations": bad}}
@@ -71,7 +71,7 @@ async def recheck_edit(state, config):
 
 
 async def submit(state, config):
-    mp = core.deps(config)["marketplace"]
+    mp = core.agent_mp(config, "approval")
     key = _key(state, config)
     rec = await mp.create_proposal(_body(state), key)  # idempotency key makes resume safe
     return {"outcome": rec, "status": "submitted", **core._t("submit", tool="create_proposal", key=key)}
