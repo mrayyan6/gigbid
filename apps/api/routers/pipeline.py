@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends
 
 from agent.marketplace_port import MarketplaceUnavailable
 from agent.nodes.config import CFG
+from agent.nodes.liaison import rule_intent
 from apps.api import runner
 from apps.api.auth import get_current_user
 from apps.api.context import AppCtx, get_ctx
@@ -17,17 +18,20 @@ router = APIRouter(prefix="/pipeline", tags=["pipeline"])
 @router.get("", response_model=PipelineOut, operation_id="get_pipeline")
 async def get_pipeline(user: UserOut = Depends(get_current_user),
                        ctx: AppCtx = Depends(get_ctx)) -> PipelineOut:
-    """Kanban from checkpoint state plus marketplace events (a client message means `replied`).
+    """Kanban from checkpoint state plus marketplace events (a client message means `replied`, one that asks for a call
+    means `interview`). `viewed` and `hired` have no event source in GigSim, so those columns stay empty.
 
     Works while the marketplace is down (cards just stop advancing), so the board never errors.
     """
     stages: list[str] = CFG["pipeline"]["stages"]
     cols: dict[str, list[PipelineCard]] = {s: [] for s in stages}
     try:
-        replied_clients = {m.get("client_id") for m in await ctx.mp.list_messages()
-                           if m.get("from") == "client"}
+        client_msgs = [m for m in await ctx.mp.list_messages() if m.get("from") == "client"]
     except MarketplaceUnavailable:
-        replied_clients = set()
+        client_msgs = []
+    replied_clients = {m.get("client_id") for m in client_msgs}
+    # a client message the conversation graph's rules read as an interview request moves the card to interview
+    interview_clients = {m.get("client_id") for m in client_msgs if rule_intent(m.get("text", "")) == "interview_request"}
     for row in await user_runs(ctx, user):
         run = await run_out(ctx, row)
         rec = run.outcome or {}
@@ -38,6 +42,8 @@ async def get_pipeline(user: UserOut = Depends(get_current_user),
             stage = rec.get("status") if rec.get("status") in stages else "submitted"
             if stage == "submitted" and client in replied_clients:
                 stage = "replied"
+            if stage in ("submitted", "replied") and client in interview_clients:
+                stage = "interview"
         elif run.status in ("rejected", "blocked"):
             stage = "lost"
         else:
