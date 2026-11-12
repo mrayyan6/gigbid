@@ -84,9 +84,11 @@ fell from 0.71 to 0.12, so a residue survives. The verifier checks that a cited 
 sentence matches the evidence (ADR 0006).
 
 **Where better retrieval did not help.** V3 had the best retrieval numbers and the lower GigSim reply rate (0.24
-against 0.39 for V0, n = 17 and 18). That gap is noise. Judge scores were 3.56 and 3.59 and are **not calibrated**:
-the labelling step has not produced a kappa (`judge_calibration.json` shows 0 labels), so judge scores carry no
-validity claim. No human pairwise panel was run.
+against 0.39 for V0, n = 17 and 18). That gap is noise. Judge scores were 3.56 and 3.59. A separate calibration on 30 drafts gave quadratic kappa 0.59 (exact agreement
+70 percent, `judge_calibration.json`), but the reference labels were written by an AI assistant with the instructor's
+permission (docs/AI_USAGE.md), so this is agreement between two LLMs, not with a human. The calibration judge
+scored lower (mean 2.1) than the proposal eval, which used a different run, so scores are not comparable across
+them. No human pairwise panel was run.
 
 **Shipped choice** (ADR 0003): V2 hybrid. It is never worse than V0, costs about 90 ms against about 7 s for V3, and
 no measured downstream metric separates the variants on this corpus.
@@ -172,5 +174,5 @@ concurrent load, and the Critic rejects every draft, which spends both send back
 
 ## Honest list of what is not done
 
-Kaggle datasets unused; judge not calibrated and no human pairwise panel; V4 to V7 and V9 not built; incremental
+Kaggle datasets unused; judge calibrated only against AI written labels (no human labels) and no human pairwise panel; V4 to V7 and V9 not built; incremental
 re-indexing missing; Inspector screenshots taken for the Portfolio server only and without an execution result; the live Upwork and GitHub MCP paths not exercised; sample sizes 17 to 40 so most intervals are wide.
