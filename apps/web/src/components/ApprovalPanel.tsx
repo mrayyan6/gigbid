@@ -23,11 +23,13 @@ export function ApprovalPanel({
   payload,
   critique,
   onDecided,
+  onRegenerated,
 }: {
   threadId: string;
   payload: Dict;
   critique?: Dict | null;
   onDecided: (result: Schemas["ApprovalOut"]) => void;
+  onRegenerated?: () => void;
 }) {
   const draft = asDict(payload.draft);
   const original = String(draft.cover_letter ?? "");
@@ -85,6 +87,10 @@ export function ApprovalPanel({
         }),
       );
       setRegenNote(res.message || (res.regenerated ? "Paragraph regenerated." : "Nothing changed."));
+      if (res.regenerated) {
+        setText(String(asDict(res.draft).cover_letter ?? ""));
+        onRegenerated?.();
+      }
     } catch (e) {
       setRegenNote(errorMessage(e));
     } finally {

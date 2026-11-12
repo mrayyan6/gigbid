@@ -27,7 +27,7 @@ pending approval survives an API restart. Why each agent exists is in `docs/ARCH
 uv sync            # or: python -m venv .venv && pip install -e .
 make seed          # generate the synthetic GigSim data
 make dev           # GigSim on 9000 and the API
-make test          # 84 tests
+make test          # unit, integration and contract tests
 docker compose -f infra/docker-compose.yml up        # everything, with Ollama
 docker build -f infra/docker/all-in-one.Dockerfile -t gigbid-all .   # single image used for hosting
 ```

@@ -350,6 +350,41 @@ def writer(state, config):
     return out
 
 
+def rewrite_paragraph(state: dict, index: int, policy: dict | None = None) -> dict:
+    """Regenerate one paragraph of the pending draft with the writer model, then run the same claim verifier and
+    compliance rules the graph uses. Returns {regenerated, cover_letter, message, removed}. When the model is off
+    or the new text breaks policy, the draft is returned unchanged with regenerated False and a message.
+    The verifier joins sentences with spaces, so a verified draft is usually one block and index 0 is the whole body."""
+    j, text = state["job"], state["proposal_draft"]["cover_letter"]
+    paras = [p for p in re.split(r"\n\s*\n", text) if p.strip()]
+    same = {"regenerated": False, "cover_letter": text, "removed": []}
+    if not llm.enabled():
+        return {**same, "message": "paragraph regeneration needs the language model, which is off in this profile"}
+    ev = state["evidence"][:CFG["writer"]["max_evidence"]]
+    facts = "\n".join(f"- id={e['evidence_id']} | {e['title']} | skills: {', '.join(e['skills'])} | "
+                      f"outcome: {e['outcome']}" for e in ev)
+    limit = max(30, CFG["compliance"]["max_words"] // max(len(paras), 1))
+    user = (untrusted("job_post", f"Title: {j['title']}\n{j['description']}") + "\n"
+            f"Evidence (the only facts you may claim):\n{facts}\n"
+            f"Full letter:\n{text}\n\nParagraph to replace:\n{paras[index]}\n\nWord limit: {limit}")
+    res = llm.complete("writer", load_prompt("rewrite_paragraph"), user)
+    if not res.text:
+        return {**same, "message": f"the model returned nothing ({res.error or 'empty'}), draft unchanged"}
+    new_paras = list(paras)
+    new_paras[index] = " ".join(res.text.split())
+    checked = verifier({"proposal_draft": {**state["proposal_draft"], "cover_letter": "\n\n".join(new_paras)},
+                        "evidence": state["evidence"]}, {})
+    removed = [r["claim"] for r in checked["claim_verification"] if r["status"] == "unsupported"]
+    letter = checked["proposal_draft"]["cover_letter"]
+    bad = violations(letter, policy, check_length=True)
+    if bad:
+        return {**same, "removed": removed, "message": f"the new paragraph breaks platform rules {bad}, draft unchanged"}
+    if letter.strip() == text.strip():
+        return {**same, "removed": removed, "message": "the model produced the same text, draft unchanged"}
+    msg = "paragraph regenerated" + (f", {len(removed)} unsupported claim(s) removed" if removed else "")
+    return {"regenerated": True, "cover_letter": letter, "removed": removed, "message": msg}
+
+
 def _llm_claim_status(sentence: str, ev: dict[str, dict]) -> tuple[str, dict]:
     tags = re.findall(r"\[ev:([^\]]+)\]", sentence)
     facts = "\n".join(f"{t}: {ev[t]['title']} | {', '.join(ev[t]['skills'])} | {ev[t]['outcome']}"

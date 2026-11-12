@@ -45,6 +45,7 @@ export default function StudioPage() {
           threadId={id}
           payload={pending}
           critique={r.critique as Dict | null}
+          onRegenerated={() => void run.reload()}
           onDecided={(res) => {
             setResult(res);
             void run.reload();
