@@ -46,3 +46,18 @@ Resources (portfolio): `portfolio://case/{id}`, `portfolio://proposal/{id}`. Pro
 ## Inspector
 
 `npx @modelcontextprotocol/inspector .venv/Scripts/python -m mcp_servers.portfolio.server` (screenshots belong in `docs/images/`; not yet captured).
+
+## MCP Inspector screenshots
+
+Captured on 2026-11-12 with `@modelcontextprotocol/inspector` 2.13.0 against the Portfolio server over stdio
+(`python -m mcp_servers.portfolio.server`):
+
+- `docs/images/inspector_1_connected.jpg`: the server connects as `gigbid-portfolio` (protocol 2025-11-25).
+- `docs/images/inspector_2_tools.jpg`: the three tools `get_case_study`, `list_skills`, `search_evidence`.
+- `docs/images/inspector_3_search_evidence_annotations.jpg`: `search_evidence` with its READ-ONLY and IDEMPOTENT
+  annotations and its input form (requirement, k, filters).
+
+Not captured: a successful execution result in the Inspector. The first `search_evidence` call was still running
+(model load on first use) when I stopped, so call results are covered only by the in-memory MCP client tests
+(`mcp_servers/portfolio/tests`, `mcp_servers/marketplace/tests`), not by a screenshot. Inspector screenshots of the
+Marketplace and Workspace servers were not taken.
