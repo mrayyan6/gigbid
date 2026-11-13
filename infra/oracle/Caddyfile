@@ -1,0 +1,7 @@
+# Free HTTPS. DOMAIN is for example 203-0-113-7.sslip.io (the VM public IP with dashes), set in server.env.
+{$DOMAIN} {
+	encode gzip
+	reverse_proxy app:7860 {
+		flush_interval -1
+	}
+}

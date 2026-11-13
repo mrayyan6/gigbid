@@ -1,0 +1,42 @@
+# Production stack for a single VM (Oracle Always Free ARM, Ubuntu). Run from the repo root:
+#   docker compose -f infra/oracle/docker-compose.yml --env-file server.env up -d --build
+# server.env holds the secrets and the DOMAIN value. It is never committed (see infra/oracle/README.md).
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: infra/docker/all-in-one.Dockerfile
+    restart: unless-stopped
+    env_file: ../../server.env
+    environment:
+      PORT: "7860"
+    volumes:
+      - gigbid_state:/home/user/state
+    expose:
+      - "7860"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:8000/api/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - app
+    environment:
+      DOMAIN: ${DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  gigbid_state:
+  caddy_data:
+  caddy_config:
