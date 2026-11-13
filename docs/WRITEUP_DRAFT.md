@@ -96,8 +96,10 @@ two proportion test gave p equals 0.38, and the test could only detect a differe
 of up to a third could have been missed. I report it as inconclusive, not as "no effect". Detecting a 10 point
 difference would need on the order of 250 proposals per arm.
 
-Do not let the judge score stand in for quality. My LLM judge has not been calibrated against human labels, so
-the 3.56 against 3.59 comparison above carries no weight in any direction.
+Do not let the judge score stand in for quality. I calibrated my LLM judge on 30 drafts and got a quadratic kappa
+of 0.59 with 70 percent exact agreement, which is moderate at best. The reference labels came from a second LLM, not
+a person, so that number says two models mostly agree, not that either is right. The 3.56 against 3.59 comparison
+above is far inside that noise and carries no weight in any direction.
 
 ## The takeaway
 
