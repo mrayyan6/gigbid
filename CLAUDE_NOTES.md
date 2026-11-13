@@ -74,3 +74,12 @@ Next steps in order: 1) check agents' results, run full pytest and npx playwrigh
 - Reviewer password set in .env (simple one, user asked). Must also be set in the deploy env. Never commit .env.
 - User will record the video. LICENSE explained to user, decision pending.
 - STILL OPEN: public hosting choice, deploy + smoke, README live URL and video link, write-up publish, Classroom submission, final push + CI green.
+
+### SAVE POINT 2026-11-13 (deadline extended to 2026-11-15 23:59 PKT)
+- Done and pushed: judge calibration (30 labels written by Claude, kappa 0.59, disclosed in AI_USAGE, README, REPORT, ADR 0004; user writes their own disclosure elsewhere), MIT LICENSE (holder Muhammad Rayyan), write-up draft updated (1438 words, no AI note on purpose per user), Oracle deploy files (infra/oracle/: compose, Caddyfile, README with steps; scripts/make_server_env.py, server.env gitignored). Last commits: 02781bb, eae9c74, then Oracle files.
+- Reviewer login: reviewer@gigbid.demo, password in .env (REVIEWER_PASSWORD), user keeps it for now.
+- Hosting decision: Render free (0.1 CPU, 512 MB, sleeps) does NOT fit (app needs about 1 GiB, 8 processes). User chose Oracle Always Free ARM VM (will create account). Laptop tunnel rejected (laptop must stay on, URL changes, risks E deployment marks in hidden test run).
+- USER HAS NOT STARTED ANY ORACLE STEP YET. Next session: user follows infra/oracle/README.md (create VM A1.Flex 2 OCPU 12 GB Ubuntu 24.04, open ports 80/443, SSH, install Docker, clone, scp server.env, docker compose up). Claude then runs scripts/smoke_live.py <url>, fixes any ARM build issues (ARM image not yet built or tested; Docker Desktop engine was off here).
+- After deploy: fill README live URL and video link (GIGBID_LIVE_URL, GIGBID_VIDEO_URL then scripts/build_readme.py), regenerate report PDF (markdown to HTML in scratchpad, Chrome headless print), final check_repo, CI green, push.
+- User does: video, publishing write-up, reviewer password in private Classroom comment, Classroom submission. kickbacks.dev ad not showing: likely no live bids on their side, nothing to fix.
+- Still not done: incremental re-indexing, regex message drafts in API, X-Trace-Id to MCP, human judge labels, human pairwise panel.
