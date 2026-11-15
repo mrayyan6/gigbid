@@ -1,4 +1,6 @@
 """Interview slots: the Workspace MCP server is used for free slots, and a failure degrades to a reply without slots."""
+from datetime import date
+
 import pytest
 
 from agent.mcp_workspace import MCPWorkspace, WorkspaceUnavailable
@@ -57,25 +59,34 @@ async def test_interview_request_offers_slots_from_the_workspace_and_degrades_wi
     app, cm = await boot()
     try:
         async with client(app) as c:
-            h = await make_user(app, "slots@example.com")
-            cid = await _client_asks_for_a_call(c, app, h, gigsim_up)
+            # each scenario uses its own user, because a draft that waits for approval is kept until it is decided
+            async def draft_for(email, workspace):
+                h = await make_user(app, email)
+                cid = await _client_asks_for_a_call(c, app, h, gigsim_up)
+                app.state.ctx.workspace = workspace
+                r = await c.post(f"/api/messages/{cid}/draft", json={}, headers=h)
+                assert r.status_code == 200, r.text
+                return cid, h, r.json()
 
-            app.state.ctx.workspace = FakeWorkspace([
-                {"start": "2026-11-16T10:00", "end": "2026-11-16T10:30"},
-                {"start": "2026-11-16T11:00", "end": "2026-11-16T11:30"}])
-            d = (await c.post(f"/api/messages/{cid}/draft", json={}, headers=h)).json()
+            ws = FakeWorkspace([{"start": "2026-11-16T10:00", "end": "2026-11-16T10:30"},
+                                {"start": "2026-11-16T11:00", "end": "2026-11-16T11:30"}])
+            cid, h, d = await draft_for("slots1@example.com", ws)
             assert d["intent"] == "interview_request"
             assert [s["start"] for s in d["slots"]] == ["2026-11-16T10:00", "2026-11-16T11:00"]
-            assert "2026-11-16 10:00" in d["draft"] and "2026-11-16 11:00" in d["draft"]
+            assert "2026-11-16T10:00" in d["draft"] and "2026-11-16T11:00" in d["draft"]
+            # asking again while the draft waits for approval returns the same draft and does not call the workspace
+            before = ws.calls
+            again = (await c.post(f"/api/messages/{cid}/draft", json={}, headers=h)).json()
+            assert again["draft"] == d["draft"] and ws.calls == before
 
             # the workspace is down: a draft without slots, not an error
-            app.state.ctx.workspace = FakeWorkspace(fail=True)
-            d = (await c.post(f"/api/messages/{cid}/draft", json={}, headers=h)).json()
-            assert d["intent"] == "interview_request" and d["slots"] == [] and d["draft"]
+            _, _, d = await draft_for("slots2@example.com", FakeWorkspace(fail=True))
+            assert d["intent"] == "interview_request" and d["slots"] == []
+            assert d["draft"] == CFG["conversation"]["templates"]["interview_no_slots"]
 
-            # no workspace configured at all behaves the same
-            app.state.ctx.workspace = None
-            d = (await c.post(f"/api/messages/{cid}/draft", json={}, headers=h)).json()
-            assert d["slots"] == [] and d["draft"] == CFG["conversation"]["templates"]["interview_no_slots"]
+            # no workspace configured: the conversation graph uses its deterministic local stand-in (weekday slots)
+            _, _, d = await draft_for("slots3@example.com", None)
+            assert len(d["slots"]) == CFG["conversation"]["max_slots_offered"]
+            assert all(date.fromisoformat(s["start"][:10]).weekday() < 5 for s in d["slots"])
     finally:
         await cm.__aexit__(None, None, None)

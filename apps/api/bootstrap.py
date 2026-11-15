@@ -10,6 +10,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from agent.graphs.bid_graph import build_bid_graph
+from agent.graphs.conversation_graph import build_conversation_graph
 from agent.marketplace_port import get_marketplace
 from agent.nodes.config import CFG
 from apps.api.context import AppCtx, GuardedMarketplace
@@ -74,6 +75,7 @@ async def open_ctx(with_arq: bool = True):
     try:
         async with checkpointer(database_url) as (saver, kind):
             ctx = AppCtx(db=db, graph=build_bid_graph(saver), checkpointer_kind=kind)
+            ctx.conv_graph = build_conversation_graph(saver)
             ctx.mp = GuardedMarketplace(get_marketplace(), ctx)
             if os.environ.get("WORKSPACE_MCP_URL") or not test_mode():
                 from agent.mcp_workspace import MCPWorkspace
