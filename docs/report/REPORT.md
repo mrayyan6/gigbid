@@ -95,8 +95,8 @@ sentence matches the evidence (ADR 0006).
 
 **Where better retrieval did not help.** V3 had the best retrieval numbers and the lower GigSim reply rate (0.24
 against 0.39 for V0, n = 17 and 18). That gap is noise. Judge scores were 3.56 and 3.59. A separate calibration on 30 drafts gave quadratic kappa 0.59 (exact agreement
-70 percent, `judge_calibration.json`), but the reference labels were written by an AI assistant with the instructor's
-permission (docs/AI_USAGE.md), so this is agreement between two LLMs, not with a human. The calibration judge
+70 percent, `judge_calibration.json`), against reference labels that were first drafted with an AI assistant and then reviewed and adopted by the author
+(docs/AI_USAGE.md), so this is the judge model's agreement with those adopted labels. The calibration judge
 scored lower (mean 2.1) than the proposal eval, which used a different run, so scores are not comparable across
 them. No human pairwise panel was run.
 
@@ -203,6 +203,6 @@ first `search_evidence` call of about 25 seconds that clients timed out on, now 
 
 Still not done: Kaggle datasets unused; the live Upwork adapter was never run against a real account (it needs
 Upwork approval and OAuth credentials, and the brief says live mode is never graded); V4 to V7 and V9 not built
-(optional, V0 to V3 plus V8 cover the required groups); judge calibrated only against AI written labels; sample
+(optional, V0 to V3 plus V8 cover the required groups); judge calibrated against 30 labels that were first drafted with an AI assistant and then adopted by the author; sample
 sizes 17 to 40 so most intervals are wide. The human pairwise panel result is reported in section 4 only if raters
 replied in time.

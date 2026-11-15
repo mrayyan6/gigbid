@@ -138,8 +138,10 @@ def analyse(responses: list[dict], key: dict, judge_pick: dict[str, str | None] 
     return out
 
 
-def score() -> dict | None:
-    path = DATA / "pairwise_responses.csv"
+def score(responses_path: Path | None = None, out_path: Path | None = None, rater_type: str = "human") -> dict | None:
+    """Score a responses file. rater_type is written into the result so an agent file can never be mistaken for a
+    human one: human replies go to pairwise_responses.csv, agent replies to agent_rater_responses.csv."""
+    path = responses_path or DATA / "pairwise_responses.csv"
     if not path.exists():
         print("no responses file:", path)
         return None
@@ -150,13 +152,16 @@ def score() -> dict | None:
     key = json.loads((DATA / "pairwise_key.json").read_text(encoding="utf-8"))
     judge_pick = {}
     for pid, k in key.items():
-        s = k["judge_score"]
-        judge_pick[pid] = BEST if s[BEST] > s[BASE] else BASE if s[BASE] > s[BEST] else None
+        sc = k["judge_score"]
+        judge_pick[pid] = BEST if sc[BEST] > sc[BASE] else BASE if sc[BASE] > sc[BEST] else None
     res = analyse(responses, key, judge_pick)
-    res["note"] = ("Blind panel: raters saw anonymised drafts in random order. Sample is small, so read the sign test "
-                   "p value and the raters count before the share.")
-    RESULTS.mkdir(parents=True, exist_ok=True)
-    (RESULTS / "pairwise_panel.json").write_text(json.dumps(res, indent=1), encoding="utf-8")
+    res["rater_type"] = rater_type
+    res["responses_file"] = str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else path.name
+    res["note"] = ("Blind pairwise ratings: raters saw anonymised drafts in random order. Sample is small, so read the "
+                   "sign test p value and the raters count before the share. rater_type says who rated.")
+    dest = out_path or RESULTS / "pairwise_panel.json"
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_text(json.dumps(res, indent=1), encoding="utf-8")
     print(json.dumps(res, indent=1))
     return res
 
@@ -167,9 +172,15 @@ def main() -> None:
     m = sub.add_parser("make")
     m.add_argument("--pairs", type=int, default=10)
     m.add_argument("--seed", type=int, default=7)
-    sub.add_parser("score")
+    sc = sub.add_parser("score")
+    sc.add_argument("--responses", type=Path, default=None)
+    sc.add_argument("--out", type=Path, default=None)
+    sc.add_argument("--rater-type", default="human", choices=["human", "agent"])
     a = ap.parse_args()
-    print(make(a.pairs, a.seed) if a.cmd == "make" else score())
+    if a.cmd == "make":
+        print(make(a.pairs, a.seed))
+    else:
+        score(a.responses, a.out, a.rater_type)
 
 
 if __name__ == "__main__":

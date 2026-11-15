@@ -1,0 +1,51 @@
+rater,pair_id,choice,rater_type,rater_style
+Ali,P01,B,agent,practical client who values clear concise proposals
+Ali,P02,B,agent,practical client who values clear concise proposals
+Ali,P03,A,agent,practical client who values clear concise proposals
+Ali,P04,B,agent,practical client who values clear concise proposals
+Ali,P05,B,agent,practical client who values clear concise proposals
+Ali,P06,A,agent,practical client who values clear concise proposals
+Ali,P07,B,agent,practical client who values clear concise proposals
+Ali,P08,B,agent,practical client who values clear concise proposals
+Ali,P09,A,agent,practical client who values clear concise proposals
+Ali,P10,B,agent,practical client who values clear concise proposals
+Abdullah,P01,B,agent,skeptical hiring manager who penalises unsupported claims
+Abdullah,P02,B,agent,skeptical hiring manager who penalises unsupported claims
+Abdullah,P03,A,agent,skeptical hiring manager who penalises unsupported claims
+Abdullah,P04,B,agent,skeptical hiring manager who penalises unsupported claims
+Abdullah,P05,B,agent,skeptical hiring manager who penalises unsupported claims
+Abdullah,P06,A,agent,skeptical hiring manager who penalises unsupported claims
+Abdullah,P07,B,agent,skeptical hiring manager who penalises unsupported claims
+Abdullah,P08,B,agent,skeptical hiring manager who penalises unsupported claims
+Abdullah,P09,A,agent,skeptical hiring manager who penalises unsupported claims
+Abdullah,P10,A,agent,skeptical hiring manager who penalises unsupported claims
+Zaim,P01,B,agent,technical lead who checks skills match and concrete past work
+Zaim,P02,B,agent,technical lead who checks skills match and concrete past work
+Zaim,P03,A,agent,technical lead who checks skills match and concrete past work
+Zaim,P04,B,agent,technical lead who checks skills match and concrete past work
+Zaim,P05,B,agent,technical lead who checks skills match and concrete past work
+Zaim,P06,A,agent,technical lead who checks skills match and concrete past work
+Zaim,P07,B,agent,technical lead who checks skills match and concrete past work
+Zaim,P08,B,agent,technical lead who checks skills match and concrete past work
+Zaim,P09,A,agent,technical lead who checks skills match and concrete past work
+Zaim,P10,A,agent,technical lead who checks skills match and concrete past work
+Musa,P01,B,agent,non-technical business owner who values plain language and trust
+Musa,P02,B,agent,non-technical business owner who values plain language and trust
+Musa,P03,A,agent,non-technical business owner who values plain language and trust
+Musa,P04,B,agent,non-technical business owner who values plain language and trust
+Musa,P05,B,agent,non-technical business owner who values plain language and trust
+Musa,P06,A,agent,non-technical business owner who values plain language and trust
+Musa,P07,B,agent,non-technical business owner who values plain language and trust
+Musa,P08,B,agent,non-technical business owner who values plain language and trust
+Musa,P09,A,agent,non-technical business owner who values plain language and trust
+Musa,P10,A,agent,non-technical business owner who values plain language and trust
+Ahsan,P01,B,agent,budget and deadline focused client
+Ahsan,P02,B,agent,budget and deadline focused client
+Ahsan,P03,A,agent,budget and deadline focused client
+Ahsan,P04,B,agent,budget and deadline focused client
+Ahsan,P05,B,agent,budget and deadline focused client
+Ahsan,P06,A,agent,budget and deadline focused client
+Ahsan,P07,B,agent,budget and deadline focused client
+Ahsan,P08,B,agent,budget and deadline focused client
+Ahsan,P09,A,agent,budget and deadline focused client
+Ahsan,P10,B,agent,budget and deadline focused client

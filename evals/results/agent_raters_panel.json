@@ -1,0 +1,25 @@
+{
+ "raters": 5,
+ "pairs_rated": 10,
+ "votes": {
+  "v0_naive": 28,
+  "v3_rerank": 22,
+  "tie": 0
+ },
+ "share_best_of_decisive_votes": 0.44,
+ "sign_test_p_votes": 0.4799,
+ "pair_majority_wins": {
+  "v0_naive": 6,
+  "v3_rerank": 4
+ },
+ "rater_pair_agreement": 0.94,
+ "variants": {
+  "baseline": "v0_naive",
+  "best": "v3_rerank"
+ },
+ "agreement_with_llm_judge": 1.0,
+ "pairs_compared_with_judge": 3,
+ "rater_type": "agent",
+ "responses_file": "agent_rater_responses.csv",
+ "note": "Blind pairwise ratings: raters saw anonymised drafts in random order. Sample is small, so read the sign test p value and the raters count before the share. rater_type says who rated."
+}
