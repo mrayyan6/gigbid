@@ -13,7 +13,7 @@ import os
 import sys
 import tempfile
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -36,7 +36,7 @@ async def main(repo: str, path: str) -> dict:
     res = add_texts("check-user", "ai_ml", [(name, text)])
     _, stats = user_corpus("ai_ml", "check-user")
     item = load_user_items("check-user")[0] if res["added"] else {}
-    out = {"checked_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+    out = {"checked_at": datetime.now(UTC).isoformat(timespec="seconds"),
            "server": "https://api.githubcopilot.com/mcp/ (official GitHub MCP server, Streamable HTTP)",
            "client": "langchain-mcp-adapters MultiServerMCPClient",
            "tools_offered": len(offered),
