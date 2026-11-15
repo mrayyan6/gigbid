@@ -8,7 +8,7 @@ AI-4016 Assignment II. Everything here is synthetic data. Every number below is 
 `evals/results/*.json` by `scripts/render_tables.py` (see `docs/results_tables.md`).
 
 - Live URL: **https://20-235-68-147.sslip.io** (reviewer login is in the private Classroom comment, not in this repo)
-- Demo video: not added yet
+- Demo video: https://drive.google.com/file/d/16QidLFNPpdbDCZBjeT_Qe1zNl5c34Xvm/view?usp=sharing
 - Public traces (LangSmith): [docs/TRACES.md](docs/TRACES.md)
 - Report: `docs/report/REPORT.pdf`. Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
