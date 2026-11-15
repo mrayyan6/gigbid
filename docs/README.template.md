@@ -9,6 +9,8 @@ AI-4016 Assignment II. Everything here is synthetic data. Every number below is 
 
 - Live URL: **{{LIVE_URL}}** (reviewer login is in the private Classroom comment, not in this repo)
 - Demo video: {{VIDEO_URL}}
+- Technical write-up: https://mrayyan6.github.io/gigbid-writeup/
+- Portfolio MCP server: [mcp_servers/portfolio/README.md](mcp_servers/portfolio/README.md) (runs with `uvx` straight from this repository)
 - Public traces (LangSmith): [docs/TRACES.md](docs/TRACES.md)
 - Report: `docs/report/REPORT.pdf`. Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 

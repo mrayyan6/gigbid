@@ -9,6 +9,8 @@ AI-4016 Assignment II. Everything here is synthetic data. Every number below is 
 
 - Live URL: **https://20-235-68-147.sslip.io** (reviewer login is in the private Classroom comment, not in this repo)
 - Demo video: https://drive.google.com/file/d/16QidLFNPpdbDCZBjeT_Qe1zNl5c34Xvm/view?usp=sharing
+- Technical write-up: https://mrayyan6.github.io/gigbid-writeup/
+- Portfolio MCP server: [mcp_servers/portfolio/README.md](mcp_servers/portfolio/README.md) (runs with `uvx` straight from this repository)
 - Public traces (LangSmith): [docs/TRACES.md](docs/TRACES.md)
 - Report: `docs/report/REPORT.pdf`. Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
