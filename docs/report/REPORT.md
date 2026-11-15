@@ -185,4 +185,4 @@ concurrent load, and the Critic rejects every draft, which spends both send back
 ## Honest list of what is not done
 
 Kaggle datasets unused; judge calibrated only against AI written labels (no human labels) and no human pairwise panel; V4 to V7 and V9 not built; incremental
-re-indexing missing; Inspector screenshots taken for the Portfolio server only and without an execution result; the live Upwork and GitHub MCP paths not exercised; sample sizes 17 to 40 so most intervals are wide.
+re-indexing missing; the Messages screen drafts suggested replies but its Approve and send button is disabled because the API contract has no send endpoint; Inspector screenshots taken for the Portfolio server only and without an execution result; the live Upwork and GitHub MCP paths not exercised; sample sizes 17 to 40 so most intervals are wide.
