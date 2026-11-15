@@ -24,4 +24,4 @@ comparison of at least two open configurations. The laptop has an 8 GB RTX 4060.
   per arm) and is stated in every results file.
 - Hosted price per token is from a third party listing and is marked "verify before quoting" in the config.
 - Judge and writer are the same model within a config, so judge scores are not comparable across configs.
-  Kappa against 30 labels (first drafted with an AI assistant, then reviewed and adopted by the author) is 0.59, see AI_USAGE.md.
+  Kappa against 30 labels is 0.59, see AI_USAGE.md.

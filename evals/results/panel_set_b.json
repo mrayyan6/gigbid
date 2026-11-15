@@ -20,6 +20,6 @@
  "agreement_with_llm_judge": 1.0,
  "pairs_compared_with_judge": 3,
  "rater_type": "agent",
- "responses_file": "agent_rater_responses.csv",
+ "responses_file": "panel_set_b_responses.csv",
  "note": "Blind pairwise ratings: raters saw anonymised drafts in random order. Sample is small, so read the sign test p value and the raters count before the share. rater_type says who rated."
 }

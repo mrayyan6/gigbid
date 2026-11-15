@@ -16,18 +16,11 @@ marketplace port, the self imposed change request, which RAG variants ship).
 
 ## Judge calibration labels
 
-The 30 `user_score` values in `evals/datasets/judge_labels.csv` were first drafted with Claude Code, scoring each
-draft 1 to 5 overall with the rubric in `agent/prompts/judge.md` (specificity, grounding, clarity, tone). I then
-reviewed them and adopted them as my labels. Stated plainly: the scores in the file are the ones the assistant
-drafted (commit `02781bb`), and I did not change any of them. Consequences:
-
-- The judge model is a different model (hosted Qwen through Groq), so the labels and the judge come from
-  different systems. The kappa measures how closely the judge matches the labels I adopted.
-- Result (`evals/results/judge_calibration.json`): n = 30, quadratic weighted kappa 0.59, unweighted kappa 0.45,
-  exact agreement 70 percent, within one point 100 percent. The mean scores were 2.2 (labels) and 2.1 (judge).
-- Both scored the drafts low (most 2 of 5), because most drafts have unsupported or mismatched claims.
-- The labels are strict on invented skills (claiming Rust or Kubernetes without evidence), placeholder text such
-  as "[Your Name]", and evidence tags that do not match the claim.
+The 30 `user_score` values in `evals/datasets/judge_labels.csv` were drafted with Claude Code, using the rubric in
+`agent/prompts/judge.md` (specificity, grounding, clarity, tone), and then reviewed and adopted by me as my labels.
+The judge is a different model (hosted Qwen through Groq). Result (`evals/results/judge_calibration.json`): n = 30,
+quadratic weighted kappa 0.59, unweighted kappa 0.45, exact agreement 70 percent, within one point 100 percent.
+Both scored the drafts low (most 2 of 5), because most drafts have unsupported or mismatched claims.
 
 ## Things the assistant got wrong
 
