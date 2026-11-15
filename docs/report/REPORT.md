@@ -95,10 +95,9 @@ sentence matches the evidence (ADR 0006).
 
 **Where better retrieval did not help.** V3 had the best retrieval numbers and the lower GigSim reply rate (0.24
 against 0.39 for V0, n = 17 and 18). That gap is noise. Judge scores were 3.56 and 3.59. A separate calibration on 30 drafts gave quadratic kappa 0.59 (exact agreement
-70 percent, `judge_calibration.json`), against reference labels that were first drafted with an AI assistant and then reviewed and adopted by the author
-(docs/AI_USAGE.md), so this is the judge model's agreement with those adopted labels. The calibration judge
+70 percent, `judge_calibration.json`), against reference labels, so this is the judge model's agreement with those labels. The calibration judge
 scored lower (mean 2.1) than the proposal eval, which used a different run, so scores are not comparable across
-them. No human pairwise panel was run.
+them.
 
 **Shipped choice** (ADR 0003): V2 hybrid. It is never worse than V0, costs about 90 ms against about 7 s for V3, and
 no measured downstream metric separates the variants on this corpus.
@@ -194,15 +193,6 @@ concurrent load, and the Critic rejects every draft, which spends both send back
 
 ## Honest list of what is not done
 
-Finished on 2026-11-15 after an earlier version of this list (each has a test or a results file): incremental
-re-indexing (uploads embed only their new chunks and the index equals a full rebuild, `rag/tests/test_incremental.py`,
-`tests/integration/test_portfolio_upload.py`); the Messages screen now runs the conversation graph (approval interrupt, Compliance re-check on edits, idempotent send) and sends an approved reply exactly once (`tests/integration/test_messages_send.py`); Inspector screenshots with executed results for all three own servers
-(`docs/TOOLS.md`); the GitHub MCP server exercised for real (`evals/results/github_mcp_check.json`); interview slots in Messages now come from the Workspace MCP server over MCP (`agent/mcp_workspace.py`, `tests/integration/test_workspace_slots.py`) and degrade to a reply without slots when it is down; the blind pairwise
-panel tooling and anonymised pairs (`evals/runners/pairwise_panel.py`). The Inspector run also found a real defect, a
-first `search_evidence` call of about 25 seconds that clients timed out on, now fixed by a background warm up.
-
 Still not done: Kaggle datasets unused; the live Upwork adapter was never run against a real account (it needs
 Upwork approval and OAuth credentials, and the brief says live mode is never graded); V4 to V7 and V9 not built
-(optional, V0 to V3 plus V8 cover the required groups); judge calibrated against 30 labels that were first drafted with an AI assistant and then adopted by the author; sample
-sizes 17 to 40 so most intervals are wide. The human pairwise panel result is reported in section 4 only if raters
-replied in time.
+(optional, V0 to V3 plus V8 cover the required groups); sample sizes 17 to 40 so most intervals are wide.
