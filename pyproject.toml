@@ -56,7 +56,7 @@ ignore = ["BLE001", "S110", "PLW1510", "C408", "RUF046", "RUF059", "RUF012", "RU
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 pythonpath = ["."]
-testpaths = ["tests", "mcp_servers"]
+testpaths = ["tests", "mcp_servers", "rag"]
 
 [tool.setuptools.packages.find]
 include = ["agent*", "apps*", "rag*", "mcp_servers*", "gigsim*", "evals*", "worker*"]
