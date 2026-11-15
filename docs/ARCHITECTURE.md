@@ -44,6 +44,15 @@ The liaison reads messages (treated as untrusted data), classifies intent (quest
 interview request, scam signal), drafts a reply or proposes interview slots from the Workspace server,
 and interrupts for approval before any message leaves.
 
+The web Messages screen drives this graph through the API (`apps/api/routers/messages.py`). "Suggest a reply" runs the
+graph to its approval interrupt on a thread `conv:<user id>:<client id>`, so the thread is per user and per client and
+is stored in the same checkpointer as the bid graph. Asking again while a draft waits returns that draft. "Approve and
+send" resumes the interrupted thread with approve (unchanged text) or edit (changed text, which the graph's Compliance
+re-check validates before sending). The send idempotency key is `<thread>:<client message id>`, so a double click or a
+retry never sends twice. Interview slots come from the Workspace MCP server through `agent/mcp_workspace.py`. If the graph
+cannot run, the API falls back to the earlier rule based draft and a direct send with its own idempotency key, so the
+user is never left without a draft.
+
 ## Why each agent exists
 
 | Agent | Why it is its own node | Tool access |
