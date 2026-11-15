@@ -26,6 +26,7 @@ from apps.api.routers import (
     memory,
     messages,
     pipeline,
+    portfolio,
     proposals,
     runs,
     settings,
@@ -86,7 +87,7 @@ async def _upstream_status(_: Request, exc: httpx.HTTPStatusError):
 
 api = APIRouter(prefix="/api")
 for r in (auth_router, jobs, runs, approvals, proposals, pipeline, messages, analytics, memory,
-          settings, health):
+          portfolio, settings, health):
     api.include_router(r.router)
 api.include_router(health.test_router)
 app.include_router(api)

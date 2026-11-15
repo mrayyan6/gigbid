@@ -11,5 +11,9 @@ def load_portfolio(persona: str | None = None) -> list[dict]:
     items = json.loads((DATA / "portfolio.json").read_text(encoding="utf-8"))
     if persona:
         items = [i for i in items if i["freelancer_id"] == persona]
-    return [{**i, "text": f"{i['title']}. {i['summary']} Skills: {', '.join(i['skills'])}."}
-            for i in items]
+    return [with_text(i) for i in items]
+
+
+def with_text(i: dict) -> dict:
+    """The searchable text of an evidence item (shared by the seeded and the uploaded portfolio)."""
+    return {**i, "text": f"{i['title']}. {i['summary']} Skills: {', '.join(i['skills'])}."}

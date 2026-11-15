@@ -32,6 +32,8 @@ dependencies = [
   "cryptography==50.0.2",
   "pyjwt==2.15.1",
   "sse-starlette==3.7.0",
+  "python-multipart==0.0.33",
+  "pypdf==7.1.0",
 ]
 
 [project.optional-dependencies]

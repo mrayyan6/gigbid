@@ -246,3 +246,27 @@ class MarketplaceDownIn(BaseModel):
 
 class MarketplaceDownOut(BaseModel):
     down: bool
+
+
+class UploadOut(BaseModel):
+    added: int
+    duplicates: int
+    rejected: list[str] = Field(default_factory=list)
+    incremental: bool = True
+    chunks_embedded: int
+    reindex_seconds: float
+    user_items: int
+    seeded_items: int
+
+
+class PortfolioItemOut(BaseModel):
+    evidence_id: str
+    type: str
+    title: str
+    skills: list[str] = Field(default_factory=list)
+    source: str
+
+
+class PortfolioOut(BaseModel):
+    seeded_items: int
+    uploaded: list[PortfolioItemOut]

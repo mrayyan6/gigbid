@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { api, errorMessage, unwrap, type Schemas } from "@/lib/api/client";
 import { useLoad } from "@/lib/useLoad";
 import { Badge, Empty, ErrorBox, KeyVal, Loading, PageHeader } from "@/components/ui";
+import PortfolioUpload from "@/components/PortfolioUpload";
 
 type Form = {
   autonomy: "manual" | "auto_skip_low_fit";
@@ -184,6 +185,8 @@ export default function SettingsPage() {
           <KeyVal k="Persona" v={s.persona} />
         </dl>
       </section>
+
+      <PortfolioUpload />
 
       <section className="card" aria-label="Memory viewer">
         <h2 className="h2">What GigBid learned</h2>

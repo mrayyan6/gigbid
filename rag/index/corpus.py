@@ -53,6 +53,24 @@ class Corpus:
         self.emb = embed_passages([c["text"] for c in self.chunks])
         self.bm25 = BM25Okapi([tokenize(c["text"]) for c in self.chunks])
 
+    def with_items(self, new_items: list[dict]) -> tuple[Corpus, int]:
+        """Incremental re-index: a corpus that also holds new_items, without re-embedding what is already
+        indexed. Only the new chunks are embedded (the expensive step); the BM25 statistics are cheap and are
+        recomputed from the stored tokens. Returns (corpus, number of chunks embedded). Items already present
+        are ignored, so adding the same item twice is a no-op."""
+        new_items = [i for i in new_items if i["evidence_id"] not in self.by_id]
+        if not new_items:
+            return self, 0
+        c = object.__new__(Corpus)
+        c.items = self.items + new_items
+        c.by_id = {i["evidence_id"]: i for i in c.items}
+        fresh = fixed_chunks(new_items)
+        c.chunks = self.chunks + fresh
+        c.chunk_ids = self.chunk_ids + [x["evidence_id"] for x in fresh]
+        c.emb = np.vstack([self.emb, embed_passages([x["text"] for x in fresh])])
+        c.bm25 = BM25Okapi([tokenize(x["text"]) for x in c.chunks])
+        return c, len(fresh)
+
     def dense(self, query: str, n: int) -> list[tuple[str, float]]:
         sims = self.emb @ embed_queries([query])[0]
         return ranked_unique(np.argsort(-sims), sims, self.chunk_ids, n)

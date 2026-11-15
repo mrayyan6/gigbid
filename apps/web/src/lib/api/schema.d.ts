@@ -337,6 +337,44 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/portfolio": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Portfolio */
+        get: operations["get_portfolio"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/portfolio/upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Portfolio
+         * @description Add work to the user's own portfolio and re-index it incrementally: only the new chunks are embedded.
+         *     The uploads are private to this user (tenant scoped) and used as evidence in this user's runs.
+         */
+        post: operations["upload_portfolio"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/settings": {
         parameters: {
             query?: never;
@@ -459,6 +497,11 @@ export interface components {
             } | null;
             /** Promoted Memory */
             promoted_memory?: string[];
+        };
+        /** Body_upload_portfolio */
+        Body_upload_portfolio: {
+            /** Files */
+            files: string[];
         };
         /** DeleteOut */
         DeleteOut: {
@@ -648,6 +691,26 @@ export interface components {
             columns: {
                 [key: string]: components["schemas"]["PipelineCard"][];
             };
+        };
+        /** PortfolioItemOut */
+        PortfolioItemOut: {
+            /** Evidence Id */
+            evidence_id: string;
+            /** Type */
+            type: string;
+            /** Title */
+            title: string;
+            /** Skills */
+            skills?: string[];
+            /** Source */
+            source: string;
+        };
+        /** PortfolioOut */
+        PortfolioOut: {
+            /** Seeded Items */
+            seeded_items: number;
+            /** Uploaded */
+            uploaded: components["schemas"]["PortfolioItemOut"][];
         };
         /** ReasonCount */
         ReasonCount: {
@@ -882,6 +945,28 @@ export interface components {
              */
             token_type: string;
             user: components["schemas"]["UserOut"];
+        };
+        /** UploadOut */
+        UploadOut: {
+            /** Added */
+            added: number;
+            /** Duplicates */
+            duplicates: number;
+            /** Rejected */
+            rejected?: string[];
+            /**
+             * Incremental
+             * @default true
+             */
+            incremental: boolean;
+            /** Chunks Embedded */
+            chunks_embedded: number;
+            /** Reindex Seconds */
+            reindex_seconds: number;
+            /** User Items */
+            user_items: number;
+            /** Seeded Items */
+            seeded_items: number;
         };
         /** UserOut */
         UserOut: {
@@ -1439,6 +1524,68 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DeleteOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_portfolio: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_portfolio: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_portfolio"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadOut"];
                 };
             };
             /** @description Validation Error */

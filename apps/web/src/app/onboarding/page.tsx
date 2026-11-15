@@ -5,6 +5,7 @@ import { useState, type FormEvent } from "react";
 import { api, errorMessage, unwrap } from "@/lib/api/client";
 import { getToken, getUser, markOnboarded } from "@/lib/auth";
 import { Loading, ErrorBox } from "@/components/ui";
+import { describeUpload } from "@/components/PortfolioUpload";
 import { useLoad } from "@/lib/useLoad";
 
 const PERSONAS = [
@@ -56,7 +57,7 @@ export default function OnboardingPage() {
         headers: { Authorization: `Bearer ${getToken() ?? ""}` },
         body: form,
       });
-      if (res.ok) setUploadNote("Portfolio uploaded. Re-indexing started.");
+      if (res.ok) setUploadNote(describeUpload(await res.json()));
       else if (res.status === 404 || res.status === 405)
         setUploadNote("Upload is not enabled on this server yet. Your persona's seeded portfolio is used.");
       else setUploadNote(`Upload failed (${res.status}).`);

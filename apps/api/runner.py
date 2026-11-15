@@ -55,10 +55,16 @@ class RunChannel:
 
 
 def graph_config(ctx: AppCtx, user_id: str, persona: str, tid: str, trace_id: str | None) -> dict:
-    retr = ctx.retrievers.get(persona)
-    if retr is None:
-        from rag.retriever import get_retriever
-        retr = ctx.retrievers.setdefault(persona, get_retriever("v2_hybrid", persona))
+    from rag.ingest.user_store import has_items
+    if has_items(user_id):
+        # the user added work in the UI: search the seeded portfolio plus their uploads (incrementally indexed)
+        from rag.retriever import get_user_retriever
+        retr = get_user_retriever("v2_hybrid", persona, user_id)
+    else:
+        retr = ctx.retrievers.get(persona)
+        if retr is None:
+            from rag.retriever import get_retriever
+            retr = ctx.retrievers.setdefault(persona, get_retriever("v2_hybrid", persona))
     return {"configurable": {"thread_id": tid, "marketplace": ctx.mp, "retriever": retr,
                              "user_id": user_id, "memory": ctx.memory, "trace_id": trace_id},
             "metadata": {"trace_id": trace_id, "user_id": user_id, "job_thread": tid},

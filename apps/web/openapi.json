@@ -816,6 +816,89 @@
         }
       }
     },
+    "/api/portfolio": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Get Portfolio",
+        "operationId": "get_portfolio",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/portfolio/upload": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Upload Portfolio",
+        "description": "Add work to the user's own portfolio and re-index it incrementally: only the new chunks are embedded.\nThe uploads are private to this user (tenant scoped) and used as evidence in this user's runs.",
+        "operationId": "upload_portfolio",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_portfolio"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
     "/api/settings": {
       "get": {
         "tags": [
@@ -1118,6 +1201,23 @@
           "status"
         ],
         "title": "ApprovalOut"
+      },
+      "Body_upload_portfolio": {
+        "properties": {
+          "files": {
+            "items": {
+              "type": "string",
+              "contentMediaType": "application/octet-stream"
+            },
+            "type": "array",
+            "title": "Files"
+          }
+        },
+        "type": "object",
+        "required": [
+          "files"
+        ],
+        "title": "Body_upload_portfolio"
       },
       "DeleteOut": {
         "properties": {
@@ -1588,6 +1688,62 @@
           "columns"
         ],
         "title": "PipelineOut"
+      },
+      "PortfolioItemOut": {
+        "properties": {
+          "evidence_id": {
+            "type": "string",
+            "title": "Evidence Id"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "skills": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Skills"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "evidence_id",
+          "type",
+          "title",
+          "source"
+        ],
+        "title": "PortfolioItemOut"
+      },
+      "PortfolioOut": {
+        "properties": {
+          "seeded_items": {
+            "type": "integer",
+            "title": "Seeded Items"
+          },
+          "uploaded": {
+            "items": {
+              "$ref": "#/components/schemas/PortfolioItemOut"
+            },
+            "type": "array",
+            "title": "Uploaded"
+          }
+        },
+        "type": "object",
+        "required": [
+          "seeded_items",
+          "uploaded"
+        ],
+        "title": "PortfolioOut"
       },
       "ReasonCount": {
         "properties": {
@@ -2137,6 +2293,56 @@
           "user"
         ],
         "title": "TokenOut"
+      },
+      "UploadOut": {
+        "properties": {
+          "added": {
+            "type": "integer",
+            "title": "Added"
+          },
+          "duplicates": {
+            "type": "integer",
+            "title": "Duplicates"
+          },
+          "rejected": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Rejected"
+          },
+          "incremental": {
+            "type": "boolean",
+            "title": "Incremental",
+            "default": true
+          },
+          "chunks_embedded": {
+            "type": "integer",
+            "title": "Chunks Embedded"
+          },
+          "reindex_seconds": {
+            "type": "number",
+            "title": "Reindex Seconds"
+          },
+          "user_items": {
+            "type": "integer",
+            "title": "User Items"
+          },
+          "seeded_items": {
+            "type": "integer",
+            "title": "Seeded Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "added",
+          "duplicates",
+          "chunks_embedded",
+          "reindex_seconds",
+          "user_items",
+          "seeded_items"
+        ],
+        "title": "UploadOut"
       },
       "UserOut": {
         "properties": {
