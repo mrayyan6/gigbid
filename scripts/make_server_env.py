@@ -12,7 +12,7 @@ from dotenv import dotenv_values
 
 ROOT = Path(__file__).resolve().parents[1]
 SECRETS = ["JWT_SECRET", "TOKEN_ENCRYPTION_KEY", "MARKETPLACE_MCP_TOKEN", "WORKSPACE_MCP_TOKEN",
-           "REVIEWER_PASSWORD", "DATABASE_URL", "REDIS_URL", "GROQ_API_KEY", "LANGSMITH_API_KEY"]
+           "REVIEWER_PASSWORD", "DATABASE_URL", "REDIS_URL", "GROQ_API_KEY", "LANGSMITH_API_KEY", "GITHUB_TOKEN"]
 VARIABLES = {"GIGBID_PROFILE": "open_hosted", "LLM_ENABLED": "1", "MARKETPLACE_MODE": "mcp",
              "REVIEWER_EMAIL": "reviewer@gigbid.demo", "REVIEWER_PERSONA": "ai_ml",
              "LANGSMITH_TRACING": "true", "LANGSMITH_PROJECT": "gigbid"}

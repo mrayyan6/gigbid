@@ -194,5 +194,16 @@ concurrent load, and the Critic rejects every draft, which spends both send back
 
 ## Honest list of what is not done
 
-Kaggle datasets unused; judge calibrated only against AI written labels (no human labels) and no human pairwise panel; V4 to V7 and V9 not built; incremental
-re-indexing missing; the Messages screen drafts suggested replies but its Approve and send button is disabled because the API contract has no send endpoint; Inspector screenshots taken for the Portfolio server only and without an execution result; the live Upwork and GitHub MCP paths not exercised; sample sizes 17 to 40 so most intervals are wide.
+Finished on 2026-11-15 after an earlier version of this list (each has a test or a results file): incremental
+re-indexing (uploads embed only their new chunks and the index equals a full rebuild, `rag/tests/test_incremental.py`,
+`tests/integration/test_portfolio_upload.py`); the Messages screen now sends an approved reply exactly once
+(`tests/integration/test_messages_send.py`); Inspector screenshots with executed results for all three own servers
+(`docs/TOOLS.md`); the GitHub MCP server exercised for real (`evals/results/github_mcp_check.json`); the blind pairwise
+panel tooling and anonymised pairs (`evals/runners/pairwise_panel.py`). The Inspector run also found a real defect, a
+first `search_evidence` call of about 25 seconds that clients timed out on, now fixed by a background warm up.
+
+Still not done: Kaggle datasets unused; the live Upwork adapter was never run against a real account (it needs
+Upwork approval and OAuth credentials, and the brief says live mode is never graded); V4 to V7 and V9 not built
+(optional, V0 to V3 plus V8 cover the required groups); judge calibrated only against AI written labels; sample
+sizes 17 to 40 so most intervals are wide. The human pairwise panel result is reported in section 4 only if raters
+replied in time.

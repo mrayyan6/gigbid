@@ -84,9 +84,12 @@ The defences did not produce a statistically clear improvement at this sample si
   used (no API token was set up). Scam and retrieval gold labels are partly circular, see `docs/DATA_CARD.md`.
 - Sample sizes are small (17 to 40 per arm) because of the Groq free tier, so most intervals are wide.
 - The LLM judge was calibrated on 30 drafts (quadratic kappa 0.59, `evals/results/judge_calibration.json`), but the reference labels were written by an AI assistant with the instructor's permission, not by a human, so this is agreement between two LLMs (docs/AI_USAGE.md).
-- The live Upwork adapter is a documented stub and was never run against a real account. The GitHub MCP server is
-  configured and documented, not exercised in the evaluated paths.
-- Incremental re-indexing of the portfolio is not implemented. Per agent tool allowlists are enforced inside the
+- The live Upwork adapter is a documented stub and was never run against a real account (it needs Upwork approval
+  and OAuth credentials; live mode is never graded). The GitHub MCP server was exercised for real
+  (`evals/results/github_mcp_check.json`) and is used to import READMEs and code, but it is not configured on the
+  public deployment (no token there), where the import answers 503.
+- Portfolio uploads (PDF, Markdown, text, JSON) and GitHub imports are re-indexed incrementally: only the new
+  chunks are embedded (`rag/tests/test_incremental.py`). Per agent tool allowlists are enforced inside the
   graph (`tests/integration/test_graph_allowlists.py`), and the Compliance Guard has no marketplace access.
 - The pipeline board fills drafted, submitted, replied, interview (derived from client messages) and lost. GigSim
   has no events for viewed or hired, so those two columns stay empty.

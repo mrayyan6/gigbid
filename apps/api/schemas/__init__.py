@@ -270,3 +270,8 @@ class PortfolioItemOut(BaseModel):
 class PortfolioOut(BaseModel):
     seeded_items: int
     uploaded: list[PortfolioItemOut]
+
+
+class GithubImportIn(BaseModel):
+    repo: str = Field(description="owner/name of a GitHub repository the server token can read")
+    path: str = Field(default="README.md", description="a text or code file in the repository")

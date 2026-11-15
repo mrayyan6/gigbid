@@ -375,6 +375,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/portfolio/github": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Import From Github
+         * @description Read a README or code file through the official GitHub MCP server and add it to the user's portfolio
+         *     (incrementally indexed, like an upload). Only the read tool get_file_contents is ever called.
+         */
+        post: operations["import_from_github"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/settings": {
         parameters: {
             query?: never;
@@ -531,6 +552,20 @@ export interface components {
              * @enum {string}
              */
             status: "awaiting_approval" | "flagged";
+        };
+        /** GithubImportIn */
+        GithubImportIn: {
+            /**
+             * Repo
+             * @description owner/name of a GitHub repository the server token can read
+             */
+            repo: string;
+            /**
+             * Path
+             * @description a text or code file in the repository
+             * @default README.md
+             */
+            path: string;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -1576,6 +1611,39 @@ export interface operations {
         requestBody: {
             content: {
                 "multipart/form-data": components["schemas"]["Body_upload_portfolio"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    import_from_github: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GithubImportIn"];
             };
         };
         responses: {

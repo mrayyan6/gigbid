@@ -35,6 +35,8 @@ export default function PortfolioUpload() {
   const [note, setNote] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [repo, setRepo] = useState("");
+  const [repoPath, setRepoPath] = useState("README.md");
 
   async function upload() {
     if (!files || files.length === 0) return;
@@ -55,6 +57,24 @@ export default function PortfolioUpload() {
       }
       setNote(describeUpload((await res.json()) as UploadResult));
       setFiles(null);
+      portfolio.reload();
+    } catch (e) {
+      setError(errorMessage(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function importFromGithub() {
+    if (!repo.trim()) return;
+    setBusy(true);
+    setError(null);
+    setNote(null);
+    try {
+      const r = await unwrap(
+        api.POST("/api/portfolio/github", { body: { repo: repo.trim(), path: repoPath.trim() || "README.md" } }),
+      );
+      setNote(describeUpload(r as UploadResult));
       portfolio.reload();
     } catch (e) {
       setError(errorMessage(e));
@@ -102,6 +122,27 @@ export default function PortfolioUpload() {
       <button type="button" className="btn-primary mt-2" disabled={busy || !files || files.length === 0} onClick={upload}>
         {busy ? "Indexing..." : "Upload and index"}
       </button>
+      <div className="mt-4 border-t border-slate-200 pt-3">
+        <p className="mb-1 text-sm font-medium">Import a README or code file from GitHub</p>
+        <p className="mb-2 text-xs text-slate-500">Read through the official GitHub MCP server (read only).</p>
+        <div className="flex flex-wrap items-end gap-2">
+          <div>
+            <label htmlFor="gh-repo" className="label">
+              Repository (owner/name)
+            </label>
+            <input id="gh-repo" className="input" placeholder="octocat/hello-world" value={repo} onChange={(e) => setRepo(e.target.value)} />
+          </div>
+          <div>
+            <label htmlFor="gh-path" className="label">
+              File
+            </label>
+            <input id="gh-path" className="input" value={repoPath} onChange={(e) => setRepoPath(e.target.value)} />
+          </div>
+          <button type="button" className="btn" disabled={busy || !repo.trim()} onClick={importFromGithub}>
+            Import from GitHub
+          </button>
+        </div>
+      </div>
       {note && (
         <p className="mt-2 text-sm text-green-700" role="status" data-testid="upload-note">
           {note}

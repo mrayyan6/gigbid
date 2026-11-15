@@ -69,8 +69,13 @@ def extract_text(filename: str, data: bytes) -> str:
     return data.decode("utf-8", errors="replace")
 
 
+CODE_EXT = {".py", ".ts", ".tsx", ".js", ".jsx", ".go", ".java", ".rs", ".sql", ".ipynb"}
+
+
 def _kind(name: str) -> str:
     low = name.lower()
+    if Path(low).suffix in CODE_EXT:
+        return "code"
     if re.search(r"(^|[^a-z])(cv|resume)([^a-z]|$)", low):
         return "cv"
     if "readme" in low:
@@ -82,7 +87,8 @@ def _kind(name: str) -> str:
     return "case_study"
 
 
-def make_item(user_id: str, persona: str, filename: str, text: str, skills_vocab: list[str]) -> dict | None:
+def make_item(user_id: str, persona: str, filename: str, text: str, skills_vocab: list[str],
+              source: str = "user_upload") -> dict | None:
     raw = text.strip()
     heading = re.search(r"^\s*#\s+(.+)$", raw, re.MULTILINE)
     flat = re.sub(r"\s+", " ", re.sub(r"^\s*#+\s*", "", raw, flags=re.MULTILINE)).strip()
@@ -98,7 +104,7 @@ def make_item(user_id: str, persona: str, filename: str, text: str, skills_vocab
             "freelancer_id": persona, "type": _kind(filename), "title": title[:120],
             "project": title.lower()[:120], "skills": skills, "date": date.today().isoformat(),
             "client_industry": industry, "summary": summary, "outcome": outcome[:240],
-            "source": "user_upload", "filename": filename}
+            "source": source, "filename": filename}
 
 
 def add_files(user_id: str, persona: str, files: list[tuple[str, bytes]]) -> dict:
@@ -134,6 +140,26 @@ def add_files(user_id: str, persona: str, files: list[tuple[str, bytes]]) -> dic
             else:
                 ids.add(item["evidence_id"])
                 added.append(item)
+    if added:
+        _path(user_id).write_text(json.dumps(existing + added, indent=1), encoding="utf-8")
+    return {"added": len(added), "duplicates": dup, "rejected": rejected}
+
+
+def add_texts(user_id: str, persona: str, texts: list[tuple[str, str]], source: str = "github_mcp") -> dict:
+    """Store text that was fetched rather than uploaded, for example a README read through the GitHub MCP server."""
+    vocab = known_skills()
+    existing = _read(user_id)
+    ids = {i["evidence_id"] for i in existing}
+    added, dup, rejected = [], 0, []
+    for name, text in texts:
+        item = make_item(user_id, persona, name, text, vocab, source=source)
+        if item is None:
+            rejected.append(f"{name}: too little text to index")
+        elif item["evidence_id"] in ids:
+            dup += 1
+        else:
+            ids.add(item["evidence_id"])
+            added.append(item)
     if added:
         _path(user_id).write_text(json.dumps(existing + added, indent=1), encoding="utf-8")
     return {"added": len(added), "duplicates": dup, "rejected": rejected}

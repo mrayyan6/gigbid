@@ -41,7 +41,7 @@ Resources (portfolio): `portfolio://case/{id}`, `portfolio://proposal/{id}`. Pro
 | Server | Used for | Auth | Trust rationale |
 |---|---|---|---|
 | Upwork official MCP (`https://mcp.upwork.com/mcp`) | Live marketplace reads and draft creation behind the same `MarketplacePort` (`mcp_servers/marketplace/adapters/upwork_live.py`) | OAuth 2.1 bearer, tokens encrypted per user with Fernet (`agent/security/tokens.py`) | First party endpoint run by the platform itself, so using it is the only sanctioned way to reach Upwork data without scraping. Drafts only, the user confirms on Upwork. Never run against a live account in this project. |
-| GitHub official MCP (`ghcr.io/github/github-mcp-server`) | Loading README files for RAG ingestion | Personal access token with read only scope, `repos` toolset, `read_only` true | Maintained by GitHub, open source and pinnable by image digest. Read only toolset means it cannot change a repository. |
+| GitHub official MCP (`https://api.githubcopilot.com/mcp/`, Streamable HTTP) | Loading README and code files into a user's portfolio for RAG ingestion (`rag/ingest/github_mcp.py`, `POST /api/portfolio/github`) | Bearer token from the server environment (`GITHUB_TOKEN`), never logged or returned. Use a fine grained read only token | Run by GitHub itself. The server offers 49 tools including writes (create_pull_request, delete_file, push_files and more), so the loader keeps an allowlist by name and only ever calls `get_file_contents` (tested in `tests/unit/test_github_mcp.py`). Exercised against the real server on 2026-11-15, result in `evals/results/github_mcp_check.json`. Not configured on the public deployment (no token there), where the endpoint answers 503. |
 
 ## Inspector
 

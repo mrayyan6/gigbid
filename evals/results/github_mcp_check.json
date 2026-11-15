@@ -1,0 +1,42 @@
+{
+ "checked_at": "2026-11-15T09:35:26+00:00",
+ "server": "https://api.githubcopilot.com/mcp/ (official GitHub MCP server, Streamable HTTP)",
+ "client": "langchain-mcp-adapters MultiServerMCPClient",
+ "tools_offered": 49,
+ "write_tools_offered_but_blocked": [
+  "create_branch",
+  "create_or_update_file",
+  "create_pull_request",
+  "create_pull_request_with_copilot",
+  "create_repository",
+  "delete_file",
+  "fork_repository",
+  "merge_pull_request",
+  "push_files",
+  "update_issue_comment",
+  "update_pull_request",
+  "update_pull_request_branch"
+ ],
+ "allowlist": [
+  "get_file_contents"
+ ],
+ "repo": "mrayyan6/gigbid",
+ "path": "mcp_servers/portfolio/README.md",
+ "file_chars": 2783,
+ "list_tools_seconds": 4.17,
+ "fetch_seconds": 9.93,
+ "ingested": {
+  "added": 1,
+  "duplicates": 0,
+  "rejected": []
+ },
+ "ingested_type": "readme",
+ "ingested_source": "github_mcp",
+ "ingested_skills": [
+  "Docker",
+  "Python",
+  "RAG"
+ ],
+ "chunks_embedded": 3,
+ "note": "token came from the environment and is not stored; the repo read is public"
+}

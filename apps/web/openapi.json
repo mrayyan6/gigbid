@@ -899,6 +899,53 @@
         ]
       }
     },
+    "/api/portfolio/github": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Import From Github",
+        "description": "Read a README or code file through the official GitHub MCP server and add it to the user's portfolio\n(incrementally indexed, like an upload). Only the read tool get_file_contents is ever called.",
+        "operationId": "import_from_github",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GithubImportIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
     "/api/settings": {
       "get": {
         "tags": [
@@ -1288,6 +1335,26 @@
           "draft"
         ],
         "title": "DraftOut"
+      },
+      "GithubImportIn": {
+        "properties": {
+          "repo": {
+            "type": "string",
+            "title": "Repo",
+            "description": "owner/name of a GitHub repository the server token can read"
+          },
+          "path": {
+            "type": "string",
+            "title": "Path",
+            "description": "a text or code file in the repository",
+            "default": "README.md"
+          }
+        },
+        "type": "object",
+        "required": [
+          "repo"
+        ],
+        "title": "GithubImportIn"
       },
       "HTTPValidationError": {
         "properties": {

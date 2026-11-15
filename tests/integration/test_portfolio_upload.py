@@ -56,3 +56,34 @@ async def test_upload_is_incremental_private_and_used_by_runs(tmp_path, monkeypa
             assert (await c.post("/api/portfolio/upload", headers=h)).status_code == 422
     finally:
         await cm.__aexit__(None, None, None)
+
+
+async def test_github_import_uses_the_mcp_loader_and_needs_configuration(tmp_path, monkeypatch, gigsim_up):  # noqa: F811
+    from rag.ingest import github_mcp
+    set_env(monkeypatch, tmp_path)
+    monkeypatch.setenv("USER_PORTFOLIO_DIR", str(tmp_path / "uploads"))
+    retr_mod._user_corpora.clear()
+    retr_mod._user_retrievers.clear()
+    app, cm = await boot()
+    try:
+        async with client(app) as c:
+            h = await make_user(app, "gh1@example.com")
+            # not configured: a clear 503, nothing fetched
+            monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+            r = await c.post("/api/portfolio/github", json={"repo": "octo/demo"}, headers=h)
+            assert r.status_code == 503
+
+            async def fake_fetch(repo, path=None, client=None):
+                github_mcp.parse_request(repo, path)
+                return "demo-README.md", MD.decode()
+            monkeypatch.setattr(github_mcp, "fetch_file", fake_fetch)
+            ok = await c.post("/api/portfolio/github", json={"repo": "octo/demo"}, headers=h)
+            assert ok.status_code == 200, ok.text
+            assert ok.json()["added"] == 1 and ok.json()["chunks_embedded"] == 1
+            item = (await c.get("/api/portfolio", headers=h)).json()["uploaded"][0]
+            assert item["type"] == "readme" and item["source"] == "github_mcp"
+            # bad input is a 422 and unauthenticated is refused
+            assert (await c.post("/api/portfolio/github", json={"repo": "not a repo"}, headers=h)).status_code == 422
+            assert (await c.post("/api/portfolio/github", json={"repo": "octo/demo"})).status_code in (401, 403)
+    finally:
+        await cm.__aexit__(None, None, None)
