@@ -7,7 +7,7 @@ marketplace simulator, and has an adapter for the official Upwork MCP behind the
 AI-4016 Assignment II. Everything here is synthetic data. Every number below is generated from
 `evals/results/*.json` by `scripts/render_tables.py` (see `docs/results_tables.md`).
 
-- Live URL: **not deployed yet, see Honest limitations** (reviewer login is in the private Classroom comment, not in this repo)
+- Live URL: **https://20-235-68-147.sslip.io** (reviewer login is in the private Classroom comment, not in this repo)
 - Demo video: not added yet
 - Public traces (LangSmith): [docs/TRACES.md](docs/TRACES.md)
 - Report: `docs/report/REPORT.pdf`. Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)

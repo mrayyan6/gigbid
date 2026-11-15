@@ -1,6 +1,12 @@
 # Deploying the public URL
 
-State on 2026-11-12: the all-in-one image builds and runs, and the whole flow works against the production
+State on 2026-11-15: **live at https://20-235-68-147.sslip.io** on an Azure VM (Central India, Standard_B2als_v2,
+2 vCPU and 4 GB, Ubuntu 24.04) running `infra/oracle/docker-compose.yml` (the all-in-one image behind Caddy with
+automatic HTTPS). `scripts/smoke_live.py` passed against it (login, run to the approval interrupt, approve, pipeline).
+Oracle Always Free ARM was tried first and never had capacity in Mumbai, and Hugging Face Docker Spaces need PRO,
+so the history below is kept as the record of what was tried. The Azure free credit lasts about 30 days.
+
+Earlier state, 2026-11-12: the all-in-one image builds and runs, and the whole flow works against the production
 configuration (Neon Postgres checkpoints, Upstash Redis worker, Groq open model). **No public host is attached
 yet**, because the planned free host stopped being free.
 
