@@ -1,13 +1,24 @@
 # ruff: noqa: B008
 from __future__ import annotations
 
+import hashlib
+
 from fastapi import APIRouter, Depends, HTTPException
 
+from agent.nodes import core
 from agent.nodes.config import CFG
 from apps.api.auth import get_current_user
 from apps.api.context import AppCtx, get_ctx
 from apps.api.routers.common import run_out, user_runs
-from apps.api.schemas import DraftIn, DraftOut, MessagesOut, MessageThreadOut, UserOut
+from apps.api.schemas import (
+    DraftIn,
+    DraftOut,
+    MessagesOut,
+    MessageThreadOut,
+    SendIn,
+    SendOut,
+    UserOut,
+)
 
 router = APIRouter(prefix="/messages", tags=["messages"])
 
@@ -63,3 +74,24 @@ async def draft_reply(client_id: str, body: DraftIn | None = None,
     # body.instruction is accepted for the contract; the LLM liaison will use it (TODO).
     return DraftOut(client_id=client_id, intent=intent, draft=text, slots=slots,
                     status="flagged" if intent == "scam_signal" else "awaiting_approval")
+
+
+@router.post("/{client_id}/send", response_model=SendOut, operation_id="send_reply")
+async def send_reply(client_id: str, body: SendIn, user: UserOut = Depends(get_current_user),
+                     ctx: AppCtx = Depends(get_ctx)) -> SendOut:
+    """Send a reply the user has approved (the click on Approve and send is the approval).
+
+    The text is re-checked against the platform policy first. The idempotency key is derived from the
+    user, the client and the exact text, so a double click or a retry never sends the message twice."""
+    if client_id not in await _my_clients(ctx, user):
+        raise HTTPException(404, "unknown client")
+    text = body.text.strip()
+    if not text:
+        raise HTTPException(422, "reply is empty")
+    bad = core.violations(text, await ctx.mp.get_policy())
+    if bad:
+        raise HTTPException(422, f"reply breaks the platform policy: {', '.join(bad)}")
+    key = hashlib.sha256(f"{user.id}|{client_id}|{text}".encode()).hexdigest()[:32]
+    rec = await ctx.mp.send_message(client_id, text, key)
+    return SendOut(client_id=client_id, message_id=rec.get("message_id"),
+                   idempotent_replay=bool(rec.get("idempotent_replay")))

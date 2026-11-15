@@ -167,6 +167,18 @@ class DraftOut(BaseModel):
     status: Literal["awaiting_approval", "flagged"] = "awaiting_approval"
 
 
+class SendIn(BaseModel):
+    """The reply the user approved. The text may be the suggested draft or the user's edit of it."""
+    text: str = Field(min_length=1, max_length=4000)
+
+
+class SendOut(BaseModel):
+    client_id: str
+    message_id: str | None = None
+    status: Literal["sent"] = "sent"
+    idempotent_replay: bool = False
+
+
 class ReasonCount(BaseModel):
     reason: str
     count: int

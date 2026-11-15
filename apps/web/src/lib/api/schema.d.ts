@@ -188,9 +188,10 @@ export interface paths {
          * Regenerate
          * @description Regenerate one paragraph of the pending draft.
          *
-         *     TODO(graph lane): the bid graph has no single paragraph rewrite entry point yet. This adapter
-         *     validates ownership and the paragraph index, then reports regenerated=false so the UI can show
-         *     the message. Wire it to a writer rewrite function when agent/nodes/writer.py exposes one.
+         *     The writer model rewrites the paragraph (prompt agent/prompts/rewrite_paragraph.md), the claim verifier removes
+         *     any unsupported claim, and the compliance rules and platform policy are applied. On success the new draft is
+         *     written into the paused thread so the approval screen and the final submit use it. The thread stays at the
+         *     approval step: nothing is sent.
          */
         post: operations["regenerate_paragraph"];
         delete?: never;
@@ -208,7 +209,8 @@ export interface paths {
         };
         /**
          * Get Pipeline
-         * @description Kanban from checkpoint state plus marketplace events (a client message means `replied`).
+         * @description Kanban from checkpoint state plus marketplace events (a client message means `replied`, one that asks for a call
+         *     means `interview`). `viewed` and `hired` have no event source in GigSim, so those columns stay empty.
          *
          *     Works while the marketplace is down (cards just stop advancing), so the board never errors.
          */
@@ -252,6 +254,29 @@ export interface paths {
          * @description Suggest a reply to the latest client message. Nothing is sent: sending needs approval.
          */
         post: operations["draft_reply"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messages/{client_id}/send": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Send Reply
+         * @description Send a reply the user has approved (the click on Approve and send is the approval).
+         *
+         *     The text is re-checked against the platform policy first. The idempotency key is derived from the
+         *     user, the client and the exact text, so a double click or a retry never sends the message twice.
+         */
+        post: operations["send_reply"];
         delete?: never;
         options?: never;
         head?: never;
@@ -766,6 +791,32 @@ export interface components {
              */
             interval_minutes: number;
         };
+        /**
+         * SendIn
+         * @description The reply the user approved. The text may be the suggested draft or the user's edit of it.
+         */
+        SendIn: {
+            /** Text */
+            text: string;
+        };
+        /** SendOut */
+        SendOut: {
+            /** Client Id */
+            client_id: string;
+            /** Message Id */
+            message_id?: string | null;
+            /**
+             * Status
+             * @default sent
+             * @constant
+             */
+            status: "sent";
+            /**
+             * Idempotent Replay
+             * @default false
+             */
+            idempotent_replay: boolean;
+        };
         /** SettingsModel */
         SettingsModel: {
             /**
@@ -1263,6 +1314,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DraftOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    send_reply: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                client_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SendIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SendOut"];
                 };
             };
             /** @description Validation Error */

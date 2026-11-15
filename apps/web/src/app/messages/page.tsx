@@ -12,6 +12,7 @@ export default function MessagesPage() {
   const [drafts, setDrafts] = useState<Record<string, Draft>>({});
   const [busy, setBusy] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [sent, setSent] = useState<Record<string, string>>({});
 
   async function suggest(clientId: string) {
     setBusy(clientId);
@@ -21,6 +22,32 @@ export default function MessagesPage() {
         api.POST("/api/messages/{client_id}/draft", { params: { path: { client_id: clientId } }, body: {} }),
       );
       setDrafts((prev) => ({ ...prev, [clientId]: d }));
+    } catch (e) {
+      setErrors((prev) => ({ ...prev, [clientId]: errorMessage(e) }));
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function send(clientId: string) {
+    const draft = drafts[clientId];
+    if (!draft) return;
+    setBusy(clientId);
+    setErrors((e) => ({ ...e, [clientId]: "" }));
+    try {
+      await unwrap(
+        api.POST("/api/messages/{client_id}/send", {
+          params: { path: { client_id: clientId } },
+          body: { text: draft.draft },
+        }),
+      );
+      setDrafts((prev) => {
+        const next = { ...prev };
+        delete next[clientId];
+        return next;
+      });
+      setSent((prev) => ({ ...prev, [clientId]: "Reply sent." }));
+      threads.reload();
     } catch (e) {
       setErrors((prev) => ({ ...prev, [clientId]: errorMessage(e) }));
     } finally {
@@ -59,6 +86,11 @@ export default function MessagesPage() {
                   })}
                 </ul>
                 {errors[t.client_id] && <ErrorBox message={errors[t.client_id]} />}
+                {sent[t.client_id] && !draft && (
+                  <p className="mb-2 text-sm text-green-700" role="status" data-testid="reply-sent">
+                    {sent[t.client_id]}
+                  </p>
+                )}
                 {draft ? (
                   <div className="rounded-md border border-indigo-200 bg-indigo-50 p-3" data-testid="suggested-reply">
                     <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -83,11 +115,18 @@ export default function MessagesPage() {
                       </ul>
                     )}
                     <div className="mt-2 flex flex-wrap items-center gap-2">
-                      <button type="button" className="btn-primary" disabled title="The send endpoint is not part of the API contract yet">
-                        Approve and send
+                      <button
+                        type="button"
+                        className="btn-primary"
+                        disabled={busy === t.client_id || draft.status === "flagged" || !draft.draft.trim()}
+                        onClick={() => send(t.client_id)}
+                      >
+                        {busy === t.client_id ? "Sending..." : "Approve and send"}
                       </button>
                       <p className="text-xs text-slate-600">
-                        Sending is disabled: the API contract has no send endpoint yet. Nothing was sent.
+                        {draft.status === "flagged"
+                          ? "Not sendable: this conversation is flagged as a possible scam."
+                          : "Nothing is sent until you click this button. You can edit the text first."}
                       </p>
                     </div>
                   </div>

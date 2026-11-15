@@ -439,7 +439,7 @@
           "proposals"
         ],
         "summary": "Regenerate",
-        "description": "Regenerate one paragraph of the pending draft.\n\nTODO(graph lane): the bid graph has no single paragraph rewrite entry point yet. This adapter\nvalidates ownership and the paragraph index, then reports regenerated=false so the UI can show\nthe message. Wire it to a writer rewrite function when agent/nodes/writer.py exposes one.",
+        "description": "Regenerate one paragraph of the pending draft.\n\nThe writer model rewrites the paragraph (prompt agent/prompts/rewrite_paragraph.md), the claim verifier removes\nany unsupported claim, and the compliance rules and platform policy are applied. On success the new draft is\nwritten into the paused thread so the approval screen and the final submit use it. The thread stays at the\napproval step: nothing is sent.",
         "operationId": "regenerate_paragraph",
         "security": [
           {
@@ -497,7 +497,7 @@
           "pipeline"
         ],
         "summary": "Get Pipeline",
-        "description": "Kanban from checkpoint state plus marketplace events (a client message means `replied`).\n\nWorks while the marketplace is down (cards just stop advancing), so the board never errors.",
+        "description": "Kanban from checkpoint state plus marketplace events (a client message means `replied`, one that asks for a call\nmeans `interview`). `viewed` and `hired` have no event source in GigSim, so those columns stay empty.\n\nWorks while the marketplace is down (cards just stop advancing), so the board never errors.",
         "operationId": "get_pipeline",
         "responses": {
           "200": {
@@ -612,6 +612,64 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DraftOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/messages/{client_id}/send": {
+      "post": {
+        "tags": [
+          "messages"
+        ],
+        "summary": "Send Reply",
+        "description": "Send a reply the user has approved (the click on Approve and send is the approval).\n\nThe text is re-checked against the platform policy first. The idempotency key is derived from the\nuser, the client and the exact text, so a double click or a retry never sends the message twice.",
+        "operationId": "send_reply",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Client Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SendOut"
                 }
               }
             }
@@ -1907,6 +1965,57 @@
           "name"
         ],
         "title": "SavedSearch"
+      },
+      "SendIn": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "SendIn",
+        "description": "The reply the user approved. The text may be the suggested draft or the user's edit of it."
+      },
+      "SendOut": {
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "title": "Client Id"
+          },
+          "message_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message Id"
+          },
+          "status": {
+            "type": "string",
+            "const": "sent",
+            "title": "Status",
+            "default": "sent"
+          },
+          "idempotent_replay": {
+            "type": "boolean",
+            "title": "Idempotent Replay",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "client_id"
+        ],
+        "title": "SendOut"
       },
       "SettingsModel": {
         "properties": {
