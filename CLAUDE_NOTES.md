@@ -83,3 +83,9 @@ Next steps in order: 1) check agents' results, run full pytest and npx playwrigh
 - After deploy: fill README live URL and video link (GIGBID_LIVE_URL, GIGBID_VIDEO_URL then scripts/build_readme.py), regenerate report PDF (markdown to HTML in scratchpad, Chrome headless print), final check_repo, CI green, push.
 - User does: video, publishing write-up, reviewer password in private Classroom comment, Classroom submission. kickbacks.dev ad not showing: likely no live bids on their side, nothing to fix.
 - Still not done: incremental re-indexing, regex message drafts in API, X-Trace-Id to MCP, human judge labels, human pairwise panel.
+
+### Update 2026-11-15 (Oracle VM setup via Chrome)
+- Oracle account active, home region Mumbai (ap-mumbai-1), Free Trial. Done in console: VCN gigbid-vcn (10.0.0.0/16) with public subnet, internet gateway, default security list now allows TCP 22, 80, 443 from 0.0.0.0/0.
+- Local SSH key made at ~/.ssh/gigbid_oracle (ed25519, no passphrase); public half pasted into the instance form. No key downloaded from the browser.
+- Instance form is filled (name gigbid, Ubuntu 24.04, A1.Flex, boot volume 100 GB, public IPv4 on). Create fails: "Out of capacity for shape VM.Standard.A1.Flex in AD-1" at 2 OCPU/12 GB, then "Too many requests for the user" when retrying at 1 OCPU/6 GB. Mumbai has a single AD.
+- Next: wait a few minutes, retry Create (try 2/12 then 1/6), then follow infra/oracle/README.md sections 2 to 4 over ssh -i ~/.ssh/gigbid_oracle ubuntu@<ip>.
