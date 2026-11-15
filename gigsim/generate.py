@@ -11,7 +11,7 @@ OUT = ROOT / "data" / "processed" / "gigsim"
 
 PERSONAS = {
     "ai_ml": {
-        "name": "Sana Qureshi", "headline": "AI/ML Engineer", "rate": 45,
+        "name": "Rayyan Masroor", "headline": "AI/ML Engineer", "rate": 45,
         "skills": ["Python", "PyTorch", "scikit-learn", "NLP", "LLM", "RAG", "classification",
                    "model evaluation", "MLOps", "FastAPI"],
         "projects": ["churn prediction", "resume ranking with embeddings", "support ticket classifier",
