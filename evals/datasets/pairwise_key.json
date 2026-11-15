@@ -1,0 +1,92 @@
+{
+ "P01": {
+  "A": "v3_rerank",
+  "B": "v0_naive",
+  "job_id": "dev-ai_ml-0030",
+  "judge_score": {
+   "v0_naive": 2.0,
+   "v3_rerank": 1.0
+  }
+ },
+ "P02": {
+  "A": "v0_naive",
+  "B": "v3_rerank",
+  "job_id": "dev-ai_ml-0045",
+  "judge_score": {
+   "v0_naive": 2.0,
+   "v3_rerank": 2.0
+  }
+ },
+ "P03": {
+  "A": "v3_rerank",
+  "B": "v0_naive",
+  "job_id": "dev-data-0019",
+  "judge_score": {
+   "v0_naive": 3.0,
+   "v3_rerank": 3.0
+  }
+ },
+ "P04": {
+  "A": "v3_rerank",
+  "B": "v0_naive",
+  "job_id": "dev-data-0051",
+  "judge_score": {
+   "v0_naive": 2.0,
+   "v3_rerank": 2.0
+  }
+ },
+ "P05": {
+  "A": "v3_rerank",
+  "B": "v0_naive",
+  "job_id": "dev-data-0021",
+  "judge_score": {
+   "v0_naive": 2.0,
+   "v3_rerank": 2.0
+  }
+ },
+ "P06": {
+  "A": "v3_rerank",
+  "B": "v0_naive",
+  "job_id": "dev-web-0049",
+  "judge_score": {
+   "v0_naive": 2.0,
+   "v3_rerank": 2.0
+  }
+ },
+ "P07": {
+  "A": "v0_naive",
+  "B": "v3_rerank",
+  "job_id": "dev-web-0029",
+  "judge_score": {
+   "v0_naive": 1.0,
+   "v3_rerank": 2.0
+  }
+ },
+ "P08": {
+  "A": "v3_rerank",
+  "B": "v0_naive",
+  "job_id": "dev-ai_ml-0017",
+  "judge_score": {
+   "v0_naive": 2.0,
+   "v3_rerank": 1.0
+  }
+ },
+ "P09": {
+  "A": "v0_naive",
+  "B": "v3_rerank",
+  "job_id": "dev-data-0008",
+  "judge_score": {
+   "v0_naive": 2.0,
+   "v3_rerank": 2.0
+  }
+ },
+ "P10": {
+  "A": "v0_naive",
+  "B": "v3_rerank",
+  "job_id": "dev-web-0032",
+  "judge_score": {
+   "v0_naive": 2.0,
+   "v3_rerank": 2.0
+  }
+ }
+}
