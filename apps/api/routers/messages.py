@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import hashlib
+from datetime import date, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -56,6 +57,21 @@ def classify_intent(text: str) -> str:
     return conv["default_intent"]
 
 
+async def _free_slots(ctx: AppCtx) -> list[dict]:
+    """Interview slots from the Workspace MCP server. If it is down or not configured the reply is drafted
+    without slots (degraded), never an error."""
+    if ctx.workspace is None:
+        return []
+    c = CFG["conversation"]
+    today = date.today()
+    try:
+        slots = await ctx.workspace.free_slots(today.isoformat(), (today + timedelta(days=c["slot_days_ahead"])).isoformat(),
+                                               c["slot_duration_min"])
+    except Exception:
+        return []
+    return slots[: c["max_slots_offered"]]
+
+
 @router.post("/{client_id}/draft", response_model=DraftOut, operation_id="draft_reply")
 async def draft_reply(client_id: str, body: DraftIn | None = None,
                       user: UserOut = Depends(get_current_user),
@@ -68,9 +84,11 @@ async def draft_reply(client_id: str, body: DraftIn | None = None,
         raise HTTPException(409, "no client message to answer")
     intent = classify_intent(msgs[-1]["text"])
     t = CFG["conversation"]["templates"]
-    slots: list[dict] = []  # TODO: Workspace MCP free_slots (server not implemented yet)
-    text = t["interview_no_slots"] if intent == "interview_request" and not slots else (
-        t[intent].replace("{slots}", ", ".join(s["start"] for s in slots)))
+    slots = await _free_slots(ctx) if intent == "interview_request" else []
+    if intent == "interview_request":
+        text = t["interview_request"].replace("{slots}", "; ".join(s["start"].replace("T", " ") for s in slots))             if slots else t["interview_no_slots"]
+    else:
+        text = t[intent]
     # body.instruction is accepted for the contract; the LLM liaison will use it (TODO).
     return DraftOut(client_id=client_id, intent=intent, draft=text, slots=slots,
                     status="flagged" if intent == "scam_signal" else "awaiting_approval")

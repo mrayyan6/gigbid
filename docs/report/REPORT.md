@@ -198,7 +198,7 @@ Finished on 2026-11-15 after an earlier version of this list (each has a test or
 re-indexing (uploads embed only their new chunks and the index equals a full rebuild, `rag/tests/test_incremental.py`,
 `tests/integration/test_portfolio_upload.py`); the Messages screen now sends an approved reply exactly once
 (`tests/integration/test_messages_send.py`); Inspector screenshots with executed results for all three own servers
-(`docs/TOOLS.md`); the GitHub MCP server exercised for real (`evals/results/github_mcp_check.json`); the blind pairwise
+(`docs/TOOLS.md`); the GitHub MCP server exercised for real (`evals/results/github_mcp_check.json`); interview slots in Messages now come from the Workspace MCP server over MCP (`agent/mcp_workspace.py`, `tests/integration/test_workspace_slots.py`) and degrade to a reply without slots when it is down; the blind pairwise
 panel tooling and anonymised pairs (`evals/runners/pairwise_panel.py`). The Inspector run also found a real defect, a
 first `search_evidence` call of about 25 seconds that clients timed out on, now fixed by a background warm up.
 

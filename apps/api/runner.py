@@ -66,7 +66,8 @@ def graph_config(ctx: AppCtx, user_id: str, persona: str, tid: str, trace_id: st
             from rag.retriever import get_retriever
             retr = ctx.retrievers.setdefault(persona, get_retriever("v2_hybrid", persona))
     return {"configurable": {"thread_id": tid, "marketplace": ctx.mp, "retriever": retr,
-                             "user_id": user_id, "memory": ctx.memory, "trace_id": trace_id},
+                             "user_id": user_id, "memory": ctx.memory, "trace_id": trace_id,
+                             "workspace": ctx.workspace},
             "metadata": {"trace_id": trace_id, "user_id": user_id, "job_thread": tid},
             "tags": ["gigbid", f"user:{user_id}"]}
 

@@ -46,6 +46,7 @@ class AppCtx:
     checkpointer_kind: str
     mp: Any = None
     memory: Any = None
+    workspace: Any = None                # MCPWorkspace (free slots over MCP) or None when not configured
     arq: Any = None                      # ArqRedis when REDIS_URL is set, else None (inline mode)
     retrievers: dict = field(default_factory=dict)
     marketplace_down: bool = False

@@ -8,6 +8,7 @@ name: gigbid
 x-app-env: &app-env
   MARKETPLACE_MODE: mcp
   MARKETPLACE_MCP_URL: http://mcp-marketplace:9100/mcp
+  WORKSPACE_MCP_URL: http://mcp-workspace:9102/mcp
   GIGSIM_URL: http://gigsim:9000
   DATABASE_URL: postgresql://gigbid:${POSTGRES_PASSWORD:-gigbid}@postgres:5432/gigbid
   REDIS_URL: redis://redis:6379

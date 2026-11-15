@@ -75,6 +75,9 @@ async def open_ctx(with_arq: bool = True):
         async with checkpointer(database_url) as (saver, kind):
             ctx = AppCtx(db=db, graph=build_bid_graph(saver), checkpointer_kind=kind)
             ctx.mp = GuardedMarketplace(get_marketplace(), ctx)
+            if os.environ.get("WORKSPACE_MCP_URL") or not test_mode():
+                from agent.mcp_workspace import MCPWorkspace
+                ctx.workspace = MCPWorkspace()  # HTTP when WORKSPACE_MCP_URL is set, else a stdio subprocess
             try:
                 from agent.memory.store import GigBidMemory
                 ctx.memory = GigBidMemory(persist=not test_mode())
