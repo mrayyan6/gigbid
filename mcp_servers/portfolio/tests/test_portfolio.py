@@ -59,3 +59,15 @@ def test_portfolio_data_env_wins(tmp_path, monkeypatch, restore_rag_data):
     monkeypatch.setattr(tools, "_data_dir", None)
     monkeypatch.setenv("PORTFOLIO_DATA", str(tmp_path))
     assert tools.resolve_data_dir() == tmp_path
+
+
+def test_warm_up_builds_the_retriever_once_in_the_background():
+    """The first search_evidence call used to take about 25 s (model load). Warm up builds it at start,
+    and a call that arrives meanwhile waits for the same build instead of starting a second one."""
+    from mcp_servers.portfolio import tools
+    tools._cache.clear()
+    t = tools.warm_up()
+    first = tools.retriever_and_items()  # may arrive while the warm up is still running
+    t.join(timeout=120)
+    assert not t.is_alive()
+    assert tools.retriever_and_items() is first and len(tools._cache) == 1

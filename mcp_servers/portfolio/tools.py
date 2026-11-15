@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import os
 import sys
+import threading
 from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
@@ -63,15 +64,28 @@ def _read(name: str) -> list[dict]:
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
 
 
+_build_lock = threading.Lock()
+
+
 def retriever_and_items() -> tuple:
     from rag.ingest.load import load_portfolio
     from rag.retriever import get_retriever
     resolve_data_dir()
     persona = os.environ.get("PORTFOLIO_PERSONA", "ai_ml")
-    if persona not in _cache:
-        _cache[persona] = (get_retriever(os.environ.get("RAG_VARIANT", "v2_hybrid"), persona),
-                           load_portfolio(persona))
+    with _build_lock:  # the warm up thread and a first tool call must not build the index twice
+        if persona not in _cache:
+            _cache[persona] = (get_retriever(os.environ.get("RAG_VARIANT", "v2_hybrid"), persona),
+                               load_portfolio(persona))
     return _cache[persona]
+
+
+def warm_up() -> threading.Thread:
+    """Build the retriever (imports, embedding model, index) in the background at server start.
+    Without this the first search_evidence call takes about 25 seconds and clients with a short timeout give
+    up. A tool call that arrives while the warm up runs simply waits for it instead of starting its own."""
+    t = threading.Thread(target=retriever_and_items, name="portfolio-warmup", daemon=True)
+    t.start()
+    return t
 
 
 def view(c: dict) -> dict:

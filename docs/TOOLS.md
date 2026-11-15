@@ -45,19 +45,36 @@ Resources (portfolio): `portfolio://case/{id}`, `portfolio://proposal/{id}`. Pro
 
 ## Inspector
 
-`npx @modelcontextprotocol/inspector .venv/Scripts/python -m mcp_servers.portfolio.server` (screenshots belong in `docs/images/`; not yet captured).
+Run it against each server (stdio):
+
+```
+npx @modelcontextprotocol/inspector .venv/Scripts/python -m mcp_servers.portfolio.server
+npx @modelcontextprotocol/inspector -e GIGSIM_URL=http://localhost:9000 .venv/Scripts/python -m mcp_servers.marketplace.server
+npx @modelcontextprotocol/inspector -e WORKSPACE_PATH=/tmp/ws.json .venv/Scripts/python -m mcp_servers.workspace.server
+```
 
 ## MCP Inspector screenshots
 
-Captured on 2026-11-12 with `@modelcontextprotocol/inspector` 2.13.0 against the Portfolio server over stdio
-(`python -m mcp_servers.portfolio.server`):
+Captured on 2026-11-15 with `@modelcontextprotocol/inspector` 2.13.0 over stdio (protocol 2025-11-25). Every server was
+connected, its tools listed, and at least one tool was executed with a successful result.
 
-- `docs/images/inspector_1_connected.jpg`: the server connects as `gigbid-portfolio` (protocol 2025-11-25).
-- `docs/images/inspector_2_tools.jpg`: the three tools `get_case_study`, `list_skills`, `search_evidence`.
-- `docs/images/inspector_3_search_evidence_annotations.jpg`: `search_evidence` with its READ-ONLY and IDEMPOTENT
-  annotations and its input form (requirement, k, filters).
+| Server | Screenshot | What it shows |
+|---|---|---|
+| Portfolio | `docs/images/inspector_1_connected.jpg` | connects as `gigbid-portfolio` |
+| Portfolio | `docs/images/inspector_2_tools.jpg` | the three tools `get_case_study`, `list_skills`, `search_evidence` |
+| Portfolio | `docs/images/inspector_3_search_evidence_annotations.jpg` | `search_evidence` READ-ONLY and IDEMPOTENT annotations and its input form |
+| Portfolio | `docs/images/inspector_4_search_evidence_result.jpg` | **executed**: `search_evidence("RAG chatbot over policy documents with FastAPI")` returns evidence items with type, date, outcome and source in 1.7 s |
+| Marketplace | `docs/images/inspector_marketplace_1_connected.jpg` | connects as `gigbid-marketplace` |
+| Marketplace | `docs/images/inspector_marketplace_2_tools.jpg` | the nine tools, read and write |
+| Marketplace | `docs/images/inspector_marketplace_3_dry_run_result.jpg` | **executed**: `create_proposal_draft` with `dry_run` true returns the exact payload, `connects_cost` 17 and `balance_after` 183, and stores nothing |
+| Marketplace | `docs/images/inspector_marketplace_4_submit_annotations.jpg` | `submit_proposal` annotated DESTRUCTIVE, IDEMPOTENT, OPEN-WORLD, "Call only after human approval" |
+| Workspace | `docs/images/inspector_workspace_1_connected.jpg` | connects as `gigbid-workspace` |
+| Workspace | `docs/images/inspector_workspace_2_tools.jpg` | the three tools `draft_email`, `free_slots`, `hold_interview` |
+| Workspace | `docs/images/inspector_workspace_3_draft_email_annotations.jpg` | `draft_email` annotated IDEMPOTENT, "never sent: the user reviews and sends it" |
+| Workspace | `docs/images/inspector_workspace_4_free_slots_result.jpg` | **executed**: `free_slots` for 2026-11-16 to 2026-11-17 returns 30 minute slots inside working hours |
 
-Not captured: a successful execution result in the Inspector. The first `search_evidence` call was still running
-(model load on first use) when I stopped, so call results are covered only by the in-memory MCP client tests
-(`mcp_servers/portfolio/tests`, `mcp_servers/marketplace/tests`), not by a screenshot. Inspector screenshots of the
-Marketplace and Workspace servers were not taken.
+What the Inspector found. The first Inspector attempt on 2026-11-12 never showed a result for `search_evidence`. The cause
+was real: the first call built the retriever (imports, embedding model, index) and took about 25 seconds, longer than the
+Inspector waits. The Portfolio server now warms up in a background thread at start (`tools.warm_up`), so `initialize`
+answers in 1 s and the first `search_evidence` call takes about 3 s (measured over raw stdio JSON-RPC). The tool schemas
+did not change, so the schema snapshot test still passes.

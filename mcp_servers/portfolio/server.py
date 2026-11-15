@@ -27,6 +27,7 @@ prompts.register(mcp)
 
 def main() -> None:
     tools.resolve_data_dir()  # fail fast or generate data before the first request
+    tools.warm_up()  # load the models in the background so the first search_evidence call is fast
     mcp.run(transport="streamable-http" if "--http" in sys.argv else "stdio")
 
 
