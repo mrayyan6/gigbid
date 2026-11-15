@@ -8,7 +8,8 @@ Links:
 - Source code (public GitHub repository): [https://github.com/mrayyan6/gigbid](https://github.com/mrayyan6/gigbid)
 - Demo video (Google Drive): [Watch the 3 minute demo video](https://drive.google.com/file/d/16QidLFNPpdbDCZBjeT_Qe1zNl5c34Xvm/view?usp=sharing)
 - Technical write-up: [https://mrayyan6.github.io/gigbid-writeup/](https://mrayyan6.github.io/gigbid-writeup/)
-- Published Portfolio MCP server: [Portfolio MCP README and uvx command](https://github.com/mrayyan6/gigbid/blob/main/mcp_servers/portfolio/README.md)
+- Published Portfolio MCP server: [Portfolio MCP README](https://github.com/mrayyan6/gigbid/blob/main/mcp_servers/portfolio/README.md), run with `uvx --from git+https://github.com/mrayyan6/gigbid gigbid-portfolio-mcp`
+- This report in the repository: [docs/report/REPORT.pdf](https://github.com/mrayyan6/gigbid/blob/main/docs/report/REPORT.pdf)
 
 AI-4016 Assignment II. Engineering design review. Every number below comes from a file in `evals/results/`
 (named in brackets) or from a git commit. All data is synthetic (`docs/DATA_CARD.md`). Where something was not
