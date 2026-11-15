@@ -91,3 +91,8 @@ Next steps in order: 1) check agents' results, run full pytest and npx playwrigh
 - Next: wait a few minutes, retry Create (try 2/12 then 1/6), then follow infra/oracle/README.md sections 2 to 4 over ssh -i ~/.ssh/gigbid_oracle ubuntu@<ip>.
 - 2026-11-15: user declined the Oracle pay-as-you-go upgrade (hold about PKR 31,000). Plan: keep retrying A1 capacity. Chrome instance form was lost (tab moved to the payment page), rebuild it before the next Create attempt.
 - Local demo stack for the video (started by Claude): GigSim on 9000, API on 8000 with DATABASE_URL and REDIS_URL empty (SQLite, inline runs) and REVIEWER_EMAIL plus REVIEWER_PASSWORD exported, web on http://localhost:3000. Note: the API only seeds the reviewer if both REVIEWER vars are in its environment (.env has only the password locally).
+
+### PLAN 2026-11-15 (decided with user)
+- Demo script PDF: .claude-context/DEMO_SCRIPT.pdf (gitignored), copy on Desktop. Jobs: approve dev-ai_ml-0001, scam dev-ai_ml-0011, injection dev-ai_ml-0015. Local app is stopped, start only when the user says.
+- Hosting: keep retrying Oracle A1.Flex (1 OCPU 6 GB, Mumbai) about hourly until 18:00 PKT, user keeps laptop on. If no VM by 18:00, fall back to Hugging Face PRO one month (about USD 9) with scripts/deploy_hf.py then scripts/smoke_live.py. Oracle pay-as-you-go upgrade declined (hold about PKR 31,000).
+- Hidden test: informs B, C and E, and a down URL during the run loses E deployment marks. If hosting fails, state it plainly in the report as a failure (brief says no excuses).
