@@ -168,8 +168,18 @@ scraping and no browser automation. Rate limiting is per user and below the simu
 ## 10. Hidden test results
 
 The instructor runs new jobs against the live URL after the deadline. **No hidden test results exist yet** and none
-are claimed. Declared budgets are in section 1. The deployed link uses the hosted open profile; see the README for the
-live URL status. Known risks to those numbers: Groq free tier pacing (token per minute limit) adds latency under
+are claimed. Declared budgets are in section 1.
+
+Deployment, stated plainly. The live URL is https://20-235-68-147.sslip.io, one Azure VM in Central India
+(Standard_B2als_v2, 2 vCPU, 4 GB, Ubuntu 24.04) running the all-in-one image behind Caddy with automatic HTTPS, on the
+hosted open profile (Groq, qwen3.8-27b), with Neon Postgres checkpoints and Upstash Redis. It took three attempts to
+get a host. Hugging Face Docker Spaces returned 402 (they need a paid plan), the Oracle Always Free ARM VM never had
+capacity in the Mumbai region across many attempts, and the Oracle upgrade needed a card hold I declined, so the app
+runs on a free Azure trial credit that lasts about 30 days. After the credit ends the VM stops, so the URL is
+not guaranteed to stay live until grades are released unless the account is upgraded. A single end to end check
+(`scripts/smoke_live.py`: login, one job run to the approval interrupt, approve, pipeline update) passed on
+2026-11-15 and took 506 seconds in total, most of it hosted model latency across two jobs. That is one run, not a load
+test, and the 2 vCPU VM serves every user. Known risks to the hidden test numbers: Groq free tier pacing (token per minute limit) adds latency under
 concurrent load, and the Critic rejects every draft, which spends both send backs on every proposal.
 
 ## Honest list of what is not done
