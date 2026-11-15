@@ -96,3 +96,8 @@ Next steps in order: 1) check agents' results, run full pytest and npx playwrigh
 - Demo script PDF: .claude-context/DEMO_SCRIPT.pdf (gitignored), copy on Desktop. Jobs: approve dev-ai_ml-0001, scam dev-ai_ml-0011, injection dev-ai_ml-0015. Local app is stopped, start only when the user says.
 - Hosting: keep retrying Oracle A1.Flex (1 OCPU 6 GB, Mumbai) about hourly until 18:00 PKT, user keeps laptop on. If no VM by 18:00, fall back to Hugging Face PRO one month (about USD 9) with scripts/deploy_hf.py then scripts/smoke_live.py. Oracle pay-as-you-go upgrade declined (hold about PKR 31,000).
 - Hidden test: informs B, C and E, and a down URL during the run loses E deployment marks. If hosting fails, state it plainly in the report as a failure (brief says no excuses).
+
+### 2026-11-15 Azure deploy (replaces Oracle, whose ARM capacity never freed)
+- User got an Azure free account with USD 200 credit. VM gigbid in resource group gigbid-rg, centralindia, Standard_B2als_v2 (2 vCPU, 4 GB, x86), Ubuntu 24.04, public IP 20.235.68.147 (Standard SKU, static), ports 22, 80 and 443 open. Login: ssh -i ~/.ssh/gigbid_oracle azureuser@20.235.68.147 (key is the local one made earlier, name is historical).
+- Done on the VM: 4 GB swap, Docker 29.9.3, repo cloned to ~/gigbid, server.env copied (made with scripts/make_server_env.py 20.235.68.147), compose build started with infra/oracle/docker-compose.yml. URL will be https://20-235-68-147.sslip.io. Oracle retry cron removed.
+- Credit lasts about 30 days, then Azure stops the VM unless the account is upgraded. Remember before grades are released.
